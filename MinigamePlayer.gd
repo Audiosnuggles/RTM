@@ -1,156 +1,87 @@
-# MinigamePlayer.gd
-
 extends CharacterBody2D
 
-# --- Physik Konstanten ---
 const SPEED = 300.0
-const JUMP_VELOCITY = -450.0
+const JUMP_VELOCITY = -400.0
 
-var gravity = ProjectSettings.get_setting("physics/2d/default_gravity") 
+# Schwerkraft vom Projekt holen (oder Standardwert)
+var gravity = ProjectSettings.get_setting("physics/2d/default_gravity")
 
-# --- Item Zustände ---
-var is_invincible: bool = false
-var is_invisible: bool = false
+@onready var animated_sprite = $AnimatedSprite
+@onready var minigame_scene = get_parent() # Zugriff auf die Haupt-Minigame-Szene
 
-# --- Level-Begrenzung ---
-const LEVEL_START_X = 0 
-const LEVEL_END_X = 4000
-
-# Referenzen zu anderen Nodes
-var minigame_scene: Node = null 
-var invincibility_timer: Timer
-var invisibility_timer: Timer
-
-@onready var animated_sprite = $AnimatedSprite 
-
-
-func _ready():
-	# 1. Referenz zur Root-Szene (MinigameScene)
-	minigame_scene = get_parent()
-	
-	# 2. Timer-Nodes über den $-Operator referenzieren
-	invincibility_timer = $InvincibilityTimer
-	invisibility_timer = $InvisibilityTimer 
-	
-	# 3. Timer-Timeout-Signale verbinden
-	invincibility_timer.timeout.connect(_on_invincibility_timer_timeout)
-	invisibility_timer.timeout.connect(_on_invisibility_timer_timeout)
-	
-	# SICHERHEITS-CHECK: Stellt sicher, dass der Player verwundbar startet
-	is_invincible = false
-	is_invisible = false
-	
-	# Startanimation spielen
-	animated_sprite.play("Idle")
-	
-	# NEU: Signalverbindung zum Gegner-Node herstellen
-	# Annahme: Der Enemy ist direkt in der MinigameScene geladen und heißt "Enemy"
-	var enemy_node = minigame_scene.get_node_or_null("Enemy")
-	
-	if enemy_node != null:
-		# Prüfen, ob der Enemy das player_hit Signal hat und verbinden
-		if enemy_node.has_signal("player_hit"):
-			enemy_node.player_hit.connect(_on_enemy_hit)
-
+# Invincibility variables
+var is_invincible = false
+@onready var invincibility_timer = $InvincibilityTimer
+@onready var invisibility_timer = $InvisibilityTimer # Timer for blinking
 
 func _physics_process(delta):
-	# 1. Schwerkraft anwenden
+	# Schwerkraft hinzufügen
 	if not is_on_floor():
 		velocity.y += gravity * delta
 
-	# 2. Bewegung verarbeiten
+	# Sprung-Input verarbeiten
+	if Input.is_action_just_pressed("ui_accept") and is_on_floor():
+		velocity.y = JUMP_VELOCITY
+		# Hier könntest du eine Sprunganimation starten, falls vorhanden
+		# animated_sprite.play("Jump_Start") # Beispiel
+
+	# Richtung ermitteln (Links/Rechts)
 	var direction = Input.get_axis("ui_left", "ui_right")
 
-	# --- ANIMATIONS- UND BEWEGUNGSSTEUERUNG ---
-	
+	# Bewegung anwenden
 	if direction:
 		velocity.x = direction * SPEED
-		animated_sprite.flip_h = (direction < 0) 
 	else:
-		velocity.x = move_toward(velocity.x, 0, SPEED)
+		velocity.x = move_toward(velocity.x, 0, SPEED) # Langsamer werden
 
-	if is_on_floor():
-		if direction:
-			animated_sprite.play("Run") 
-		else:
-			animated_sprite.play("Idle")
-			
-		if Input.is_action_just_pressed("ui_accept"):
-			velocity.y = JUMP_VELOCITY
-			animated_sprite.play("Jump_Loop") 
-			
-	else: 
-		if animated_sprite.animation != "Jump_Land":
-			animated_sprite.play("Jump_Loop") 
-		
-	# 4. CHARAKTER BEWEGEN
+	# Animationen basierend auf Bewegung und Zustand setzen
+	if not is_on_floor():
+		# In der Luft: Hier könntest du zwischen Jump_Start, Jump_Loop, Jump_Land unterscheiden
+		# Fürs Erste eine einfache Sprunganimation (falls vorhanden)
+		if animated_sprite.animation != "Jump_Loop": # Beispielname
+			#animated_sprite.play("Jump_Loop") # Beispielname
+			pass # Füge hier deine Sprunganimation ein
+	elif direction != 0:
+		# Läuft
+		animated_sprite.play("Run")
+		animated_sprite.flip_h = (direction < 0) # Sprite spiegeln bei Linkslauf
+	else:
+		# Steht still
+		animated_sprite.play("Idle")
+
+	# Bewegung ausführen
 	move_and_slide()
-	
-	# 5. Begrenze die horizontale Position
-	var new_position = position
-	
-	if new_position.x < LEVEL_START_X:
-		new_position.x = LEVEL_START_X
-		velocity.x = 0 
-		
-	if new_position.x > LEVEL_END_X:
-		new_position.x = LEVEL_END_X
-		velocity.x = 0
-		
-	position = new_position
 
-	# --- TODESTEST (Temporär) ---
-	if position.y > 1000:
-		minigame_scene.player_died()
+	# DEBUG: Gib die aktuelle Position aus
+	print("Player Position: ", global_position)
 
 
-# --- ITEM ZUSTANDS-LOGIK ---
+func _on_spikes_body_entered(body):
+	if body == self and not is_invincible:
+		take_damage()
 
-func activate_invincibility(duration: float):
-	if not invincibility_timer.is_stopped():
-		invincibility_timer.stop() 
-		
+func take_damage():
+	print("Player took damage!")
 	is_invincible = true
-	invincibility_timer.start(duration)
-	animated_sprite.modulate = Color(1.0, 0.7, 0.0, 1.0) 
+	invincibility_timer.start(1.0) # 1 Sekunde unverwundbar
+	invisibility_timer.start(0.1) # Start blinking
+	modulate.a = 0.5 # Start semi-transparent
+
+	# Rufe die player_died Funktion in der Haupt-Minigame-Szene auf
+	if minigame_scene.has_method("player_died"):
+		minigame_scene.player_died()
+	else:
+		print("FEHLER: player_died() Methode nicht in minigame_scene gefunden!")
 
 
 func _on_invincibility_timer_timeout():
 	is_invincible = false
-	animated_sprite.modulate = Color(1.0, 1.0, 1.0, 1.0) 
-
-
-func activate_invisibility(duration: float):
-	if not invisibility_timer.is_stopped():
-		invisibility_timer.stop() 
-		
-	is_invisible = true
-	invisibility_timer.start(duration)
-	animated_sprite.modulate.a = 0.5
+	modulate.a = 1.0 # Fully visible again
+	invisibility_timer.stop() # Stop blinking
 
 
 func _on_invisibility_timer_timeout():
-	is_invisible = false
-	animated_sprite.modulate.a = 1.0
-
-
-# NEU: Funktion zum Empfangen des Treffer-Signals vom Gegner
-func _on_enemy_hit():
-	if not is_invincible and not is_invisible:
-		minigame_scene.player_died()
-		
-		# Stoppe die Player-Logik (Player-Tod-Animation könnte hier folgen)
-		set_process(false) 
-		set_physics_process(false)
-		hide()
-
-
-# --- SCHADENS-/TODES-LOGIK (Spikes) ---
-
-func _on_spikes_body_entered(_body):
-	if not is_invincible and not is_invisible:
-		minigame_scene.player_died()
-		
-		set_process(false) 
-		set_physics_process(false)
-		hide()
+	# Toggle visibility for blinking effect
+	if is_invincible:
+		modulate.a = 1.0 - modulate.a # Flip between 0.5 and 1.0
+		invisibility_timer.start(0.1) # Restart timer for next blink
