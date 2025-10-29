@@ -1,0 +1,604 @@
+[gd_scene load_steps=37 format=3 uid="uid://bmylyescf3g70"]
+
+[ext_resource type="Script" uid="uid://br82ec5f4ohot" path="res://health_bar.gd" id="1_0f027"]
+[ext_resource type="Script" uid="uid://smeagdsc75b1" path="res://main_scene.gd" id="1_2c62f"]
+[ext_resource type="Texture2D" uid="uid://cc26uxucedbfk" path="res://Robot_Spritesheet.png" id="3_d5x1h"]
+[ext_resource type="Script" uid="uid://dqifbdydossw8" path="res://corrupted_visual.gd" id="4_8mm7a"]
+[ext_resource type="Texture2D" uid="uid://77q43ojrohy0" path="res://background_image_0.png" id="5_8mm7a"]
+[ext_resource type="FontFile" uid="uid://diar4wg3jugva" path="res://OCR-a_.ttf" id="5_hq1ik"]
+[ext_resource type="Script" uid="uid://s8t0fauav2l2" path="res://Typewriter_label.gd" id="5_m35m6"]
+[ext_resource type="Texture2D" uid="uid://ru00rfjq6acw" path="res://WorldMap_2.jpg" id="6_2jcla"]
+[ext_resource type="Texture2D" uid="uid://destv6n0a832q" path="res://sprites/drohne_3_sheet.png" id="6_7ycvg"]
+[ext_resource type="VideoStream" uid="uid://b04nmr0ndiefc" path="res://Done1.ogv" id="7_nfk4m"]
+[ext_resource type="Texture2D" uid="uid://cyplpp46eebdf" path="res://sprites/drohne_2_sheet___.png" id="7_wr18j"]
+[ext_resource type="Script" uid="uid://b74q4q471ookd" path="res://title_screen.gd" id="8_671wp"]
+[ext_resource type="Script" uid="uid://cae7ma7hviea2" path="res://hub_map.gd" id="9_mo76n"]
+[ext_resource type="Texture2D" uid="uid://dhmggddy5m2lr" path="res://WorldMap.jpg" id="10_42l1d"]
+[ext_resource type="Script" uid="uid://qn6ght7nxnqw" path="res://TyperwriterLabel.gd" id="11_42l1d"]
+[ext_resource type="Script" uid="uid://dggh1wov2ew14" path="res://story_intro.gd" id="11_mo76n"]
+[ext_resource type="PackedScene" uid="uid://dh2ue3w1qbcrr" path="res://minigame_scene.tscn" id="17_u0ygc"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wr18j"]
+bg_color = Color(0.23573187, 0.23573193, 0.23573181, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_qwutr"]
+bg_color = Color(0, 0.9647059, 0.24313726, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_671wp"]
+bg_color = Color(0.06100855, 0.06100855, 0.06100855, 0.91200006)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0, 0.9647059, 0.24313726, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mo76n"]
+bg_color = Color(0.06100855, 0.06100855, 0.06100855, 0.91200006)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0, 0.9647059, 0.24313726, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_42l1d"]
+bg_color = Color(0.06100855, 0.06100855, 0.06100855, 0.91200006)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0, 0.9647059, 0.24313726, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_nfk4m"]
+bg_color = Color(0.039215688, 0.039215688, 0.039215688, 0.5019608)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0, 0.9647059, 0.24313726, 1)
+border_blend = true
+expand_margin_left = 12.0
+expand_margin_right = 12.0
+expand_margin_bottom = 3.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_66tet"]
+bg_color = Color(0, 0.9647059, 0.24313726, 1)
+expand_margin_left = 12.0
+expand_margin_right = 12.0
+expand_margin_bottom = 3.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2jcla"]
+bg_color = Color(0, 0.9647059, 0.24313726, 1)
+expand_margin_left = 12.0
+expand_margin_right = 12.0
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_hq1ik"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hq1ik"]
+bg_color = Color(0.039215688, 0.039215688, 0.039215688, 0.5019608)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0, 0.9647059, 0.24313726, 1)
+border_blend = true
+expand_margin_left = 12.0
+expand_margin_right = 12.0
+expand_margin_bottom = 6.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7ycvg"]
+bg_color = Color(0, 0.9647059, 0.24313726, 1)
+expand_margin_left = 12.0
+expand_margin_right = 12.0
+expand_margin_bottom = 3.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_m35m6"]
+bg_color = Color(0, 0.9647059, 0.24313726, 1)
+expand_margin_left = 12.0
+expand_margin_right = 12.0
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_nfk4m"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_d5x1h"]
+bg_color = Color(0.060530342, 0.060530365, 0.060530297, 1)
+expand_margin_left = 12.0
+expand_margin_top = 12.0
+expand_margin_right = 12.0
+expand_margin_bottom = 12.0
+
+[sub_resource type="Animation" id="Animation_8mm7a"]
+resource_name = "Fade_IN"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_hq1ik"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 0)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_nfk4m"]
+_data = {
+&"Fade_IN": SubResource("Animation_8mm7a"),
+&"RESET": SubResource("Animation_hq1ik")
+}
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2c62f"]
+bg_color = Color(0.21770102, 0.21770108, 0.21770096, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_gyfs4"]
+bg_color = Color(0.107582815, 0.7043738, 0.50690824, 1)
+
+[node name="MainScene" type="Node2D"]
+script = ExtResource("1_2c62f")
+metadata/_edit_horizontal_guides_ = [840.0]
+
+[node name="Corrupted_Visual" type="Sprite2D" parent="."]
+position = Vector2(960, 700)
+scale = Vector2(2, 2)
+texture = ExtResource("3_d5x1h")
+region_enabled = true
+region_rect = Rect2(0, 0, 256, 256)
+script = ExtResource("4_8mm7a")
+
+[node name="UI_Layer" type="CanvasLayer" parent="."]
+
+[node name="Search_Screen" type="ColorRect" parent="UI_Layer"]
+visible = false
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.12041847, 0.12041845, 0.12041845, 1)
+
+[node name="Typewriter_Label" type="RichTextLabel" parent="UI_Layer/Search_Screen"]
+layout_mode = 0
+offset_left = 751.0
+offset_top = 510.0
+offset_right = 1751.0
+offset_bottom = 1510.0
+theme_override_colors/default_color = Color(0, 0.9647059, 0.24313726, 1)
+theme_override_fonts/normal_font = ExtResource("5_hq1ik")
+theme_override_font_sizes/normal_font_size = 32
+text = "SCANNING AREA..."
+script = ExtResource("5_m35m6")
+
+[node name="Search_Progress_Bar" type="ProgressBar" parent="UI_Layer/Search_Screen"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -205.0
+offset_top = 26.5
+offset_right = 685.0
+offset_bottom = 49.5
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.5, 0.5)
+theme_override_styles/background = SubResource("StyleBoxFlat_wr18j")
+theme_override_styles/fill = SubResource("StyleBoxFlat_qwutr")
+
+[node name="TitleScreen" type="Control" parent="UI_Layer"]
+z_index = 10
+layout_mode = 3
+anchors_preset = 0
+mouse_filter = 2
+script = ExtResource("8_671wp")
+
+[node name="TextureRect" type="TextureRect" parent="UI_Layer/TitleScreen"]
+layout_mode = 1
+offset_right = 1920.0
+offset_bottom = 1080.0
+mouse_filter = 2
+texture = ExtResource("10_42l1d")
+
+[node name="Button_Start" type="Button" parent="UI_Layer/TitleScreen/TextureRect"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -100.0
+offset_top = 302.0
+offset_right = 100.0
+offset_bottom = 352.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+theme_override_colors/font_color = Color(0, 0.9647059, 0.24313726, 1)
+theme_override_fonts/font = ExtResource("5_hq1ik")
+theme_override_font_sizes/font_size = 32
+text = "START"
+
+[node name="HubMap" type="Control" parent="UI_Layer"]
+visible = false
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("9_mo76n")
+
+[node name="TextureRect" type="TextureRect" parent="UI_Layer/HubMap"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = 1880.0
+offset_bottom = 1040.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("6_2jcla")
+
+[node name="Mission_1_Button" type="Button" parent="UI_Layer/HubMap"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 967.5
+offset_top = 474.5
+offset_right = 1132.5
+offset_bottom = 505.5
+grow_horizontal = 2
+grow_vertical = 2
+text = "Corruption I: Start"
+
+[node name="Mission_2_Button" type="Button" parent="UI_Layer/HubMap"]
+layout_mode = 0
+offset_left = 1060.0
+offset_top = 385.0
+offset_right = 1225.0
+offset_bottom = 416.0
+text = "Corruption II: FIND ROBOT"
+
+[node name="Mission_3_Button" type="Button" parent="UI_Layer/HubMap"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 960.0
+offset_top = 255.0
+offset_right = 1160.0
+offset_bottom = 305.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "Corruption III: HACK ROBOT"
+
+[node name="Mission_4_Button" type="Button" parent="UI_Layer/HubMap"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 690.0
+offset_top = 310.0
+offset_right = 901.0
+offset_bottom = 360.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0.9647059, 0.24313726, 1)
+theme_override_fonts/font = ExtResource("5_hq1ik")
+text = "Corruption IV: END WAR"
+
+[node name="Mission_5_Button" type="Button" parent="UI_Layer/HubMap"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 1485.5
+offset_top = 645.0
+offset_right = 1696.5
+offset_bottom = 695.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0.9647059, 0.24313726, 1)
+theme_override_fonts/font = ExtResource("5_hq1ik")
+text = "Corruption IV: END WAR"
+
+[node name="Mission_Grid" type="GridContainer" parent="UI_Layer/HubMap"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Drone_Gallery_Label" type="Label" parent="UI_Layer"]
+offset_left = 55.0
+offset_top = 487.0
+offset_right = 196.0
+offset_bottom = 530.0
+theme_override_colors/font_color = Color(0, 0.9647059, 0.24313726, 1)
+theme_override_fonts/font = ExtResource("5_hq1ik")
+theme_override_font_sizes/font_size = 38
+text = "ROBOTS"
+
+[node name="Drone_Gallery" type="GridContainer" parent="UI_Layer"]
+offset_left = 59.0
+offset_top = 547.0
+offset_right = 559.0
+offset_bottom = 1047.0
+columns = 3
+
+[node name="Drone_Panel_1" type="PanelContainer" parent="UI_Layer/Drone_Gallery"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_671wp")
+
+[node name="Sprite" type="TextureRect" parent="UI_Layer/Drone_Gallery/Drone_Panel_1"]
+texture_filter = 1
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+texture = ExtResource("7_wr18j")
+expand_mode = 1
+
+[node name="Drone_Panel_2" type="PanelContainer" parent="UI_Layer/Drone_Gallery"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_mo76n")
+
+[node name="Sprite" type="TextureRect" parent="UI_Layer/Drone_Gallery/Drone_Panel_2"]
+texture_filter = 1
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+texture = ExtResource("3_d5x1h")
+expand_mode = 1
+
+[node name="Drone_Panel_3" type="PanelContainer" parent="UI_Layer/Drone_Gallery"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_42l1d")
+
+[node name="Sprite" type="TextureRect" parent="UI_Layer/Drone_Gallery/Drone_Panel_3"]
+texture_filter = 1
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+texture = ExtResource("6_7ycvg")
+expand_mode = 1
+
+[node name="Power_Display" type="Label" parent="UI_Layer"]
+offset_left = 60.0
+offset_top = 170.0
+offset_right = 257.0
+offset_bottom = 206.0
+theme_override_colors/font_color = Color(0, 0.827451, 0, 1)
+theme_override_fonts/font = ExtResource("5_hq1ik")
+theme_override_font_sizes/font_size = 32
+text = "TEST: 99 HP"
+
+[node name="Label" type="Label" parent="UI_Layer/Power_Display"]
+layout_mode = 0
+offset_top = -51.0
+offset_right = 117.0
+offset_bottom = -8.0
+theme_override_colors/font_color = Color(0, 0.9647059, 0.24313726, 1)
+theme_override_fonts/font = ExtResource("5_hq1ik")
+theme_override_font_sizes/font_size = 38
+text = "POWER"
+
+[node name="Fragment_Display" type="Label" parent="UI_Layer"]
+offset_left = 58.0
+offset_top = 52.0
+offset_right = 157.0
+offset_bottom = 88.0
+theme_override_colors/font_color = Color(1, 0.80363095, 0, 1)
+theme_override_fonts/font = ExtResource("5_hq1ik")
+theme_override_font_sizes/font_size = 38
+text = "Hallo
+"
+
+[node name="Upgrade_Button" type="Button" parent="UI_Layer"]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -890.0
+offset_top = -750.0
+offset_right = -490.0
+offset_bottom = -700.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_colors/font_color = Color(0, 0.827451, 0, 1)
+theme_override_colors/font_pressed_color = Color(0, 0.71331286, 0.71331275, 1)
+theme_override_colors/font_hover_color = Color(0.029506527, 0.029506546, 0.029506704, 1)
+theme_override_fonts/font = ExtResource("5_hq1ik")
+theme_override_font_sizes/font_size = 24
+theme_override_styles/normal = SubResource("StyleBoxFlat_nfk4m")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_66tet")
+theme_override_styles/hover = SubResource("StyleBoxFlat_2jcla")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_hq1ik")
+text = "UPGRADE HT(Cost 100 F)
+"
+
+[node name="Label" type="Label" parent="UI_Layer/Upgrade_Button"]
+layout_mode = 0
+offset_left = -11.0
+offset_top = -60.0
+offset_right = 177.0
+offset_bottom = -17.0
+theme_override_colors/font_color = Color(0, 0.9647059, 0.24313726, 1)
+theme_override_fonts/font = ExtResource("5_hq1ik")
+theme_override_font_sizes/font_size = 38
+text = "UPGRADES"
+
+[node name="Click_Upgrade_Button" type="Button" parent="UI_Layer"]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -890.0
+offset_top = -675.0
+offset_right = -490.0
+offset_bottom = -625.0
+grow_horizontal = 2
+grow_vertical = 0
+tooltip_text = "HP/Click"
+theme_override_colors/font_color = Color(0, 0.82665706, 0, 1)
+theme_override_colors/font_hover_color = Color(0.025363777, 0.025363786, 0.025363918, 1)
+theme_override_fonts/font = ExtResource("5_hq1ik")
+theme_override_font_sizes/font_size = 24
+theme_override_styles/normal = SubResource("StyleBoxFlat_hq1ik")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_7ycvg")
+theme_override_styles/hover = SubResource("StyleBoxFlat_m35m6")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_nfk4m")
+text = "UPGRADE HpC(Cost: 50 F)
+"
+
+[node name="Victory_Display" type="Label" parent="UI_Layer"]
+visible = false
+modulate = Color(1, 1, 1, 0)
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -259.5
+offset_top = -27.0
+offset_right = 259.5
+offset_bottom = 27.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(5.756852e-06, 0.7381076, 0, 1)
+theme_override_fonts/font = ExtResource("5_hq1ik")
+theme_override_font_sizes/font_size = 48
+theme_override_styles/normal = SubResource("StyleBoxFlat_d5x1h")
+text = "REPAIR SUCCESSFUL!"
+
+[node name="Victory_Animator" type="AnimationPlayer" parent="UI_Layer/Victory_Display"]
+libraries = {
+&"": SubResource("AnimationLibrary_nfk4m")
+}
+
+[node name="StoryIntro" type="Control" parent="UI_Layer"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("11_mo76n")
+
+[node name="ColorRect" type="ColorRect" parent="UI_Layer/StoryIntro"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = 1880.0
+offset_bottom = 1040.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.058420584, 0.0584206, 0.058420606, 1)
+
+[node name="RichTextLabel" type="RichTextLabel" parent="UI_Layer/StoryIntro/ColorRect"]
+layout_mode = 0
+offset_left = 680.0
+offset_top = 230.0
+offset_right = 1680.0
+offset_bottom = 1230.0
+theme_override_colors/default_color = Color(0, 0.9647059, 0.24313726, 1)
+theme_override_fonts/normal_font = ExtResource("5_hq1ik")
+theme_override_font_sizes/normal_font_size = 38
+text = "The world is in danger... "
+script = ExtResource("11_42l1d")
+
+[node name="Next_Button" type="Button" parent="UI_Layer/StoryIntro"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 1580.0
+offset_top = 30.0
+offset_right = 1780.0
+offset_bottom = 80.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_font_sizes/font_size = 32
+text = "SKIP >>"
+
+[node name="Health_Bar" type="ProgressBar" parent="UI_Layer"]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -250.0
+offset_top = -170.0
+offset_right = 250.0
+offset_bottom = -120.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_styles/background = SubResource("StyleBoxFlat_2c62f")
+theme_override_styles/fill = SubResource("StyleBoxFlat_gyfs4")
+script = ExtResource("1_0f027")
+
+[node name="HealthLabel" type="Label" parent="UI_Layer/Health_Bar"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 20.129002
+anchor_top = 0.5
+anchor_right = 20.129002
+anchor_bottom = 0.5
+offset_left = -53.516006
+offset_top = -11.5
+offset_right = -13.516006
+offset_bottom = 11.5
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Next_Round_Timer" type="Timer" parent="."]
+wait_time = 5.0
+one_shot = true
+
+[node name="Background" type="Sprite2D" parent="."]
+z_index = -10
+position = Vector2(960, 540)
+texture = ExtResource("5_8mm7a")
+
+[node name="Video_Player" type="VideoStreamPlayer" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -960.0
+offset_top = -540.0
+offset_right = 960.0
+offset_bottom = 540.0
+grow_horizontal = 2
+grow_vertical = 2
+stream = ExtResource("7_nfk4m")
+
+[node name="MinigameScene" parent="." instance=ExtResource("17_u0ygc")]
+position = Vector2(0, 540)
+
+[connection signal="pressed" from="UI_Layer/TitleScreen/TextureRect/Button_Start" to="." method="_on_button_start_pressed"]
+[connection signal="pressed" from="UI_Layer/HubMap/Mission_1_Button" to="UI_Layer/HubMap" method="_on_mission_1_button_pressed"]
+[connection signal="pressed" from="UI_Layer/HubMap/Mission_2_Button" to="." method="_on_mission_2_button_pressed"]
+[connection signal="pressed" from="UI_Layer/HubMap/Mission_3_Button" to="." method="_on_mission_3_button_pressed"]
+[connection signal="pressed" from="UI_Layer/Upgrade_Button" to="." method="_on_upgrade_button_pressed"]
+[connection signal="pressed" from="UI_Layer/Click_Upgrade_Button" to="." method="_on_click_upgrade_button_pressed"]
+[connection signal="pressed" from="UI_Layer/StoryIntro/Next_Button" to="UI_Layer/StoryIntro" method="_on_next_button_pressed"]
