@@ -4,11 +4,16 @@ const UI_LAYER_PATH = "UI_Layer/"
 var next_round_timer: Timer
 var video_player: VideoStreamPlayer 
 
+# Füge die Referenz für das Minigame hinzu!
+const MINIGAME_SCENE_PATH = preload("res://minigame_scene.tscn") 
+var current_minigame: Node = null 
+
 # --- KONSTANTEN ---
 const MISSION_1_BUTTON_PATH = UI_LAYER_PATH + "HubMap/Mission_1_Button"
 const MISSION_2_BUTTON_PATH = UI_LAYER_PATH + "HubMap/Mission_2_Button" 
 const MISSION_3_BUTTON_PATH = UI_LAYER_PATH + "HubMap/Mission_3_Button" 
-const MISSION_4_BUTTON_PATH = UI_LAYER_PATH + "HubMap/Mission_4_Button"  # NEU: Mission 4 Pfad
+const MISSION_4_BUTTON_PATH = UI_LAYER_PATH + "HubMap/Mission_4_Button" 
+const MISSION_5_BUTTON_PATH = UI_LAYER_PATH + "HubMap/Mission_5_Button" # KORRIGIERT: 5. Button
 const DRONE_GALLERY_LABEL_PATH = UI_LAYER_PATH + "Drone_Gallery_Label" 
 const SEARCH_LABEL_PATH = UI_LAYER_PATH + "Search_Screen/Typewriter_Label"
 
@@ -17,7 +22,8 @@ const MISSION_BUTTONS_MAP = [
 	MISSION_1_BUTTON_PATH,
 	MISSION_2_BUTTON_PATH,
 	MISSION_3_BUTTON_PATH,
-	MISSION_4_BUTTON_PATH,  # NEU: Mission 4 zur Karte hinzufügen
+	MISSION_4_BUTTON_PATH, 
+	MISSION_5_BUTTON_PATH, # KORRIGIERT: 5. Button
 ]
 
 # FARBEN UND ZUSTÄNDE
@@ -63,7 +69,8 @@ func _ready():
 		Combat.corrupted_healed.connect(_on_corrupted_healed)
 	
 	if is_instance_valid(Combat) and is_instance_valid(health_bar):
-		Combat.corrupted_health_changed.connect(health_bar._on_corrupted_health_changed.bind()) 
+		# KORREKTUR: Robuste Godot 4 Callable-Syntax
+		Combat.corrupted_health_changed.connect(Callable(health_bar, "_on_corrupted_health_changed")) 
 
 	if is_instance_valid(video_player):
 		video_player.position = Vector2(0, 0)
@@ -80,10 +87,12 @@ func _unhandled_input(event):
 		if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 			Combat.perform_click_impulse() 
 			Combat.healing_impulse_fired.emit(event.position) 
+			# KORRIGIERT: Godot 4 set_handled()
+			get_viewport().set_input_as_handled()
 
 
 # --------------------------------------------------------------------------------------
-## NAVIGATIONS-FUNKTIONEN
+## NAVIGATIONS-FUNKTIONEN (KORRIGIERT/FEHLENDE HINZUGEFÜGT)
 # --------------------------------------------------------------------------------------
 
 func goto_title_screen():
@@ -154,18 +163,25 @@ func goto_hub_map():
 			
 	print("Zustand: HUB/WORLDMAP.")
 
+# KORRIGIERT: Logik für Minigame (Level 1) und Klicker-Level (Rest)
 func goto_combat(level_index: int):
 	if current_state != GameState.STATE_HUB_MAP:
 		print("FEHLER: Kampf kann nur aus HUB/MAP gestartet werden.")
 		return
 		
-	level_to_start = level_index
+	level_to_start = level_index # Speichert den *Missions-Index* (0, 1, 2, 3, 4)
 	
 	var hub_map_node = get_node(UI_LAYER_PATH + "HubMap")
 	if is_instance_valid(hub_map_node):
 		hub_map_node.hide()
 	
-	_show_search_screen(true) 
+	# Mission 2 (Index 1) startet das Minigame
+	if level_index == 1:
+		current_state = GameState.STATE_MINIGAME
+		start_minigame_level() # Startet das Minigame
+	else:
+		# Alle anderen Missionen starten den Klicker-Kampf
+		_show_search_screen(true) 
 
 func _return_to_combat_after_transition():
 	var search_screen = get_node(UI_LAYER_PATH + "Search_Screen")
@@ -184,19 +200,64 @@ func _return_to_combat_after_transition():
 	if is_instance_valid(health_bar):
 		health_bar.show()
 		
-	start_next_corrupted(level_to_start) 
+	# KORRIGIERT: Berechnet den korrekten Klicker-Index
+	var klicker_level_index = level_to_start
+	if level_to_start > 1: # Wenn Mission 3 oder höher (Index 2+)
+		klicker_level_index = level_to_start - 1 # (Mission 3 wird Klicker Level 1)
+		
+	start_next_corrupted(klicker_level_index) 
 	print("Zustand: COMBAT.")
 
+# --------------------------------------------------------------------------------------
+## MINIGAME-LOGIK (NEU)
+# --------------------------------------------------------------------------------------
+
+func start_minigame_level():
+	if is_instance_valid(current_minigame):
+		current_minigame.queue_free()
+		
+	var minigame_scene_resource = MINIGAME_SCENE_PATH
+	if minigame_scene_resource:
+		current_minigame = minigame_scene_resource.instantiate() 
+		add_child(current_minigame)
+		
+		# Verbinde das Signal vom Minigame
+		if current_minigame.has_signal("minigame_finished"):
+			current_minigame.minigame_finished.connect(_on_minigame_finished)
+		
+		# Starte das Minigame
+		if current_minigame.has_method("start_game"):
+			current_minigame.start_game()
+		
+	_hide_ui() 
+	get_node("Corrupted_Visual").hide()
+
+func _on_minigame_finished(success: bool):
+	if is_instance_valid(current_minigame):
+		current_minigame.queue_free()
+		current_minigame = null 
+
+	if success:
+		print("Minigame erfolgreich abgeschlossen!")
+		# Setzt den Index auf 2 (damit Mission 3 als nächstes gelb ist)
+		Combat.current_level_index = 2
+	else:
+		print("Minigame fehlgeschlagen. Zurück zur Karte.")
+		
+	goto_hub_map()
+		
 # --------------------------------------------------------------------------------------
 ## KAMPF- UND ÜBERGANGSLOGIK
 # --------------------------------------------------------------------------------------
 
 func start_next_corrupted(level_index: int): 
 	
-	var asset_array = Combat.LEVEL_ASSETS
+	# KORRIGIERT: Verwendet das korrekte Asset-Array
+	var asset_array = Combat.CLICKER_LEVEL_ASSETS 
 	var asset_index_to_load = level_index % asset_array.size()
 	var current_assets = asset_array[asset_index_to_load]
 
+	# KORRIGIERT: Setzt den *Klicker*-Index im Combat-Singleton
 	Combat.current_level_index = level_index 
 	
 	var corrupted_node = get_node("Corrupted_Visual")
@@ -218,7 +279,8 @@ func start_next_corrupted(level_index: int):
 		corrupted_node.region_rect.size = Vector2(256, 256) 
 		corrupted_node.position = Vector2(960, 620)
 
-	Combat.start_new_combat() 
+	# KORRIGIERT: Übergibt den korrekten Klicker-Index an das Singleton
+	Combat.start_new_combat(level_index) 
 	
 	if is_instance_valid(corrupted_node):
 		var current_region = corrupted_node.region_rect
@@ -266,7 +328,8 @@ func _on_corrupted_healed():
 		next_round_timer.start()
 		await next_round_timer.timeout
 		
-	if Combat.current_level_index == 3: 
+	# KORRIGIERT: Prüft den *Klicker-Index*
+	if Combat.current_level_index == 2: # Wenn Klicker-Level 2 (Mission 4) abgeschlossen ist
 		if is_instance_valid(video_player):
 			
 			video_player.show()
@@ -283,7 +346,7 @@ func _show_search_screen(to_combat: bool = false):
 	var search_screen = get_node(UI_LAYER_PATH + "Search_Screen")
 	var search_label = get_node(SEARCH_LABEL_PATH) 
 	
-	var progress_bar = get_node(UI_LAYER_PATH + "Search_Screen/Health_Bar")
+	var progress_bar = get_node(UI_LAYER_PATH + "Search_Screen/Search_Progress_Bar")
 	
 	if is_instance_valid(victory_display):
 		victory_display.hide()
@@ -305,7 +368,6 @@ func _show_search_screen(to_combat: bool = false):
 		search_label.visible_characters = 0 
 		search_label.start_typing()
 		
-	# Wir brauchen den Timer hier nur für das Time-Node, nicht für das Timeout
 	if is_instance_valid(next_round_timer):
 		next_round_timer.wait_time = SEARCH_DURATION
 		next_round_timer.start()
@@ -314,19 +376,18 @@ func _show_search_screen(to_combat: bool = false):
 			progress_bar.max_value = SEARCH_DURATION
 			progress_bar.value = 0.0 
 	
-	# Warte, bis der simulierte Fortschritt 100% erreicht hat (Loop wird in _process kontrolliert)
+	# Warte, bis der simulierte Fortschritt 100% erreicht hat
 	while simulated_progress < SEARCH_DURATION:
 		await get_tree().process_frame
 		
-	# Wenn der Fortschritt 100% erreicht, garantieren wir die visuelle Darstellung:
 	if is_instance_valid(progress_bar):
 		progress_bar.value = progress_bar.max_value
 
-	# Kurze Zwangspause, um visuelle Updates zu garantieren
+	# Kurze Zwangspause
 	var temp_timer = Timer.new()
 	add_child(temp_timer)
 	temp_timer.one_shot = true
-	temp_timer.wait_time = 0.1 # 100ms Puffer
+	temp_timer.wait_time = 0.1 
 	temp_timer.start()
 	await temp_timer.timeout
 	temp_timer.queue_free()
@@ -343,22 +404,18 @@ func _update_search_text(new_text: String):
 	
 	if is_instance_valid(search_label):
 		
-		# Stoppe die laufende Animation und setze den Text
 		if search_label.has_method("skip_typing"):
 			search_label.skip_typing()
 			
 		var final_text = new_text
 		
-		# Füge BBCode für rot/gelb hinzu
 		if final_text == "CORRUPTION FOUND...":
 			final_text = "[color=red]" + final_text + "[/color]"
 		elif final_text == "ENTER":
 			final_text = "[color=yellow]" + final_text + "[/color]"
 
-		# Neuen Text im RichTextLabel setzen
 		search_label.text = final_text
 		
-		# Startet die Animation neu
 		search_label.start_typing()
 
 
@@ -382,7 +439,7 @@ func _show_ui():
 
 func _update_drone_gallery():
 	if not is_instance_valid(Combat): return
-	var drone_count = Combat.LEVEL_ASSETS.size()
+	var drone_count = Combat.CLICKER_LEVEL_ASSETS.size() # KORRIGIERT: Verwendet Klicker-Assets
 	
 	for i in range(drone_count):
 		var panel = get_node(UI_LAYER_PATH + "Drone_Gallery/Drone_Panel_" + str(i + 1))
@@ -412,44 +469,34 @@ func _process(_delta):
 		var progress_bar = get_node(UI_LAYER_PATH + "Search_Screen/Search_Progress_Bar")
 		var search_label = get_node(SEARCH_LABEL_PATH) 
 		
-		# Prüfe, ob wir noch Fortschritt machen müssen
 		if simulated_progress < SEARCH_DURATION:
 			
-			# --- MANUELLE GESCHWINDIGKEITSSTEUERUNG ---
 			var progress_ratio = simulated_progress / SEARCH_DURATION
 			var speed_multiplier = 1.0 
 			
-			# Phase 2: Verlangsamen und "CORRUPTION FOUND..." (50% bis 80%)
 			if progress_ratio >= 0.50 and progress_ratio < 0.81:
 				
-				# Textwechsel bei 50%
 				if not search_text_updated:
 					_update_search_text("CORRUPTION FOUND...")
 					search_text_updated = true
 					
-				speed_multiplier = 0.4 # 40% Geschwindigkeit
+				speed_multiplier = 0.4 
 			
-			# Phase 3: Beschleunigen und "ENTER" (ab 81%)
 			elif progress_ratio >= 0.81:
-				speed_multiplier = 1.5 # 150% Geschwindigkeit
+				speed_multiplier = 1.5 
 				
-				# "ENTER" anzeigen, nachdem der rote Text fertig getippt wurde (bei 85%)
 				if progress_ratio >= 0.85 and is_instance_valid(search_label) and not search_label.is_typing and not enter_text_shown:
 					_update_search_text("ENTER") 
 					enter_text_shown = true
 			
-			# 1. Simulierten Fortschritt inkrementieren
 			simulated_progress += _delta * speed_multiplier
 			
-			# 2. Begrenze den Fortschritt auf die maximale Dauer
 			simulated_progress = min(simulated_progress, SEARCH_DURATION)
 			
-			# 3. Den visuellen Ladebalken aktualisieren
 			if is_instance_valid(progress_bar):
 				progress_bar.value = simulated_progress
 			
 			
-	# STATISTIKEN AKTUALISIEREN
 	if is_instance_valid(Combat) and is_instance_valid(fragment_display) and fragment_display.visible:
 		
 		fragment_display.text = "Coins: " + str(Combat.harmony_fragments) 
@@ -469,6 +516,7 @@ func _on_button_start_pressed(): goto_story_intro()
 	
 func _on_upgrade_button_pressed():
 	if Combat.upgrade_healing_power():
+		_update_fragment_display()
 		var button = get_node(UI_LAYER_PATH + "Upgrade_Button")
 		if is_instance_valid(button):
 			button.text = "Upgrade Healing (" + str(Combat.upgrade_cost) + " C)"
@@ -476,6 +524,7 @@ func _on_upgrade_button_pressed():
 
 func _on_click_upgrade_button_pressed():
 	if Combat.upgrade_click_power():
+		_update_fragment_display()
 		var button = get_node(UI_LAYER_PATH + "Click_Upgrade_Button")
 		if is_instance_valid(button):
 			button.text = "Upgrade Click (" + str(Combat.click_upgrade_cost) + " C)"
@@ -484,4 +533,5 @@ func _on_click_upgrade_button_pressed():
 func _on_mission_1_button_pressed(): goto_combat(0)
 func _on_mission_2_button_pressed(): goto_combat(1)
 func _on_mission_3_button_pressed(): goto_combat(2)
-func _on_mission_4_button_pressed(): goto_combat(3) # NEU: Handler für Mission 4 (Level-Index 3)
+func _on_mission_4_button_pressed(): goto_combat(3)
+func _on_mission_5_button_pressed(): goto_combat(4) # KORRIGIERT: 5. Button hinzugefügt
