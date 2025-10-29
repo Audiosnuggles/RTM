@@ -1,26 +1,27 @@
-# MinigameScene.gd (Sofortige Szene-Freigabe ohne Pause/Timer)
-
+# minigame_scene.gd
 extends Node2D
 
-# Dieses Signal wird an die MainScene (die den Level geladen hat) gesendet
 signal minigame_finished(success: bool)
 
-# Die Funktion für das Tor (Erfolg)
 func _on_door_body_entered(body):
 	if body.name == "Player":
-		# Erfolg: Szene sofort freigeben
+		get_tree().paused = true
+		
+		# KORRIGIERT: Verwendet einen unpausierbaren SceneTreeTimer
+		await get_tree().create_timer(0.5, false).timeout
+		
+		get_tree().paused = false
+		
 		minigame_finished.emit(true)
 		queue_free()
 
-
-# Methode, die vom Player oder Gegner aufgerufen wird, wenn er stirbt
 func player_died():
-	print("!!! player_died() aufgerufen. Szene wird sofort entfernt. !!!")
+	get_tree().paused = true
 	
-	# Sicherstellen, dass die Pause aufgehoben ist, falls sie in einem früheren Frame gesetzt wurde
-	if get_tree().paused:
-		get_tree().paused = false 
+	# KORRIGIERT: Verwendet einen unpausierbaren SceneTreeTimer
+	await get_tree().create_timer(1.0, false).timeout 
 	
-	# Sende das Misserfolgssignal an die MainScene und beende das Minigame
+	get_tree().paused = false
+	
 	minigame_finished.emit(false)
 	queue_free()
