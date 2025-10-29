@@ -130,6 +130,12 @@ func goto_hub_map():
     
     get_node("Corrupted_Visual").hide()
     
+    # --- KORREKTUR HINZUGEFÜGT (im Falle einer Rückkehr vom Minigame) ---
+    # Stelle sicher, dass der Haupt-Hintergrund wieder sichtbar ist, wenn wir zur Karte zurückkehren.
+    var main_bg = get_node("Background")
+    if is_instance_valid(main_bg):
+        main_bg.show()
+    
     var story_intro = get_node(UI_LAYER_PATH + "StoryIntro")
     if is_instance_valid(story_intro):
         story_intro.hide()
@@ -231,6 +237,12 @@ func start_minigame_level():
         
     _hide_ui() 
     get_node("Corrupted_Visual").hide()
+    
+    # --- KORREKTUR HINZUGEFÜGT ---
+    # Blende den Hintergrund der Hauptszene aus, damit er nicht durchscheint.
+    var main_bg = get_node("Background")
+    if is_instance_valid(main_bg):
+        main_bg.hide()
 
 func _on_minigame_finished(success: bool):
     if is_instance_valid(current_minigame):
@@ -272,6 +284,10 @@ func start_next_corrupted(level_index: int):
         
     if is_instance_valid(background_node) and current_assets.background:
         background_node.texture = current_assets.background
+        
+        # --- KORREKTUR HINZUGEFÜGT ---
+        # Stelle sicher, dass der Hintergrund sichtbar ist, wenn ein Klicker-Kampf startet.
+        background_node.show() 
         
     if is_instance_valid(corrupted_node) and current_assets.sprite:
         corrupted_node.texture = current_assets.sprite
@@ -461,7 +477,7 @@ func _update_drone_gallery():
                 sprite_rect.texture = null
 
 # --------------------------------------------------------------------------------------
-# --- START DER KORREKTUR ---
+# --- START DER KORREKTUR (von letztem Mal) ---
 # --------------------------------------------------------------------------------------
 
 # NEUE FUNKTION HINZUGEFÜGT (Diese Funktion hat gefehlt)
@@ -519,7 +535,7 @@ func _process(_delta):
                 progress_bar.value = simulated_progress
             
     
-    # --- GEÄNDERT ---
+    # --- GEÄNDERT (von letztem Mal) ---
     # Die UI-Logik wurde aus _process entfernt und in die neue Funktion verschoben.
     # Wir rufen jetzt nur noch die neue Funktion auf.
     if is_instance_valid(fragment_display) and fragment_display.visible:
