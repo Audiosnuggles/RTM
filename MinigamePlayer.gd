@@ -52,8 +52,7 @@ func _physics_process(delta):
 	# Bewegung ausführen
 	move_and_slide()
 
-	# DEBUG: Gib die aktuelle Position aus
-	print("Player Position: ", global_position)
+	# DEBUG-Zeile entfernt
 
 
 func _on_spikes_body_entered(body):
