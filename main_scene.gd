@@ -13,7 +13,7 @@ const MISSION_1_BUTTON_PATH = UI_LAYER_PATH + "HubMap/Mission_1_Button"
 const MISSION_2_BUTTON_PATH = UI_LAYER_PATH + "HubMap/Mission_2_Button" 
 const MISSION_3_BUTTON_PATH = UI_LAYER_PATH + "HubMap/Mission_3_Button" 
 const MISSION_4_BUTTON_PATH = UI_LAYER_PATH + "HubMap/Mission_4_Button" 
-const MISSION_5_BUTTON_PATH = UI_LAYER_PATH + "HubMap/Mission_5_Button" # KORRIGIERT: 5. Button
+const MISSION_5_BUTTON_PATH = UI_LAYER_PATH + "HubMap/Mission_5_Button" 
 const DRONE_GALLERY_LABEL_PATH = UI_LAYER_PATH + "Drone_Gallery_Label" 
 const SEARCH_LABEL_PATH = UI_LAYER_PATH + "Search_Screen/Typewriter_Label"
 
@@ -23,7 +23,7 @@ const MISSION_BUTTONS_MAP = [
 	MISSION_2_BUTTON_PATH,
 	MISSION_3_BUTTON_PATH,
 	MISSION_4_BUTTON_PATH, 
-	MISSION_5_BUTTON_PATH, # KORRIGIERT: 5. Button
+	MISSION_5_BUTTON_PATH, 
 ]
 
 # FARBEN UND ZUSTÄNDE
@@ -69,7 +69,6 @@ func _ready():
 		Combat.corrupted_healed.connect(_on_corrupted_healed)
 	
 	if is_instance_valid(Combat) and is_instance_valid(health_bar):
-		# KORREKTUR: Robuste Godot 4 Callable-Syntax
 		Combat.corrupted_health_changed.connect(Callable(health_bar, "_on_corrupted_health_changed")) 
 
 	if is_instance_valid(video_player):
@@ -220,7 +219,7 @@ func _return_to_combat_after_transition():
 	print("Zustand: COMBAT.")
 
 # --------------------------------------------------------------------------------------
-## MINIGAME-LOGIK (MIT KORRIGIERTEM KAMERA-WECHSEL)
+## MINIGAME-LOGIK (NEUER PLAN: Nur Hauptkamera deaktivieren)
 # --------------------------------------------------------------------------------------
 
 func start_minigame_level():
@@ -240,22 +239,8 @@ func start_minigame_level():
 		if is_instance_valid(main_cam):
 			main_cam.enabled = false
 		
-		# 3. Szene zum Baum hinzufügen
+		# 3. Szene zum Baum hinzufügen (Das ist alles!)
 		add_child(current_minigame)
-		
-		# --- NEUE, SICHERE METHODE ---
-		# 4. EINEN FRAME WARTEN, damit das Minigame (inkl. Player/Camera)
-		#    vollständig im Szenenbaum initialisiert ist.
-		await get_tree().process_frame 
-		
-		# 5. Jetzt die Minigame-Kamera sicher finden und aktivieren
-		var minigame_camera = current_minigame.get_node_or_null("Player/Camera2D")
-		if is_instance_valid(minigame_camera):
-			minigame_camera.enabled = true
-			minigame_camera.make_current()
-		else:
-			print("FATALER FEHLER: 'Player/Camera2D' in minigame_scene.tscn nicht gefunden!")
-		# --- ENDE DER NEUEN METHODE ---
 		
 		# Starte das Minigame (falls es eine start_game Funktion hat)
 		if current_minigame.has_method("start_game"):
