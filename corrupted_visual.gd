@@ -1,4 +1,4 @@
-# Corrupted_Visual.gd
+# corrupted_visual.gd
 extends Sprite2D
 
 var initial_scale: Vector2 = Vector2(1, 1) 
@@ -8,24 +8,20 @@ var sprite_switched = false # Status, um den Wechsel nur einmal auszuführen
 func _ready():
 	initial_scale = scale
 	
-# Löst den Puls-Effekt (Scale-Up) aus (verbunden mit Combat.healing_impulse_fired)
-func apply_healing_visual():
+# KORRIGIERT: Akzeptiert das 'position'-Argument
+func apply_healing_visual(position: Vector2): 
+	# (Die Position wird derzeit nicht verwendet, aber das Argument ist für das Signal notwendig)
 	scale *= 1.15
 	modulate = Color(1.0, 1.0, 1.0) 
 
-# Prüft Mausklicks im Sichtfeld
 func _input(event):
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		
-		# WICHTIG: Klick nur verarbeiten, wenn der Roboter NICHT geheilt ist
 		if is_instance_valid(Combat) and not Combat.is_corrupted_healed:
-			# Prüft, ob der Klick auf dem Sprite stattfindet
 			if is_visible_in_tree() and self.get_rect().has_point(to_local(event.position)):
 				
-				# Führt den Klick-Impuls im globalen Skript aus
 				Combat.perform_click_impulse()
 				
-				# Visuelles Feedback für Klick-Impuls
 				scale *= 1.05 
 				modulate = click_flash_color
 
@@ -47,7 +43,6 @@ func _process(_delta):
 			var percent = Combat.corrupted_current_health / Combat.corrupted_max_health
 			var target_color = Color(1.0 - percent, 0.2, percent) 
 			
-			# Führt den Farb-Fadeout des Klick-Flashes und den sanften Übergang zur HP-Farbe durch
 			self.modulate = lerp(self.modulate, target_color, _delta * 10.0)
 
 # Wird durch das Signal in Combat_Logic aufgerufen und setzt den Status
@@ -60,6 +55,5 @@ func switch_to_healed_sprite_internal():
 	modulate = Color(1.0, 1.0, 1.0)
 	
 	var current_region = region_rect
-	# Verschiebt die X-Position des Ausschnitts um die Breite des kaputten Sprites
 	current_region.position.x = current_region.size.x 
 	region_rect = current_region
