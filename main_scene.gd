@@ -1,10 +1,17 @@
 extends Node2D
 
+# --- NEU: NODE-VERKNÜPFUNGEN ---
+# Diese Variablen erscheinen im Godot-Inspektor.
+# Wir MÜSSEN die Nodes per Drag-and-Drop dorthin ziehen.
+@export var main_camera: Camera2D
+@export var klicker_background: Sprite2D
+@export var klicker_roboter: Sprite2D
+# --- ENDE NEU ---
+
 const UI_LAYER_PATH = "UI_Layer/" 
 var next_round_timer: Timer
 var video_player: VideoStreamPlayer 
 
-# Füge die Referenz für das Minigame hinzu!
 const MINIGAME_SCENE_PATH = preload("res://minigame_scene.tscn") 
 var current_minigame: Node = null 
 
@@ -17,7 +24,6 @@ const MISSION_5_BUTTON_PATH = UI_LAYER_PATH + "HubMap/Mission_5_Button"
 const DRONE_GALLERY_LABEL_PATH = UI_LAYER_PATH + "Drone_Gallery_Label" 
 const SEARCH_LABEL_PATH = UI_LAYER_PATH + "Search_Screen/Typewriter_Label"
 
-# ARRAY DER MISSIONS-BUTTON-PFADE FÜR EINFACHES DURCHLAUFEN
 const MISSION_BUTTONS_MAP = [
 	MISSION_1_BUTTON_PATH,
 	MISSION_2_BUTTON_PATH,
@@ -26,7 +32,6 @@ const MISSION_BUTTONS_MAP = [
 	MISSION_5_BUTTON_PATH, 
 ]
 
-# FARBEN UND ZUSTÄNDE
 const COLOR_COMPLETED = Color(0.0, 1.0, 0.0)
 const COLOR_CURRENT = Color(1.0, 1.0, 0.0)  
 const COLOR_LOCKED = Color(1.0, 0.0, 0.0)   
@@ -45,8 +50,6 @@ const HEALED_SPRITE_SIZE = Vector2(256, 256)
 const HEALED_SPRITE_OFFSET_X = 256 
 
 var level_to_start: int = -1 
-
-# ZUSTANDS-VARIABLEN FÜR DIE MANUELLE STEUERUNG
 var search_text_updated: bool = false 
 var enter_text_shown: bool = false   
 var simulated_progress: float = 0.0   
@@ -58,14 +61,18 @@ const SEARCH_DURATION: float = 8.0
 # --------------------------------------------------------------------------------------
 
 func _ready():
-	var corrupted_node = get_node("Corrupted_Visual")
 	next_round_timer = get_node("Next_Round_Timer") 
 	video_player = get_node("Video_Player") 
-	
 	var health_bar = get_node(UI_LAYER_PATH + "Health_Bar") 
 	
-	if is_instance_valid(corrupted_node):
-		Combat.healing_impulse_fired.connect(corrupted_node.apply_healing_visual)
+	# NEU: Überprüfe, ob die Nodes im Editor zugewiesen wurden
+	if !is_instance_valid(main_camera) or !is_instance_valid(klicker_background) or !is_instance_valid(klicker_roboter):
+		print("FATALER FEHLER: 'Main Camera', 'Klicker Background' oder 'Klicker Roboter' wurden nicht im Inspektor der MainScene zugewiesen!")
+		get_tree().quit() # Beendet das Spiel, weil es sonst crashen würde
+		return
+
+	if is_instance_valid(klicker_roboter):
+		Combat.healing_impulse_fired.connect(klicker_roboter.apply_healing_visual)
 		Combat.corrupted_healed.connect(_on_corrupted_healed)
 	
 	if is_instance_valid(Combat) and is_instance_valid(health_bar):
@@ -76,15 +83,12 @@ func _ready():
 		video_player.size = Vector2(1920, 1080)
 		video_player.hide() 
 
-	# Stellt sicher, dass die MainCamera existiert und beim Start aktiv ist.
-	var main_cam = get_node_or_null("MainCamera")
-	if is_instance_valid(main_cam):
-		main_cam.enabled = true
-		main_cam.make_current()
-	else:
-		print("WARNUNG: Node 'MainCamera' nicht in main_scene.tscn gefunden. Bitte füge eine Camera2D mit diesem Namen hinzu!")
+	# NEU: Verwendet die @export Variable
+	if is_instance_valid(main_camera):
+		main_camera.enabled = true
+		main_camera.make_current()
 
-	get_node("Corrupted_Visual").hide()
+	klicker_roboter.hide()
 	_hide_ui() 
 	
 	goto_title_screen()
@@ -103,63 +107,45 @@ func _unhandled_input(event):
 
 func goto_title_screen():
 	current_state = GameState.STATE_TITLE
-	
 	var title_screen = get_node(UI_LAYER_PATH + "TitleScreen")
 	var hub_map = get_node(UI_LAYER_PATH + "HubMap")
 	var story_intro = get_node(UI_LAYER_PATH + "StoryIntro")
 	
-	if is_instance_valid(title_screen):
-		title_screen.show()
-	
-	if is_instance_valid(hub_map):
-		hub_map.hide()
-	if is_instance_valid(story_intro):
-		story_intro.hide()
+	if is_instance_valid(title_screen): title_screen.show()
+	if is_instance_valid(hub_map): hub_map.hide()
+	if is_instance_valid(story_intro): story_intro.hide()
 	
 	print("Zustand: TITLE SCREEN.")
 
 func goto_story_intro():
 	current_state = GameState.STATE_STORY
-	
 	var title_screen = get_node(UI_LAYER_PATH + "TitleScreen")
-	if is_instance_valid(title_screen):
-		title_screen.hide()
-		
+	if is_instance_valid(title_screen): title_screen.hide()
 	var story_intro = get_node(UI_LAYER_PATH + "StoryIntro")
-	if is_instance_valid(story_intro):
-		story_intro.show()
-		
+	if is_instance_valid(story_intro): story_intro.show()
 	print("Zustand: STORY INTRO.")
 
 func goto_hub_map():
 	current_state = GameState.STATE_HUB_MAP
 	
-	get_node("Corrupted_Visual").hide()
-	
-	var main_bg = get_node("Background")
-	if is_instance_valid(main_bg):
-		main_bg.show()
+	# NEU: Verwendet @export Variablen
+	klicker_roboter.hide()
+	klicker_background.show()
 	
 	var story_intro = get_node(UI_LAYER_PATH + "StoryIntro")
-	if is_instance_valid(story_intro):
-		story_intro.hide()
-		
+	if is_instance_valid(story_intro): story_intro.hide()
 	var hub_map_node = get_node(UI_LAYER_PATH + "HubMap") 
-	if is_instance_valid(hub_map_node):
-		hub_map_node.show()
+	if is_instance_valid(hub_map_node): hub_map_node.show()
 	
 	_hide_ui() 
-	
 	_update_drone_gallery() 
 	_show_ui() 
 	
 	for i in range(MISSION_BUTTONS_MAP.size()):
 		var button_path = MISSION_BUTTONS_MAP[i]
 		var button = get_node(button_path)
-		
 		if is_instance_valid(button):
 			button.show()
-			
 			if i < Combat.current_level_index:
 				button.modulate = COLOR_COMPLETED
 				button.disabled = false
@@ -169,19 +155,13 @@ func goto_hub_map():
 			else:
 				button.modulate = COLOR_LOCKED
 				button.disabled = true
-			
 	print("Zustand: HUB/WORLDMAP.")
 
 func goto_combat(level_index: int):
-	if current_state != GameState.STATE_HUB_MAP:
-		print("FEHLER: Kampf kann nur aus HUB/MAP gestartet werden.")
-		return
-		
+	if current_state != GameState.STATE_HUB_MAP: return
 	level_to_start = level_index 
-	
 	var hub_map_node = get_node(UI_LAYER_PATH + "HubMap")
-	if is_instance_valid(hub_map_node):
-		hub_map_node.hide()
+	if is_instance_valid(hub_map_node): hub_map_node.hide()
 	
 	if level_index == 1:
 		current_state = GameState.STATE_MINIGAME
@@ -191,35 +171,30 @@ func goto_combat(level_index: int):
 
 func _return_to_combat_after_transition():
 	var search_screen = get_node(UI_LAYER_PATH + "Search_Screen")
-	if is_instance_valid(search_screen):
-		search_screen.hide()
-	
-	if is_instance_valid(video_player):
-		video_player.hide()
+	if is_instance_valid(search_screen): search_screen.hide()
+	if is_instance_valid(video_player): video_player.hide()
 		
-	var main_cam = get_node_or_null("MainCamera")
-	if is_instance_valid(main_cam):
-		main_cam.enabled = true
-		main_cam.make_current()
+	# NEU: Verwendet @export Variable
+	if is_instance_valid(main_camera):
+		main_camera.enabled = true
+		main_camera.make_current()
 		
 	current_state = GameState.STATE_COMBAT
 	
-	get_node("Corrupted_Visual").show()
+	# NEU: Verwendet @export Variable
+	klicker_roboter.show()
 	_show_ui() 
 	
 	var health_bar = get_node(UI_LAYER_PATH + "Health_Bar")
-	if is_instance_valid(health_bar):
-		health_bar.show()
-		
+	if is_instance_valid(health_bar): health_bar.show()
+	
 	var klicker_level_index = level_to_start
-	if level_to_start > 1: 
-		klicker_level_index = level_to_start - 1 
-		
+	if level_to_start > 1: klicker_level_index = level_to_start - 1 
 	start_next_corrupted(klicker_level_index) 
 	print("Zustand: COMBAT.")
 
 # --------------------------------------------------------------------------------------
-## MINIGAME-LOGIK (NEUER PLAN: Nur Hauptkamera deaktivieren)
+## MINIGAME-LOGIK (PLAN C: Mit "await ready")
 # --------------------------------------------------------------------------------------
 
 func start_minigame_level():
@@ -228,39 +203,42 @@ func start_minigame_level():
 		
 	var minigame_scene_resource = MINIGAME_SCENE_PATH
 	if minigame_scene_resource:
-		# 1. Instanz erstellen und Signal verbinden
 		current_minigame = minigame_scene_resource.instantiate() 
 		
 		if current_minigame.has_signal("minigame_finished"):
 			current_minigame.minigame_finished.connect(_on_minigame_finished)
 		
-		# 2. Haupt-Kamera SOFORT deaktivieren
-		var main_cam = get_node_or_null("MainCamera")
-		if is_instance_valid(main_cam):
-			main_cam.enabled = false
+		# NEU: Verwendet @export Variable
+		if is_instance_valid(main_camera):
+			main_camera.enabled = false
 		
-		# 3. Szene zum Baum hinzufügen (Das ist alles!)
 		add_child(current_minigame)
 		
-		# Starte das Minigame (falls es eine start_game Funktion hat)
+		# "Bulletproof" Warten:
+		await current_minigame.ready
+		
+		var minigame_camera = current_minigame.get_node_or_null("Player/Camera2D")
+		if is_instance_valid(minigame_camera):
+			minigame_camera.enabled = true
+			minigame_camera.make_current()
+		else:
+			print("FATALER FEHLER: 'Player/Camera2D' in minigame_scene.tscn nicht gefunden!")
+		
 		if current_minigame.has_method("start_game"):
 			current_minigame.start_game()
 		
 	_hide_ui() 
-	get_node("Corrupted_Visual").hide()
-	
-	var main_bg = get_node("Background")
-	if is_instance_valid(main_bg):
-		main_bg.hide()
+	# NEU: Verwendet @export Variablen
+	klicker_roboter.hide()
+	klicker_background.hide()
 
 
 func _on_minigame_finished(success: bool):
 	
-	# Schalte auf die Haupt-Kamera zurück, BEVOR das Minigame gelöscht wird.
-	var main_cam = get_node_or_null("MainCamera")
-	if is_instance_valid(main_cam):
-		main_cam.enabled = true
-		main_cam.make_current()
+	# NEU: Verwendet @export Variable
+	if is_instance_valid(main_camera):
+		main_camera.enabled = true
+		main_camera.make_current()
 
 	if is_instance_valid(current_minigame):
 		current_minigame.queue_free()
@@ -279,22 +257,21 @@ func _on_minigame_finished(success: bool):
 # --------------------------------------------------------------------------------------
 
 func start_next_corrupted(level_index: int): 
-	
 	var asset_array = Combat.CLICKER_LEVEL_ASSETS 
 	var asset_index_to_load = level_index % asset_array.size()
 	var current_assets = asset_array[asset_index_to_load]
 
 	Combat.current_level_index = level_index 
 	
-	var corrupted_node = get_node("Corrupted_Visual")
-	var background_node = get_node("Background")
+	# NEU: Verwendet @export Variablen
+	var background_node = klicker_background
+	var corrupted_node = klicker_roboter
+	
 	var victory_display = get_node(UI_LAYER_PATH + "Victory_Display")
 	var search_screen = get_node(UI_LAYER_PATH + "Search_Screen")
 	
-	if is_instance_valid(search_screen):
-		search_screen.hide()
-	if is_instance_valid(victory_display):
-		victory_display.hide()
+	if is_instance_valid(search_screen): search_screen.hide()
+	if is_instance_valid(victory_display): victory_display.hide()
 		
 	if is_instance_valid(background_node) and current_assets.background:
 		background_node.texture = current_assets.background
@@ -316,7 +293,8 @@ func start_next_corrupted(level_index: int):
 		
 
 func _on_corrupted_healed():
-	var corrupted_node = get_node("Corrupted_Visual")
+	# NEU: Verwendet @export Variable
+	var corrupted_node = klicker_roboter
 	if is_instance_valid(corrupted_node):
 		var current_region = corrupted_node.region_rect
 		current_region.position.x = HEALED_SPRITE_OFFSET_X 
@@ -356,7 +334,6 @@ func _on_corrupted_healed():
 		
 	if Combat.current_level_index == 2: 
 		if is_instance_valid(video_player):
-			
 			video_player.show()
 			video_player.play()
 			await video_player.finished
@@ -366,19 +343,14 @@ func _on_corrupted_healed():
 
 
 func _show_search_screen(to_combat: bool = false):
-	
 	var victory_display = get_node(UI_LAYER_PATH + "Victory_Display")
 	var search_screen = get_node(UI_LAYER_PATH + "Search_Screen")
 	var search_label = get_node(SEARCH_LABEL_PATH) 
-	
 	var progress_bar = get_node(UI_LAYER_PATH + "Search_Screen/Search_Progress_Bar")
 	
-	if is_instance_valid(victory_display):
-		victory_display.hide()
+	if is_instance_valid(victory_display): victory_display.hide()
 	_hide_ui() 
-	
-	if is_instance_valid(search_screen):
-		search_screen.show()
+	if is_instance_valid(search_screen): search_screen.show()
 
 	_update_drone_gallery() 
 	
@@ -394,7 +366,6 @@ func _show_search_screen(to_combat: bool = false):
 	if is_instance_valid(next_round_timer):
 		next_round_timer.wait_time = SEARCH_DURATION
 		next_round_timer.start()
-		
 		if is_instance_valid(progress_bar):
 			progress_bar.max_value = SEARCH_DURATION
 			progress_bar.value = 0.0 
@@ -419,25 +390,17 @@ func _show_search_screen(to_combat: bool = false):
 		goto_hub_map() 
 
 func _update_search_text(new_text: String):
-	
 	var search_label = get_node(SEARCH_LABEL_PATH) 
-	
 	if is_instance_valid(search_label):
-		
 		if search_label.has_method("skip_typing"):
 			search_label.skip_typing()
-			
 		var final_text = new_text
-		
 		if final_text == "CORRUPTION FOUND...":
 			final_text = "[color=red]" + final_text + "[/color]"
 		elif final_text == "ENTER":
 			final_text = "[color=yellow]" + final_text + "[/color]"
-
 		search_label.text = final_text
-		
 		search_label.start_typing()
-
 
 # --------------------------------------------------------------------------------------
 ## HILFSFUNKTIONEN & PROCESS
@@ -447,25 +410,21 @@ func _hide_ui():
 	var nodes_to_hide = ["Fragment_Display", "Power_Display", "Upgrade_Button", "Click_Upgrade_Button", "Drone_Gallery", "Health_Bar", "Drone_Gallery_Label"]
 	for node_name in nodes_to_hide:
 		var node = get_node(UI_LAYER_PATH + node_name)
-		if is_instance_valid(node):
-			node.hide()
+		if is_instance_valid(node): node.hide()
 
 func _show_ui():
 	var nodes_to_show = ["Fragment_Display", "Power_Display", "Upgrade_Button", "Click_Upgrade_Button", "Drone_Gallery", "Drone_Gallery_Label"]
 	for node_name in nodes_to_show:
 		var node = get_node(UI_LAYER_PATH + node_name)
-		if is_instance_valid(node):
-			node.show()
+		if is_instance_valid(node): node.show()
 
 func _update_drone_gallery():
 	if not is_instance_valid(Combat): return
 	var drone_count = Combat.CLICKER_LEVEL_ASSETS.size() 
-	
 	for i in range(drone_count):
 		var panel = get_node(UI_LAYER_PATH + "Drone_Gallery/Drone_Panel_" + str(i + 1))
 		if not is_instance_valid(panel): continue
 		var sprite_rect = panel.get_node("Sprite") 
-		
 		if i < Combat.collected_drones.size():
 			var drone_texture = Combat.collected_drones[i]
 			if is_instance_valid(sprite_rect) and is_instance_valid(drone_texture):
@@ -477,14 +436,12 @@ func _update_drone_gallery():
 				var cropped_texture = ImageTexture.create_from_image(cropped_image)
 				sprite_rect.texture = cropped_texture
 		else:
-			if is_instance_valid(sprite_rect):
-				sprite_rect.texture = null
+			if is_instance_valid(sprite_rect): sprite_rect.texture = null
 
 func _update_fragment_display():
 	var fragment_display = get_node(UI_LAYER_PATH + "Fragment_Display")
 	if is_instance_valid(Combat) and is_instance_valid(fragment_display):
 		fragment_display.text = "Coins: " + str(Combat.harmony_fragments) 
-			
 	var power_display = get_node(UI_LAYER_PATH + "Power_Display")
 	if is_instance_valid(power_display):
 		power_display.text = (
@@ -493,41 +450,28 @@ func _update_fragment_display():
 		)
 
 func _process(_delta):
-	
 	var fragment_display = get_node(UI_LAYER_PATH + "Fragment_Display")
-	
 	var search_screen = get_node(UI_LAYER_PATH + "Search_Screen")
 	if is_instance_valid(search_screen) and search_screen.visible:
 		var progress_bar = get_node(UI_LAYER_PATH + "Search_Screen/Search_Progress_Bar")
 		var search_label = get_node(SEARCH_LABEL_PATH) 
-		
 		if simulated_progress < SEARCH_DURATION:
-			
 			var progress_ratio = simulated_progress / SEARCH_DURATION
 			var speed_multiplier = 1.0 
-			
 			if progress_ratio >= 0.50 and progress_ratio < 0.81:
-				
 				if not search_text_updated:
 					_update_search_text("CORRUPTION FOUND...")
 					search_text_updated = true
-					
 				speed_multiplier = 0.4 
-			
 			elif progress_ratio >= 0.81:
 				speed_multiplier = 1.5 
-				
 				if progress_ratio >= 0.85 and is_instance_valid(search_label) and not search_label.is_typing and not enter_text_shown:
 					_update_search_text("ENTER") 
 					enter_text_shown = true
-			
 			simulated_progress += _delta * speed_multiplier
-			
 			simulated_progress = min(simulated_progress, SEARCH_DURATION)
-			
 			if is_instance_valid(progress_bar):
 				progress_bar.value = simulated_progress
-			
 	if is_instance_valid(fragment_display) and fragment_display.visible:
 		_update_fragment_display() 
 			
