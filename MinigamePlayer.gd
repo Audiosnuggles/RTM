@@ -1,7 +1,7 @@
 extends CharacterBody2D
 
 const SPEED = 300.0
-const JUMP_VELOCITY = -400.0
+const JUMP_VELOCITY = -400.0 # (Passe diesen Wert an, wenn du die Höhe ändern willst)
 
 # Schwerkraft vom Projekt holen (oder Standardwert)
 var gravity = ProjectSettings.get_setting("physics/2d/default_gravity")
@@ -22,8 +22,7 @@ func _physics_process(delta):
 	# Sprung-Input verarbeiten
 	if Input.is_action_just_pressed("ui_accept") and is_on_floor():
 		velocity.y = JUMP_VELOCITY
-		# Hier könntest du eine Sprunganimation starten, falls vorhanden
-		# animated_sprite.play("Jump_Start") # Beispiel
+		# (Wir könnten hier "Jump_Start" spielen, aber "Jump_Loop" ist einfacher)
 
 	# Richtung ermitteln (Links/Rechts)
 	var direction = Input.get_axis("ui_left", "ui_right")
@@ -34,13 +33,12 @@ func _physics_process(delta):
 	else:
 		velocity.x = move_toward(velocity.x, 0, SPEED) # Langsamer werden
 
-	# Animationen basierend auf Bewegung und Zustand setzen
+	# --- KORRIGIERTE ANIMATIONEN ---
 	if not is_on_floor():
-		# In der Luft: Hier könntest du zwischen Jump_Start, Jump_Loop, Jump_Land unterscheiden
-		# Fürs Erste eine einfache Sprunganimation (falls vorhanden)
-		if animated_sprite.animation != "Jump_Loop": # Beispielname
-			#animated_sprite.play("Jump_Loop") # Beispielname
-			pass # Füge hier deine Sprunganimation ein
+		# In der Luft:
+		# Stelle sicher, dass die "Jump_Loop"-Animation gespielt wird.
+		if animated_sprite.animation != "Jump_Loop":
+			animated_sprite.play("Jump_Loop")
 	elif direction != 0:
 		# Läuft
 		animated_sprite.play("Run")
@@ -48,11 +46,10 @@ func _physics_process(delta):
 	else:
 		# Steht still
 		animated_sprite.play("Idle")
+	# --- ENDE KORREKTUR ---
 
 	# Bewegung ausführen
 	move_and_slide()
-
-	# DEBUG-Zeile entfernt
 
 
 func _on_spikes_body_entered(body):
