@@ -3,85 +3,107 @@ extends CharacterBody2D
 const SPEED = 300.0
 const JUMP_VELOCITY = -400.0 # (Passe diesen Wert an, wenn du die Höhe ändern willst)
 
-# Schwerkraft vom Projekt holen (oder Standardwert)
+# --- NEUE HEALTH-VARIABLEN ---
+@export var max_health: int = 3
+var current_health: int
+
+# --- NEU: @export VARIABLE FÜR HEALTHBAR ---
+# Diese Variable müssen wir im Godot-Editor zuweisen!
+@export var health_bar: ProgressBar
+# -------------------------------------------
+
 var gravity = ProjectSettings.get_setting("physics/2d/default_gravity")
 
 @onready var animated_sprite = $AnimatedSprite
-@onready var minigame_scene = get_parent() # Zugriff auf die Haupt-Minigame-Szene
+@onready var minigame_scene = get_parent() 
 
-# Invincibility variables
 var is_invincible = false
 @onready var invincibility_timer = $InvincibilityTimer
-@onready var invisibility_timer = $InvisibilityTimer # Timer for blinking
+@onready var invisibility_timer = $InvisibilityTimer 
+
+
+# --- ANGEPASSTE _ready Funktion ---
+func _ready():
+	current_health = max_health
+	
+	# Prüft, ob die HealthBar im Editor zugewiesen wurde
+	if is_instance_valid(health_bar):
+		health_bar.max_value = max_health
+		health_bar.value = current_health
+	else:
+		print("FEHLER in MinigamePlayer.gd: Die 'Health Bar'-Variable wurde nicht im Inspektor zugewiesen!")
+
 
 func _physics_process(delta):
-	# Schwerkraft hinzufügen
 	if not is_on_floor():
 		velocity.y += gravity * delta
 
-	# Sprung-Input verarbeiten
 	if Input.is_action_just_pressed("ui_accept") and is_on_floor():
 		velocity.y = JUMP_VELOCITY
 
-	# Richtung ermitteln (Links/Rechts)
 	var direction = Input.get_axis("ui_left", "ui_right")
 
-	# Bewegung anwenden
 	if direction:
 		velocity.x = direction * SPEED
 	else:
-		velocity.x = move_toward(velocity.x, 0, SPEED) # Langsamer werden
+		velocity.x = move_toward(velocity.x, 0, SPEED)
 
-	# --- KORREKTUR: LOGIK FÜR SPRITE-DREHUNG ---
-	# Diese Logik muss JEDES MAL laufen, wenn eine Richtung gedrückt wird,
-	# egal ob in der Luft oder am Boden.
 	if direction != 0:
-		animated_sprite.flip_h = (direction < 0) # Sprite spiegeln bei Linkslauf
-	# --- ENDE KORREKTUR ---
+		animated_sprite.flip_h = (direction < 0) 
 
-	# --- Logik für Animationen ---
 	if not is_on_floor():
-		# In der Luft:
 		if animated_sprite.animation != "Jump_Loop":
 			animated_sprite.play("Jump_Loop")
 	elif direction != 0:
-		# Läuft (am Boden)
 		animated_sprite.play("Run")
 	else:
-		# Steht still (am Boden)
 		animated_sprite.play("Idle")
-	# --- ENDE ANIMATIONS-LOGIK ---
 
-	# Bewegung ausführen
 	move_and_slide()
 
 
 func _on_spikes_body_entered(body):
-	if body == self and not is_invincible:
-		take_damage()
+	if body == self:
+		take_damage(1) 
 
-func take_damage():
-	print("Player took damage!")
-	is_invincible = true
-	invincibility_timer.start(1.0) # 1 Sekunde unverwundbar
-	invisibility_timer.start(0.1) # Start blinking
-	modulate.a = 0.5 # Start semi-transparent
 
-	# Rufe die player_died Funktion in der Haupt-Minigame-Szene auf
-	if minigame_scene.has_method("player_died"):
-		minigame_scene.player_died()
+func take_damage(damage_amount: int = 1):
+	if is_invincible:
+		return 
+
+	print("Player took damage: ", damage_amount)
+	current_health -= damage_amount
+	
+	# UI-Leiste aktualisieren (prüft jetzt auch hier)
+	if is_instance_valid(health_bar):
+		health_bar.value = current_health
 	else:
-		print("FEHLER: player_died() Methode nicht in minigame_scene gefunden!")
+		print("HealthBar nicht gefunden, kann Wert nicht aktualisieren.")
+
+	is_invincible = true
+	invincibility_timer.start(1.0) 
+	invisibility_timer.start(0.1) 
+	modulate.a = 0.5 
+
+	if current_health <= 0:
+		print("Player health is zero. Calling player_died()")
+		await get_tree().create_timer(0.5).timeout
+		
+		if minigame_scene.has_method("player_died"):
+			minigame_scene.player_died()
+		else:
+			print("FEHLER: player_died() Methode nicht in minigame_scene gefunden!")
+	else:
+		print("Player health remaining: ", current_health)
 
 
 func _on_invincibility_timer_timeout():
 	is_invincible = false
-	modulate.a = 1.0 # Fully visible again
-	invisibility_timer.stop() # Stop blinking
+	modulate.a = 1.0 
+	invisibility_timer.stop() 
 
 
 func _on_invisibility_timer_timeout():
-	# Toggle visibility for blinking effect
 	if is_invincible:
-		modulate.a = 1.0 - modulate.a # Flip between 0.5 and 1.0
-		invisibility_timer.start(0.1) # Restart timer for next blink
+		modulate.a = 1.0 - modulate.a 
+		invisibility_timer.start(0.1)
