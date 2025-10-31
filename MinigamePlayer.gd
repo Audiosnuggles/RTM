@@ -22,7 +22,6 @@ func _physics_process(delta):
 	# Sprung-Input verarbeiten
 	if Input.is_action_just_pressed("ui_accept") and is_on_floor():
 		velocity.y = JUMP_VELOCITY
-		# (Wir könnten hier "Jump_Start" spielen, aber "Jump_Loop" ist einfacher)
 
 	# Richtung ermitteln (Links/Rechts)
 	var direction = Input.get_axis("ui_left", "ui_right")
@@ -33,20 +32,25 @@ func _physics_process(delta):
 	else:
 		velocity.x = move_toward(velocity.x, 0, SPEED) # Langsamer werden
 
-	# --- KORRIGIERTE ANIMATIONEN ---
+	# --- KORREKTUR: LOGIK FÜR SPRITE-DREHUNG ---
+	# Diese Logik muss JEDES MAL laufen, wenn eine Richtung gedrückt wird,
+	# egal ob in der Luft oder am Boden.
+	if direction != 0:
+		animated_sprite.flip_h = (direction < 0) # Sprite spiegeln bei Linkslauf
+	# --- ENDE KORREKTUR ---
+
+	# --- Logik für Animationen ---
 	if not is_on_floor():
 		# In der Luft:
-		# Stelle sicher, dass die "Jump_Loop"-Animation gespielt wird.
 		if animated_sprite.animation != "Jump_Loop":
 			animated_sprite.play("Jump_Loop")
 	elif direction != 0:
-		# Läuft
+		# Läuft (am Boden)
 		animated_sprite.play("Run")
-		animated_sprite.flip_h = (direction < 0) # Sprite spiegeln bei Linkslauf
 	else:
-		# Steht still
+		# Steht still (am Boden)
 		animated_sprite.play("Idle")
-	# --- ENDE KORREKTUR ---
+	# --- ENDE ANIMATIONS-LOGIK ---
 
 	# Bewegung ausführen
 	move_and_slide()
