@@ -64,16 +64,23 @@ func _physics_process(delta):
 		stand_shape.disabled = false
 		crouch_shape.disabled = true
 		
+		# Spiele die "Aufsteh"-Animation, NUR WENN wir in der Hocke waren
 		if animated_sprite.animation == "Crouch_Idle":
-			animated_sprite.play("Crouch_End")
+			if animated_sprite.sprite_frames.has_animation("Crouch_End"):
+				animated_sprite.play("Crouch_End")
+			else:
+				# Falls "Crouch_End" nicht existiert, setze sofort Idle/Run
+				pass # Block 7 unten wird dies automatisch tun
 	
 	# ---------------------------------
 	# 4. Horizontale Bewegung
 	# ---------------------------------
 	
+	# Keine Bewegung, wenn geduckt ODER beim Hinhocken/Aufstehen
 	if is_crouching or animated_sprite.animation in ["Crouch_Start", "Crouch_End"]:
 		velocity.x = 0
 	else:
+		# Normale Bewegung
 		if direction:
 			velocity.x = direction * SPEED
 		else:
@@ -97,6 +104,8 @@ func _physics_process(delta):
 		animated_sprite.flip_h = (direction < 0) 
 
 	# Animations-Logik (nur für Laufen/Idle/Springen)
+	# Dieser Block wird jetzt automatisch die Kontrolle übernehmen,
+	# nachdem "Crouch_End" fertig ist, weil "is_crouching" false ist.
 	if not is_crouching and animated_sprite.animation not in ["Crouch_Start", "Crouch_End"]:
 		if not is_on_floor():
 			if animated_sprite.animation != "Jump_Loop":
@@ -108,7 +117,7 @@ func _physics_process(delta):
 			if animated_sprite.animation != "Idle":
 				animated_sprite.play("Idle")
 
-# --- KORRIGIERTE FUNKTION ---
+# --- KORRIGIERTE FUNKTION (VEREINFACHT) ---
 # Wird aufgerufen, wenn eine Animation (mit Loop=OFF) endet
 func _on_animation_finished():
 	
@@ -120,14 +129,9 @@ func _on_animation_finished():
 			# ...spiele die "Geduckt-Bleiben"-Animation (Loop=ON)
 			animated_sprite.play("Crouch_Idle")
 			
-	elif anim_name == "Crouch_End":
-		# Wenn die "Aufsteh"-Animation fertig ist...
-		# ...prüfe, was der Spieler gerade tut, anstatt stur "Idle" zu spielen
-		var direction = Input.get_axis("ui_left", "ui_right")
-		if direction != 0:
-			animated_sprite.play("Run")
-		else:
-			animated_sprite.play("Idle")
+	# Wir entfernen den "Crouch_End"-Block.
+	# Block 7 in _physics_process wird übernehmen,
+	# sobald "Crouch_End" fertig ist und "is_crouching" false ist.
 
 
 # --- (Rest des Skripts bleibt gleich) ---

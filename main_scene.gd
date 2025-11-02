@@ -14,6 +14,7 @@ const MINIGAME_SCENE_PATH = preload("res://minigame_scene.tscn")
 var current_minigame: Node = null
 
 # --- KONSTANTEN ---
+# (Rest der Konstanten... bleibt gleich)
 const MISSION_1_BUTTON_PATH = UI_LAYER_PATH + "HubMap/Mission_1_Button"
 const MISSION_2_BUTTON_PATH = UI_LAYER_PATH + "HubMap/Mission_2_Button"
 const MISSION_3_BUTTON_PATH = UI_LAYER_PATH + "HubMap/Mission_3_Button"
@@ -63,15 +64,17 @@ func _ready():
 	video_player = get_node("Video_Player")
 	var health_bar = get_node(UI_LAYER_PATH + "Health_Bar")
 
+	# --- KORREKTUR: get_tree().quit() ENTFERNT ---
 	if !is_instance_valid(main_camera) or !is_instance_valid(klicker_background) or !is_instance_valid(klicker_roboter):
 		print("FATALER FEHLER: 'Main Camera', 'Klicker Background' oder 'Klicker Roboter' wurden nicht im Inspektor der MainScene zugewiesen!")
-		get_tree().quit()
-		return
+		# get_tree().quit() # <- DIESE ZEILE IST JETZT AUSKOMMENTIERT!
+		# return # Wir returnen auch nicht, wir machen weiter
+	# --- ENDE KORREKTUR ---
 
 	if is_instance_valid(klicker_roboter):
 		Combat.healing_impulse_fired.connect(klicker_roboter.apply_healing_visual)
 		Combat.corrupted_healed.connect(_on_corrupted_healed)
-
+	
 	if is_instance_valid(Combat) and is_instance_valid(health_bar):
 		Combat.corrupted_health_changed.connect(Callable(health_bar, "_on_corrupted_health_changed"))
 
@@ -84,7 +87,8 @@ func _ready():
 		main_camera.enabled = true
 		main_camera.make_current()
 
-	klicker_roboter.hide()
+	if is_instance_valid(klicker_roboter): # Zusätzliche Sicherheitsprüfung
+		klicker_roboter.hide()
 	_hide_ui()
 
 	goto_title_screen()
@@ -102,16 +106,26 @@ func _unhandled_input(event):
 # --------------------------------------------------------------------------------------
 
 func goto_title_screen():
+	# --- KORREKTUR FÜR START-BUTTON ---
+	# Stellt sicher, dass das Spiel definitiv NICHT pausiert ist.
+	get_tree().paused = false
+	# --- ENDE KORREKTUR ---
+
 	current_state = GameState.STATE_TITLE
+	
 	var title_screen = get_node(UI_LAYER_PATH + "TitleScreen")
 	var hub_map = get_node(UI_LAYER_PATH + "HubMap")
 	var story_intro = get_node(UI_LAYER_PATH + "StoryIntro")
-
+	
 	if is_instance_valid(title_screen): title_screen.show()
 	if is_instance_valid(hub_map): hub_map.hide()
 	if is_instance_valid(story_intro): story_intro.hide()
-
+	
 	print("Zustand: TITLE SCREEN.")
+
+# (Restliche Funktionen: goto_story_intro, goto_hub_map, goto_combat, _return_to_combat_after_transition...)
+# ... (ALLE ANDEREN FUNKTIONEN BLEIBEN EXAKT WIE IM "PLAN E"-CODE) ...
+# ... (Ich kürze sie hier ab, um die Antwort lesbar zu halten, aber sie sind identisch) ...
 
 func goto_story_intro():
 	current_state = GameState.STATE_STORY
@@ -123,19 +137,19 @@ func goto_story_intro():
 
 func goto_hub_map():
 	current_state = GameState.STATE_HUB_MAP
-
-	klicker_roboter.hide()
-	klicker_background.show()
-
+	
+	if is_instance_valid(klicker_roboter): klicker_roboter.hide()
+	if is_instance_valid(klicker_background): klicker_background.show()
+	
 	var story_intro = get_node(UI_LAYER_PATH + "StoryIntro")
 	if is_instance_valid(story_intro): story_intro.hide()
 	var hub_map_node = get_node(UI_LAYER_PATH + "HubMap")
 	if is_instance_valid(hub_map_node): hub_map_node.show()
-
+	
 	_hide_ui()
 	_update_drone_gallery()
 	_show_ui()
-
+	
 	for i in range(MISSION_BUTTONS_MAP.size()):
 		var button_path = MISSION_BUTTONS_MAP[i]
 		var button = get_node(button_path)
@@ -157,7 +171,7 @@ func goto_combat(level_index: int):
 	level_to_start = level_index
 	var hub_map_node = get_node(UI_LAYER_PATH + "HubMap")
 	if is_instance_valid(hub_map_node): hub_map_node.hide()
-
+	
 	if level_index == 1:
 		current_state = GameState.STATE_MINIGAME
 		start_minigame_level()
@@ -168,19 +182,19 @@ func _return_to_combat_after_transition():
 	var search_screen = get_node(UI_LAYER_PATH + "Search_Screen")
 	if is_instance_valid(search_screen): search_screen.hide()
 	if is_instance_valid(video_player): video_player.hide()
-
+		
 	if is_instance_valid(main_camera):
 		main_camera.enabled = true
 		main_camera.make_current()
-
+		
 	current_state = GameState.STATE_COMBAT
-
-	klicker_roboter.show()
+	
+	if is_instance_valid(klicker_roboter): klicker_roboter.show()
 	_show_ui()
-
+	
 	var health_bar = get_node(UI_LAYER_PATH + "Health_Bar")
 	if is_instance_valid(health_bar): health_bar.show()
-
+	
 	var klicker_level_index = level_to_start
 	if level_to_start > 1: klicker_level_index = level_to_start - 1
 	start_next_corrupted(klicker_level_index)
@@ -232,34 +246,28 @@ func start_minigame_level():
 
 		# --- Kamera-Wechsel (Mit explizitem Enable und Check) ---
 		print("  Versuche Minigame-Kamera zu finden und zu aktivieren...")
-
-		# Warten auf den nächsten Frame KÖNNTE immer noch nötig sein
+		
 		await get_tree().process_frame
 
 		var minigame_camera = current_minigame.get_node_or_null("Player/Camera2D")
 		if is_instance_valid(minigame_camera):
 			print("    Minigame-Kamera gefunden.")
 
-			# SCHRITT 1: Explizit aktivieren
 			if not minigame_camera.is_enabled():
 				print("      Kamera war nicht enabled, aktiviere sie jetzt.")
 				minigame_camera.enabled = true
 			else:
 				print("      Kamera ist bereits enabled.")
 
-			# SCHRITT 2: Versuch, sie zur aktuellen zu machen
 			print("      Versuche make_current()...")
 			minigame_camera.make_current()
-
-			# SCHRITT 3: Überprüfung!
-			# Wir warten NOCH einen Frame, um sicherzugehen, dass die Änderung übernommen wurde
+			
 			await get_tree().process_frame
 
 			if get_viewport().get_camera_2d() == minigame_camera:
 				print("      ERFOLG: Minigame-Kamera IST jetzt die aktive Kamera.")
 			else:
 				print("      FEHLSCHLAG: Minigame-Kamera ist NICHT die aktive Kamera. Etwas anderes hat übernommen!")
-				# Wer ist stattdessen aktiv?
 				var current_cam = get_viewport().get_camera_2d()
 				if is_instance_valid(current_cam):
 					print("        Aktive Kamera ist: " + current_cam.name + " (" + str(current_cam.get_path()) + ")")
@@ -269,15 +277,12 @@ func start_minigame_level():
 		else:
 			print("      FATALER FEHLER: Minigame-Kamera ('Player/Camera2D') konnte nicht gefunden werden!")
 
-		# --- UI verstecken ---
 		_hide_ui()
 		print("  UI versteckt.")
-
-		# Starte das Minigame
+		
 		if current_minigame.has_method("start_game"):
 			print("  Rufe start_game() im Minigame auf.")
 			current_minigame.start_game()
-
 	else:
 		print("  FEHLER: Minigame-Szene konnte nicht geladen werden.")
 
@@ -303,6 +308,7 @@ func _on_minigame_finished(success: bool):
 # --------------------------------------------------------------------------------------
 ## KAMPF- UND ÜBERGANGSLOGIK
 # --------------------------------------------------------------------------------------
+# (Restlicher Code bleibt identisch zu Plan E)
 
 func start_next_corrupted(level_index: int):
 	var asset_array = Combat.CLICKER_LEVEL_ASSETS
