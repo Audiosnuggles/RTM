@@ -12,16 +12,14 @@ var gravity = ProjectSettings.get_setting("physics/2d/default_gravity")
 @onready var animated_sprite = $AnimatedSprite
 @onready var minigame_scene = get_parent() 
 
-# --- Referenzen zu BEIDEN Formen ---
 @onready var stand_shape = $StandShape
 @onready var crouch_shape = $CrouchShape
-# -----------------------------------
 
 var is_invincible = false
 @onready var invincibility_timer = $InvincibilityTimer
 @onready var invisibility_timer = $InvisibilityTimer 
 
-var is_crouching = false # Wichtig: 'var', nicht 'const'
+var is_crouching = false # Dies ist jetzt unser "Zustand"
 
 
 func _ready():
@@ -32,9 +30,12 @@ func _ready():
 	else:
 		print("FEHLER in MinigamePlayer.gd: Die 'Health Bar'-Variable wurde nicht im Inspektor zugewiesen!")
 	
-	# Sicherstellen, dass der Start-Zustand korrekt ist
 	stand_shape.disabled = false
 	crouch_shape.disabled = true
+	
+	# NEU: Verbinde das "animation_finished"-Signal mit uns selbst
+	# Das ist entscheidend, um "Crouch_Start" mit "Crouch_Idle" zu verketten
+	animated_sprite.animation_finished.connect(_on_animation_finished)
 
 
 func _physics_process(delta):
@@ -51,30 +52,36 @@ func _physics_process(delta):
 	var direction = Input.get_axis("ui_left", "ui_right")
 	
 	# ---------------------------------
-	# 3. Ducken-Zustand (STABILE LOGIK)
+	# 3. Ducken-Zustand (State Machine)
 	# ---------------------------------
-	
-	# Wenn wir in der Luft sind, können wir nicht ducken (automatisch aufstehen)
-	if not is_on_floor():
-		is_crouching = false
-	else:
-		# Wenn wir am Boden sind, bestimmt der Input den Zustand
-		is_crouching = crouch_input
+	var wants_to_crouch = crouch_input and is_on_floor()
 
-	# Schalte die Kollisionsformen basierend auf dem finalen Zustand um
-	# (Diese Logik ist jetzt stabil und zittert nicht mehr)
-	stand_shape.disabled = is_crouching
-	crouch_shape.disabled = not is_crouching
+	if wants_to_crouch and not is_crouching:
+		# Spieler will sich HINSETZEN (Taste gerade gedrückt)
+		is_crouching = true
+		stand_shape.disabled = true
+		crouch_shape.disabled = false
+		animated_sprite.play("Crouch_Start") # Spielt die "Hinsetz"-Animation (Loop=OFF)
+		
+	elif not wants_to_crouch and is_crouching:
+		# Spieler will AUFSTEHEN (Taste gerade losgelassen)
+		is_crouching = false
+		stand_shape.disabled = false
+		crouch_shape.disabled = true
+		
+		# Spiele die "Aufsteh"-Animation, WENN wir nicht gerade beim Hinsetzen waren
+		if animated_sprite.animation == "Crouch_Idle":
+			animated_sprite.play("Crouch_End") # (Loop=OFF)
 	
 	# ---------------------------------
 	# 4. Horizontale Bewegung
 	# ---------------------------------
 	
-	# Wenn wir ducken (was impliziert, dass wir auf dem Boden sind), stoppen wir
-	if is_crouching:
+	# Keine Bewegung, wenn geduckt ODER beim Hinhocken/Aufstehen
+	if is_crouching or animated_sprite.animation in ["Crouch_Start", "Crouch_End"]:
 		velocity.x = 0
 	else:
-		# Normale Bewegung (auch in der Luft)
+		# Normale Bewegung
 		if direction:
 			velocity.x = direction * SPEED
 		else:
@@ -98,14 +105,33 @@ func _physics_process(delta):
 	if direction != 0:
 		animated_sprite.flip_h = (direction < 0) 
 
-	# Animationen basierend auf dem finalen Zustand
-	if is_crouching:
-		animated_sprite.play("Crouch")
-	elif not is_on_floor():
-		animated_sprite.play("Jump_Loop")
-	elif direction != 0:
-		animated_sprite.play("Run")
-	else:
+	# Animations-Logik (nur für Laufen/Idle/Springen)
+	# Die Duck-Animationen werden jetzt oben in Block 3 gesteuert
+	if not is_crouching and animated_sprite.animation not in ["Crouch_Start", "Crouch_End"]:
+		if not is_on_floor():
+			if animated_sprite.animation != "Jump_Loop":
+				animated_sprite.play("Jump_Loop")
+		elif direction != 0:
+			if animated_sprite.animation != "Run":
+				animated_sprite.play("Run")
+		else:
+			if animated_sprite.animation != "Idle":
+				animated_sprite.play("Idle")
+
+# --- NEUE FUNKTION ---
+# Wird aufgerufen, wenn eine Animation (mit Loop=OFF) endet
+func _on_animation_finished():
+	
+	# Wenn die "Hinsetz"-Animation fertig ist...
+	if animated_sprite.animation == "Crouch_Start":
+		# ...und wir immer noch ducken wollen (Taste wird noch gehalten)...
+		if is_crouching:
+			# ...spiele die "Geduckt-Bleiben"-Animation (Loop=ON)
+			animated_sprite.play("Crouch_Idle")
+	
+	# Wenn die "Aufsteh"-Animation fertig ist...
+	elif animated_sprite.animation == "Crouch_End":
+		# ...gehe zurück zu "Idle".
 		animated_sprite.play("Idle")
 
 
