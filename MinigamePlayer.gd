@@ -19,7 +19,7 @@ var is_invincible = false
 @onready var invincibility_timer = $InvincibilityTimer
 @onready var invisibility_timer = $InvisibilityTimer 
 
-var is_crouching = false # Dies ist jetzt unser "Zustand"
+var is_crouching = false
 
 
 func _ready():
@@ -33,21 +33,15 @@ func _ready():
 	stand_shape.disabled = false
 	crouch_shape.disabled = true
 	
-	# NEU: Verbinde das "animation_finished"-Signal mit uns selbst
-	# Das ist entscheidend, um "Crouch_Start" mit "Crouch_Idle" zu verketten
-	animated_sprite.animation_finished.connect(_on_animation_finished)
+	# WICHTIG: Stellt sicher, dass das Signal verbunden ist
+	if not animated_sprite.animation_finished.is_connected(_on_animation_finished):
+		animated_sprite.animation_finished.connect(_on_animation_finished)
 
 
 func _physics_process(delta):
-	# ---------------------------------
-	# 1. Schwerkraft
-	# ---------------------------------
 	if not is_on_floor():
 		velocity.y += gravity * delta
 
-	# ---------------------------------
-	# 2. Inputs lesen
-	# ---------------------------------
 	var crouch_input = Input.is_action_pressed("ui_down")
 	var direction = Input.get_axis("ui_left", "ui_right")
 	
@@ -57,31 +51,29 @@ func _physics_process(delta):
 	var wants_to_crouch = crouch_input and is_on_floor()
 
 	if wants_to_crouch and not is_crouching:
-		# Spieler will sich HINSETZEN (Taste gerade gedrückt)
+		# Spieler will sich HINSETZEN
 		is_crouching = true
 		stand_shape.disabled = true
 		crouch_shape.disabled = false
-		animated_sprite.play("Crouch_Start") # Spielt die "Hinsetz"-Animation (Loop=OFF)
+		if animated_sprite.animation != "Crouch_Start":
+			animated_sprite.play("Crouch_Start") 
 		
 	elif not wants_to_crouch and is_crouching:
-		# Spieler will AUFSTEHEN (Taste gerade losgelassen)
+		# Spieler will AUFSTEHEN
 		is_crouching = false
 		stand_shape.disabled = false
 		crouch_shape.disabled = true
 		
-		# Spiele die "Aufsteh"-Animation, WENN wir nicht gerade beim Hinsetzen waren
 		if animated_sprite.animation == "Crouch_Idle":
-			animated_sprite.play("Crouch_End") # (Loop=OFF)
+			animated_sprite.play("Crouch_End")
 	
 	# ---------------------------------
 	# 4. Horizontale Bewegung
 	# ---------------------------------
 	
-	# Keine Bewegung, wenn geduckt ODER beim Hinhocken/Aufstehen
 	if is_crouching or animated_sprite.animation in ["Crouch_Start", "Crouch_End"]:
 		velocity.x = 0
 	else:
-		# Normale Bewegung
 		if direction:
 			velocity.x = direction * SPEED
 		else:
@@ -90,7 +82,6 @@ func _physics_process(delta):
 	# ---------------------------------
 	# 5. Vertikale Bewegung (Sprung)
 	# ---------------------------------
-	# Kann nur springen, wenn am Boden UND nicht geduckt
 	if Input.is_action_just_pressed("ui_accept") and is_on_floor() and not is_crouching:
 		velocity.y = JUMP_VELOCITY
 
@@ -106,7 +97,6 @@ func _physics_process(delta):
 		animated_sprite.flip_h = (direction < 0) 
 
 	# Animations-Logik (nur für Laufen/Idle/Springen)
-	# Die Duck-Animationen werden jetzt oben in Block 3 gesteuert
 	if not is_crouching and animated_sprite.animation not in ["Crouch_Start", "Crouch_End"]:
 		if not is_on_floor():
 			if animated_sprite.animation != "Jump_Loop":
@@ -118,21 +108,26 @@ func _physics_process(delta):
 			if animated_sprite.animation != "Idle":
 				animated_sprite.play("Idle")
 
-# --- NEUE FUNKTION ---
+# --- KORRIGIERTE FUNKTION ---
 # Wird aufgerufen, wenn eine Animation (mit Loop=OFF) endet
 func _on_animation_finished():
 	
-	# Wenn die "Hinsetz"-Animation fertig ist...
-	if animated_sprite.animation == "Crouch_Start":
-		# ...und wir immer noch ducken wollen (Taste wird noch gehalten)...
+	var anim_name = animated_sprite.animation
+	
+	if anim_name == "Crouch_Start":
+		# Wenn die "Hinsetz"-Animation fertig ist...
 		if is_crouching:
 			# ...spiele die "Geduckt-Bleiben"-Animation (Loop=ON)
 			animated_sprite.play("Crouch_Idle")
-	
-	# Wenn die "Aufsteh"-Animation fertig ist...
-	elif animated_sprite.animation == "Crouch_End":
-		# ...gehe zurück zu "Idle".
-		animated_sprite.play("Idle")
+			
+	elif anim_name == "Crouch_End":
+		# Wenn die "Aufsteh"-Animation fertig ist...
+		# ...prüfe, was der Spieler gerade tut, anstatt stur "Idle" zu spielen
+		var direction = Input.get_axis("ui_left", "ui_right")
+		if direction != 0:
+			animated_sprite.play("Run")
+		else:
+			animated_sprite.play("Idle")
 
 
 # --- (Rest des Skripts bleibt gleich) ---
