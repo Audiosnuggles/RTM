@@ -27,3 +27,7 @@ func player_died():
 	minigame_finished.emit(false)
 	
 	# "queue_free()" HIER ENTFERNT
+
+
+func _on_spikes_2_body_entered(body: Node2D) -> void:
+	pass # Replace with function body.

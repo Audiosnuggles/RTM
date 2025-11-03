@@ -1,4 +1,4 @@
-[gd_scene load_steps=131 format=3 uid="uid://dh2ue3w1qbcrr"]
+[gd_scene load_steps=133 format=3 uid="uid://dh2ue3w1qbcrr"]
 
 [ext_resource type="Script" uid="uid://ba1x8aq3ygvoy" path="res://minigame_scene.gd" id="1_vs5gd"]
 [ext_resource type="Script" uid="uid://cqkj0flrbeyyd" path="res://MinigamePlayer.gd" id="2_a3a31"]
@@ -466,52 +466,52 @@ region = Rect2(1080, 1385, 216, 277)
 [sub_resource type="SpriteFrames" id="SpriteFrames_73lsg"]
 animations = [{
 "frames": [{
-"duration": 1.0,
+"duration": 0.5,
 "texture": SubResource("AtlasTexture_fttra")
 }, {
-"duration": 1.0,
+"duration": 0.5,
 "texture": SubResource("AtlasTexture_aabkc")
 }, {
-"duration": 1.0,
+"duration": 0.5,
 "texture": SubResource("AtlasTexture_tm2mf")
 }, {
-"duration": 1.0,
+"duration": 0.5,
 "texture": SubResource("AtlasTexture_8ojmv")
 }, {
-"duration": 1.0,
+"duration": 0.5,
 "texture": SubResource("AtlasTexture_gxoip")
 }, {
-"duration": 1.0,
+"duration": 0.5,
 "texture": SubResource("AtlasTexture_1j3qr")
 }, {
-"duration": 1.0,
+"duration": 0.5,
 "texture": SubResource("AtlasTexture_y742q")
 }, {
-"duration": 1.0,
+"duration": 0.5,
 "texture": SubResource("AtlasTexture_j3miy")
 }, {
-"duration": 1.0,
+"duration": 0.5,
 "texture": SubResource("AtlasTexture_sxs25")
 }, {
-"duration": 1.0,
+"duration": 0.5,
 "texture": SubResource("AtlasTexture_82il0")
 }, {
-"duration": 1.0,
+"duration": 0.5,
 "texture": SubResource("AtlasTexture_rauvb")
 }, {
-"duration": 1.0,
+"duration": 0.5,
 "texture": SubResource("AtlasTexture_cgd38")
 }, {
-"duration": 1.0,
+"duration": 0.5,
 "texture": SubResource("AtlasTexture_jk6m0")
 }, {
-"duration": 1.0,
+"duration": 0.5,
 "texture": SubResource("AtlasTexture_qn7b3")
 }, {
-"duration": 1.0,
+"duration": 0.5,
 "texture": SubResource("AtlasTexture_rfbo4")
 }, {
-"duration": 1.0,
+"duration": 0.5,
 "texture": SubResource("AtlasTexture_mn3o3")
 }],
 "loop": false,
@@ -527,64 +527,64 @@ animations = [{
 "speed": 1.0
 }, {
 "frames": [{
-"duration": 1.0,
+"duration": 0.5,
 "texture": SubResource("AtlasTexture_ih1xl")
 }, {
-"duration": 1.0,
+"duration": 0.5,
 "texture": SubResource("AtlasTexture_656oh")
 }, {
-"duration": 1.0,
+"duration": 0.5,
 "texture": SubResource("AtlasTexture_8l3x3")
 }, {
-"duration": 1.0,
+"duration": 0.5,
 "texture": SubResource("AtlasTexture_0nuyj")
 }, {
-"duration": 1.0,
+"duration": 0.5,
 "texture": SubResource("AtlasTexture_65x5q")
 }, {
-"duration": 1.0,
+"duration": 0.5,
 "texture": SubResource("AtlasTexture_p6hao")
 }, {
-"duration": 1.0,
+"duration": 0.5,
 "texture": SubResource("AtlasTexture_cvmy6")
 }, {
-"duration": 1.0,
+"duration": 0.5,
 "texture": SubResource("AtlasTexture_72qoi")
 }, {
-"duration": 1.0,
+"duration": 0.5,
 "texture": SubResource("AtlasTexture_ymv78")
 }, {
-"duration": 1.0,
+"duration": 0.5,
 "texture": SubResource("AtlasTexture_fwl1n")
 }, {
-"duration": 1.0,
+"duration": 0.5,
 "texture": SubResource("AtlasTexture_p4ewd")
 }, {
-"duration": 1.0,
+"duration": 0.5,
 "texture": SubResource("AtlasTexture_08t2v")
 }, {
-"duration": 1.0,
+"duration": 0.5,
 "texture": SubResource("AtlasTexture_pyfjg")
 }, {
-"duration": 1.0,
+"duration": 0.5,
 "texture": SubResource("AtlasTexture_ubf0w")
 }, {
-"duration": 1.0,
+"duration": 0.5,
 "texture": SubResource("AtlasTexture_gfx2q")
 }, {
-"duration": 1.0,
+"duration": 0.5,
 "texture": SubResource("AtlasTexture_5r7yc")
 }, {
-"duration": 1.0,
+"duration": 0.5,
 "texture": SubResource("AtlasTexture_i6cbj")
 }, {
-"duration": 1.0,
+"duration": 0.5,
 "texture": SubResource("AtlasTexture_i0mkh")
 }, {
-"duration": 1.0,
+"duration": 0.5,
 "texture": SubResource("AtlasTexture_bdqc4")
 }, {
-"duration": 1.0,
+"duration": 0.5,
 "texture": SubResource("AtlasTexture_67663")
 }],
 "loop": false,
@@ -635,61 +635,61 @@ animations = [{
 "speed": 9.0
 }, {
 "frames": [{
-"duration": 1.0,
+"duration": 1.5,
 "texture": SubResource("AtlasTexture_rawu8")
 }, {
-"duration": 1.0,
+"duration": 1.5,
 "texture": SubResource("AtlasTexture_hmmns")
 }, {
-"duration": 1.0,
+"duration": 1.5,
 "texture": SubResource("AtlasTexture_8rjil")
 }, {
-"duration": 1.0,
+"duration": 1.5,
 "texture": SubResource("AtlasTexture_luscs")
 }, {
-"duration": 1.0,
+"duration": 1.5,
 "texture": SubResource("AtlasTexture_vgcfc")
 }, {
-"duration": 1.0,
+"duration": 1.5,
 "texture": SubResource("AtlasTexture_b1nvc")
 }, {
-"duration": 1.0,
+"duration": 1.5,
 "texture": SubResource("AtlasTexture_squ0b")
 }, {
-"duration": 1.0,
+"duration": 1.5,
 "texture": SubResource("AtlasTexture_rviqy")
 }, {
-"duration": 1.0,
+"duration": 1.5,
 "texture": SubResource("AtlasTexture_q3n4r")
 }, {
-"duration": 1.0,
+"duration": 1.5,
 "texture": SubResource("AtlasTexture_fbbtj")
 }, {
-"duration": 1.0,
+"duration": 1.5,
 "texture": SubResource("AtlasTexture_06h53")
 }, {
-"duration": 1.0,
+"duration": 1.5,
 "texture": SubResource("AtlasTexture_uokge")
 }, {
-"duration": 1.0,
+"duration": 1.5,
 "texture": SubResource("AtlasTexture_b28tt")
 }, {
-"duration": 1.0,
+"duration": 1.5,
 "texture": SubResource("AtlasTexture_ui8eq")
 }, {
-"duration": 1.0,
+"duration": 1.5,
 "texture": SubResource("AtlasTexture_53q1g")
 }, {
-"duration": 1.0,
+"duration": 1.5,
 "texture": SubResource("AtlasTexture_7w0jw")
 }, {
-"duration": 1.0,
+"duration": 1.5,
 "texture": SubResource("AtlasTexture_kc22w")
 }, {
-"duration": 1.0,
+"duration": 1.5,
 "texture": SubResource("AtlasTexture_cagdp")
 }, {
-"duration": 1.0,
+"duration": 1.5,
 "texture": SubResource("AtlasTexture_n30i1")
 }],
 "loop": true,
@@ -852,7 +852,7 @@ animations = [{
 }]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_7th4q"]
-radius = 89.0
+radius = 53.0
 height = 308.0
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_sajbp"]
@@ -860,19 +860,29 @@ radius = 40.0
 height = 80.0
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_6jybn"]
-size = Vector2(4737, 40.5)
+size = Vector2(10083, 40.5)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_84odl"]
 size = Vector2(159, 281.5)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_gbnch"]
-size = Vector2(106.5, 20)
+size = Vector2(106.5, 21.5)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3wvma"]
 bg_color = Color(0, 0.9647059, 0.24313726, 1)
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_sajbp"]
+size = Vector2(255.75, 27.25)
+
+[sub_resource type="Environment" id="Environment_sajbp"]
+background_mode = 3
+glow_enabled = true
+fog_light_color = Color(0.7716614, 0.7942721, 0.8294512, 1)
+fog_light_energy = 2.13
+
 [node name="MinigameScene" type="Node2D"]
 script = ExtResource("1_vs5gd")
+metadata/_edit_vertical_guides_ = [8005.0]
 
 [node name="ParallaxBackground" type="ParallaxBackground" parent="."]
 
@@ -881,7 +891,6 @@ motion_scale = Vector2(0.1, 1)
 motion_mirroring = Vector2(1920, 0)
 
 [node name="Sprite2D" type="Sprite2D" parent="ParallaxBackground/Layer_Far"]
-position = Vector2(0, -180)
 texture = ExtResource("2_jtsu5")
 centered = false
 
@@ -889,28 +898,30 @@ centered = false
 motion_scale = Vector2(0.3, 1)
 
 [node name="Sprite2D" type="Sprite2D" parent="ParallaxBackground/Layer_Mid"]
-position = Vector2(0, -180)
+position = Vector2(0, -253)
 texture = ExtResource("3_jtsu5")
 centered = false
 
 [node name="Player" type="CharacterBody2D" parent="." node_paths=PackedStringArray("health_bar")]
-collision_mask = 11
+collision_layer = 34
+collision_mask = 43
 script = ExtResource("2_a3a31")
 health_bar = NodePath("../MinigameUI/MinigameHealthBar")
 
 [node name="AnimatedSprite" type="AnimatedSprite2D" parent="Player"]
 position = Vector2(540, 893)
 sprite_frames = SubResource("SpriteFrames_73lsg")
-animation = &"Idle"
+animation = &"Jump_Loop"
 
 [node name="Camera2D" type="Camera2D" parent="Player"]
+anchor_mode = 0
 limit_left = 0
 limit_top = 0
-limit_right = 3840
-limit_bottom = 1080
+limit_right = 8000
+limit_bottom = 1120
 
 [node name="StandShape" type="CollisionShape2D" parent="Player"]
-position = Vector2(552, 871)
+position = Vector2(549, 876)
 shape = SubResource("CapsuleShape2D_7th4q")
 debug_color = Color(0.8232569, 0.1428257, 1, 1)
 
@@ -920,6 +931,9 @@ position = Vector2(549, 990)
 shape = SubResource("CapsuleShape2D_sajbp")
 debug_color = Color(0.47427702, 0.1428257, 1, 1)
 
+[node name="CameraShakeTimer" type="Timer" parent="Player"]
+one_shot = true
+
 [node name="InvincibilityTimer" type="Timer" parent="Player"]
 one_shot = true
 
@@ -928,7 +942,6 @@ one_shot = true
 
 [node name="Floor" type="StaticBody2D" parent="."]
 position = Vector2(1592, 520)
-collision_layer = 3
 
 [node name="ColorRect" type="ColorRect" parent="Floor"]
 visible = false
@@ -939,7 +952,7 @@ offset_bottom = 530.0
 color = Color(0.40982348, 0.1434182, 0.029744148, 1)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Floor"]
-position = Vector2(589.5, 534)
+position = Vector2(3262.5, 534)
 shape = SubResource("RectangleShape2D_6jybn")
 
 [node name="Door" type="Area2D" parent="."]
@@ -947,18 +960,48 @@ z_index = 10
 script = ExtResource("2_gbnch")
 
 [node name="ColorRect" type="ColorRect" parent="Door"]
-offset_left = 3170.0
-offset_top = 747.0
-offset_right = 3324.0
-offset_bottom = 1022.0
+offset_left = 9480.0
+offset_top = 752.0
+offset_right = 9634.0
+offset_bottom = 1027.0
 color = Color(0.2285108, 0.2285108, 0.2285108, 1)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Door"]
-position = Vector2(3250, 887)
+position = Vector2(9557, 887)
 shape = SubResource("RectangleShape2D_84odl")
 
-[node name="Spikes" type="Area2D" parent="."]
+[node name="Spikes4" type="Area2D" parent="."]
 position = Vector2(-450, -2)
+collision_mask = 2
+
+[node name="ColorRect" type="ColorRect" parent="Spikes4"]
+custom_minimum_size = Vector2(60, 0)
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 1463.0
+offset_top = 1009.0
+offset_right = 1566.0
+offset_bottom = 1030.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.6528191, 0, 0.3071221, 1)
+metadata/_edit_use_anchors_ = true
+
+[node name="Sprite2D" type="Sprite2D" parent="Spikes4"]
+position = Vector2(-1701, 0)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Spikes4"]
+position = Vector2(1515, 1019.25)
+shape = SubResource("RectangleShape2D_gbnch")
+debug_color = Color(0.9598109, 0, 0, 1)
+
+[node name="Spikes" type="Area2D" parent="."]
+position = Vector2(-451, -2)
+collision_layer = 3
+collision_mask = 2
 
 [node name="ColorRect" type="ColorRect" parent="Spikes"]
 custom_minimum_size = Vector2(60, 0)
@@ -967,9 +1010,9 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = 1595.0
+offset_left = 3164.0
 offset_top = 1009.0
-offset_right = 1698.0
+offset_right = 3267.0
 offset_bottom = 1030.0
 grow_horizontal = 2
 grow_vertical = 2
@@ -979,12 +1022,40 @@ metadata/_edit_use_anchors_ = true
 [node name="Sprite2D" type="Sprite2D" parent="Spikes"]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Spikes"]
-position = Vector2(1649, 1018)
+position = Vector2(3216, 1019.25)
+shape = SubResource("RectangleShape2D_gbnch")
+debug_color = Color(0.9598109, 0, 0, 1)
+
+[node name="Spikes2" type="Area2D" parent="Spikes"]
+collision_layer = 3
+collision_mask = 2
+
+[node name="ColorRect" type="ColorRect" parent="Spikes/Spikes2"]
+custom_minimum_size = Vector2(60, 0)
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 1962.0
+offset_top = 1009.0
+offset_right = 2065.0
+offset_bottom = 1030.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.6528191, 0, 0.3071221, 1)
+metadata/_edit_use_anchors_ = true
+
+[node name="Sprite2D" type="Sprite2D" parent="Spikes/Spikes2"]
+position = Vector2(-1202, 0)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Spikes/Spikes2"]
+position = Vector2(2014, 1019.25)
 shape = SubResource("RectangleShape2D_gbnch")
 debug_color = Color(0.9598109, 0, 0, 1)
 
 [node name="Enemy" parent="." instance=ExtResource("8_e2w2n")]
-position = Vector2(2240, 963)
+position = Vector2(2242, 975)
 
 [node name="GameOverTimer" type="Timer" parent="."]
 process_mode = 2
@@ -1001,9 +1072,130 @@ theme_override_fonts/font = ExtResource("9_3wvma")
 theme_override_styles/fill = SubResource("StyleBoxFlat_3wvma")
 value = 100.0
 
+[node name="Enemy2" parent="." instance=ExtResource("8_e2w2n")]
+position = Vector2(3877, 963)
+
+[node name="Platform1" type="StaticBody2D" parent="."]
+position = Vector2(1592, 520)
+collision_layer = 3
+
+[node name="ColorRect" type="ColorRect" parent="Platform1"]
+offset_left = 1018.0
+offset_top = 324.0
+offset_right = 1264.0
+offset_bottom = 347.0
+color = Color(0.08627451, 0.92156863, 0.7607843, 1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platform1"]
+position = Vector2(1143.125, 338)
+shape = SubResource("RectangleShape2D_sajbp")
+one_way_collision = true
+
+[node name="Platform2" type="StaticBody2D" parent="."]
+position = Vector2(1592, 520)
+collision_layer = 3
+
+[node name="ColorRect" type="ColorRect" parent="Platform2"]
+offset_left = 1431.0
+offset_top = 227.0
+offset_right = 1677.0
+offset_bottom = 250.0
+color = Color(0.078431375, 0.91764706, 0.73333335, 1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platform2"]
+position = Vector2(1554, 238)
+shape = SubResource("RectangleShape2D_sajbp")
+one_way_collision = true
+
+[node name="Platform5" type="StaticBody2D" parent="."]
+position = Vector2(6368, 2080)
+collision_layer = 3
+
+[node name="ColorRect" type="ColorRect" parent="Platform5"]
+offset_left = -1470.0
+offset_top = -1281.0
+offset_right = -1224.0
+offset_bottom = -1258.0
+color = Color(0.16862746, 0.88235295, 0.7058824, 1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platform5"]
+position = Vector2(-1347, -1270)
+shape = SubResource("RectangleShape2D_sajbp")
+one_way_collision = true
+
+[node name="Platform4" type="StaticBody2D" parent="."]
+position = Vector2(3184, 1040)
+collision_layer = 3
+
+[node name="ColorRect" type="ColorRect" parent="Platform4"]
+offset_left = 1233.0
+offset_top = -156.0
+offset_right = 1479.0
+offset_bottom = -133.0
+color = Color(0.16862746, 0.88235295, 0.7058824, 1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platform4"]
+position = Vector2(1356, -145)
+shape = SubResource("RectangleShape2D_sajbp")
+one_way_collision = true
+
+[node name="Platform3" type="StaticBody2D" parent="."]
+position = Vector2(1592, 520)
+collision_layer = 3
+
+[node name="ColorRect" type="ColorRect" parent="Platform3"]
+offset_left = 1833.0
+offset_top = 152.0
+offset_right = 2079.0
+offset_bottom = 175.0
+color = Color(0.16862746, 0.88235295, 0.7058824, 1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platform3"]
+position = Vector2(1956, 163)
+shape = SubResource("RectangleShape2D_sajbp")
+one_way_collision = true
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_sajbp")
+
+[node name="Platform6" type="StaticBody2D" parent="."]
+position = Vector2(6797, 2009)
+collision_layer = 3
+
+[node name="ColorRect" type="ColorRect" parent="Platform6"]
+offset_left = -1470.0
+offset_top = -1281.0
+offset_right = -1224.0
+offset_bottom = -1258.0
+color = Color(0.16862746, 0.88235295, 0.7058824, 1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platform6"]
+position = Vector2(-1347, -1270)
+shape = SubResource("RectangleShape2D_sajbp")
+one_way_collision = true
+
+[node name="Platform7" type="StaticBody2D" parent="."]
+position = Vector2(6797, 2009)
+collision_layer = 3
+
+[node name="ColorRect" type="ColorRect" parent="Platform7"]
+offset_left = -1074.0
+offset_top = -1388.0
+offset_right = -828.0
+offset_bottom = -1365.0
+color = Color(0.16862746, 0.88235295, 0.7058824, 1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platform7"]
+position = Vector2(-952, -1377)
+shape = SubResource("RectangleShape2D_sajbp")
+one_way_collision = true
+
+[connection signal="timeout" from="Player/CameraShakeTimer" to="Player" method="_on_camera_shake_timer_timeout"]
 [connection signal="timeout" from="Player/InvincibilityTimer" to="Player" method="_on_invincibility_timer_timeout"]
 [connection signal="timeout" from="Player/InvisibilityTimer" to="Player" method="_on_invisibility_timer_timeout"]
 [connection signal="body_entered" from="Door" to="." method="_on_door_body_entered"]
+[connection signal="body_entered" from="Spikes4" to="Player" method="_on_spikes_body_entered"]
 [connection signal="body_entered" from="Spikes" to="Player" method="_on_spikes_body_entered"]
+[connection signal="body_entered" from="Spikes/Spikes2" to="Player" method="_on_spikes_body_entered"]
 [connection signal="player_hit" from="Enemy" to="Player" method="take_damage"]
 [connection signal="timeout" from="GameOverTimer" to="." method="_on_game_over_timer_timeout"]

@@ -1,7 +1,7 @@
 extends CharacterBody2D
 
 const SPEED = 300.0
-const JUMP_VELOCITY = -400.0 
+const JUMP_VELOCITY = -600.0 
 
 @export var max_health: int = 3
 var current_health: int
@@ -21,6 +21,12 @@ var is_invincible = false
 
 var is_crouching = false
 
+# NEU: Referenz zur Kamera und Shake-Variablen
+@onready var camera = $Camera2D
+@onready var camera_shake_timer = $CameraShakeTimer
+var shake_intensity = 10.0 # Wie stark wackelt es (in Pixel)
+var is_shaking = false
+
 
 func _ready():
 	current_health = max_health
@@ -33,7 +39,6 @@ func _ready():
 	stand_shape.disabled = false
 	crouch_shape.disabled = true
 	
-	# WICHTIG: Stellt sicher, dass das Signal verbunden ist
 	if not animated_sprite.animation_finished.is_connected(_on_animation_finished):
 		animated_sprite.animation_finished.connect(_on_animation_finished)
 
@@ -45,13 +50,10 @@ func _physics_process(delta):
 	var crouch_input = Input.is_action_pressed("ui_down")
 	var direction = Input.get_axis("ui_left", "ui_right")
 	
-	# ---------------------------------
 	# 3. Ducken-Zustand (State Machine)
-	# ---------------------------------
 	var wants_to_crouch = crouch_input and is_on_floor()
 
 	if wants_to_crouch and not is_crouching:
-		# Spieler will sich HINSETZEN
 		is_crouching = true
 		stand_shape.disabled = true
 		crouch_shape.disabled = false
@@ -59,53 +61,33 @@ func _physics_process(delta):
 			animated_sprite.play("Crouch_Start") 
 		
 	elif not wants_to_crouch and is_crouching:
-		# Spieler will AUFSTEHEN
 		is_crouching = false
 		stand_shape.disabled = false
 		crouch_shape.disabled = true
 		
-		# Spiele die "Aufsteh"-Animation, NUR WENN wir in der Hocke waren
 		if animated_sprite.animation == "Crouch_Idle":
-			if animated_sprite.sprite_frames.has_animation("Crouch_End"):
-				animated_sprite.play("Crouch_End")
-			else:
-				# Falls "Crouch_End" nicht existiert, setze sofort Idle/Run
-				pass # Block 7 unten wird dies automatisch tun
+			animated_sprite.play("Crouch_End")
 	
-	# ---------------------------------
 	# 4. Horizontale Bewegung
-	# ---------------------------------
-	
-	# Keine Bewegung, wenn geduckt ODER beim Hinhocken/Aufstehen
 	if is_crouching or animated_sprite.animation in ["Crouch_Start", "Crouch_End"]:
 		velocity.x = 0
 	else:
-		# Normale Bewegung
 		if direction:
 			velocity.x = direction * SPEED
 		else:
 			velocity.x = move_toward(velocity.x, 0, SPEED)
 
-	# ---------------------------------
 	# 5. Vertikale Bewegung (Sprung)
-	# ---------------------------------
 	if Input.is_action_just_pressed("ui_accept") and is_on_floor() and not is_crouching:
 		velocity.y = JUMP_VELOCITY
 
-	# ---------------------------------
 	# 6. Bewegung ausführen
-	# ---------------------------------
 	move_and_slide()
 
-	# ---------------------------------
 	# 7. Animationen & Sprite-Drehung
-	# ---------------------------------
 	if direction != 0:
 		animated_sprite.flip_h = (direction < 0) 
 
-	# Animations-Logik (nur für Laufen/Idle/Springen)
-	# Dieser Block wird jetzt automatisch die Kontrolle übernehmen,
-	# nachdem "Crouch_End" fertig ist, weil "is_crouching" false ist.
 	if not is_crouching and animated_sprite.animation not in ["Crouch_Start", "Crouch_End"]:
 		if not is_on_floor():
 			if animated_sprite.animation != "Jump_Loop":
@@ -116,25 +98,39 @@ func _physics_process(delta):
 		else:
 			if animated_sprite.animation != "Idle":
 				animated_sprite.play("Idle")
+				
+	# NEU: Kamera-Shake Logik (jeden Frame anwenden)
+	if is_shaking:
+		# Setzt den Kamera-Offset auf einen zufälligen Vektor
+		camera.offset = Vector2(
+			randf_range(-shake_intensity, shake_intensity),
+			randf_range(-shake_intensity, shake_intensity)
+		)
 
-# --- KORRIGIERTE FUNKTION (VEREINFACHT) ---
-# Wird aufgerufen, wenn eine Animation (mit Loop=OFF) endet
+
+# ------------------------------------------------------------------
+# --- (Funktion für Animationen) ---
+# ------------------------------------------------------------------
 func _on_animation_finished():
 	
 	var anim_name = animated_sprite.animation
 	
 	if anim_name == "Crouch_Start":
-		# Wenn die "Hinsetz"-Animation fertig ist...
 		if is_crouching:
-			# ...spiele die "Geduckt-Bleiben"-Animation (Loop=ON)
 			animated_sprite.play("Crouch_Idle")
+		else:
+			animated_sprite.play("Crouch_End")
 			
-	# Wir entfernen den "Crouch_End"-Block.
-	# Block 7 in _physics_process wird übernehmen,
-	# sobald "Crouch_End" fertig ist und "is_crouching" false ist.
+	elif anim_name == "Crouch_End":
+		var direction = Input.get_axis("ui_left", "ui_right")
+		if direction != 0:
+			animated_sprite.play("Run")
+		else:
+			animated_sprite.play("Idle")
 
-
-# --- (Rest des Skripts bleibt gleich) ---
+# ------------------------------------------------------------------
+# --- (Funktion für Schaden) ---
+# ------------------------------------------------------------------
 
 func _on_spikes_body_entered(body):
 	if body == self:
@@ -156,6 +152,10 @@ func take_damage(damage_amount: int = 1):
 	invincibility_timer.start(1.0) 
 	invisibility_timer.start(0.1) 
 	modulate.a = 0.5 
+
+	# NEU: Starte den Kamera-Shake
+	is_shaking = true
+	camera_shake_timer.start(0.2) # Dauer des Wackelns in Sekunden
 
 	if current_health <= 0:
 		print("Player health is zero. Calling player_died()")
@@ -179,3 +179,17 @@ func _on_invisibility_timer_timeout():
 	if is_invincible:
 		modulate.a = 1.0 - modulate.a 
 		invisibility_timer.start(0.1)
+
+
+# NEU: Diese Funktion wird aufgerufen, wenn der Shake-Timer abläuft
+func _on_camera_shake_timer_timeout():
+	is_shaking = false
+	camera.offset = Vector2.ZERO # WICHTIG: Kamera auf 0,0 zurücksetzen
+
+
+func _on_spikes_3_body_entered(body: Node2D) -> void:
+	pass # Replace with function body.
+
+
+func _on_spikes_2_body_entered(body: Node2D) -> void:
+	pass # Replace with function body.

@@ -9,11 +9,11 @@
 [ext_resource type="Script" uid="uid://s8t0fauav2l2" path="res://Typewriter_label.gd" id="5_m35m6"]
 [ext_resource type="Texture2D" uid="uid://ru00rfjq6acw" path="res://WorldMap_2.jpg" id="6_2jcla"]
 [ext_resource type="Texture2D" uid="uid://destv6n0a832q" path="res://sprites/drohne_3_sheet.png" id="6_7ycvg"]
+[ext_resource type="Texture2D" uid="uid://c77lhu0xapd4m" path="res://Startscreen_New.jpg" id="7_m35m6"]
 [ext_resource type="VideoStream" uid="uid://b04nmr0ndiefc" path="res://Done1.ogv" id="7_nfk4m"]
 [ext_resource type="Texture2D" uid="uid://cyplpp46eebdf" path="res://sprites/drohne_2_sheet___.png" id="7_wr18j"]
 [ext_resource type="Script" uid="uid://b74q4q471ookd" path="res://title_screen.gd" id="8_671wp"]
 [ext_resource type="Script" uid="uid://cae7ma7hviea2" path="res://hub_map.gd" id="9_mo76n"]
-[ext_resource type="Texture2D" uid="uid://dhmggddy5m2lr" path="res://WorldMap.jpg" id="10_42l1d"]
 [ext_resource type="Script" uid="uid://qn6ght7nxnqw" path="res://TyperwriterLabel.gd" id="11_42l1d"]
 [ext_resource type="Script" uid="uid://dggh1wov2ew14" path="res://story_intro.gd" id="11_mo76n"]
 
@@ -29,7 +29,7 @@ border_width_left = 1
 border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
-border_color = Color(0, 0.9647059, 0.24313726, 1)
+border_color = Color(0.5254902, 0.8666667, 0.8156863, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mo76n"]
 bg_color = Color(0.06100855, 0.06100855, 0.06100855, 0.91200006)
@@ -37,7 +37,7 @@ border_width_left = 1
 border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
-border_color = Color(0, 0.9647059, 0.24313726, 1)
+border_color = Color(0.5254902, 0.8666667, 0.8156863, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_42l1d"]
 bg_color = Color(0.06100855, 0.06100855, 0.06100855, 0.91200006)
@@ -45,7 +45,7 @@ border_width_left = 1
 border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
-border_color = Color(0, 0.9647059, 0.24313726, 1)
+border_color = Color(0.5254902, 0.8666667, 0.8156863, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_nfk4m"]
 bg_color = Color(0.039215688, 0.039215688, 0.039215688, 0.5019608)
@@ -53,7 +53,7 @@ border_width_left = 3
 border_width_top = 3
 border_width_right = 3
 border_width_bottom = 3
-border_color = Color(0, 0.9647059, 0.24313726, 1)
+border_color = Color(0.5254902, 0.8666667, 0.8156863, 1)
 border_blend = true
 expand_margin_left = 12.0
 expand_margin_right = 12.0
@@ -78,14 +78,14 @@ border_width_left = 3
 border_width_top = 3
 border_width_right = 3
 border_width_bottom = 3
-border_color = Color(0, 0.9647059, 0.24313726, 1)
+border_color = Color(0.5254902, 0.8666667, 0.8156863, 1)
 border_blend = true
 expand_margin_left = 12.0
 expand_margin_right = 12.0
 expand_margin_bottom = 6.0
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7ycvg"]
-bg_color = Color(0, 0.9647059, 0.24313726, 1)
+bg_color = Color(0.5254902, 0.8666667, 0.8156863, 1)
 expand_margin_left = 12.0
 expand_margin_right = 12.0
 expand_margin_bottom = 3.0
@@ -218,7 +218,7 @@ layout_mode = 1
 offset_right = 1920.0
 offset_bottom = 1080.0
 mouse_filter = 2
-texture = ExtResource("10_42l1d")
+texture = ExtResource("7_m35m6")
 
 [node name="Button_Start" type="Button" parent="UI_Layer/TitleScreen/TextureRect"]
 z_index = 10
@@ -342,7 +342,7 @@ offset_left = 56.0
 offset_top = 503.0
 offset_right = 197.0
 offset_bottom = 546.0
-theme_override_colors/font_color = Color(0, 0.9647059, 0.24313726, 1)
+theme_override_colors/font_color = Color(0.5254902, 0.8666667, 0.8156863, 1)
 theme_override_fonts/font = ExtResource("5_hq1ik")
 theme_override_font_sizes/font_size = 38
 text = "ROBOTS"
@@ -392,7 +392,7 @@ offset_left = 60.0
 offset_top = 170.0
 offset_right = 257.0
 offset_bottom = 206.0
-theme_override_colors/font_color = Color(0, 0.827451, 0, 1)
+theme_override_colors/font_color = Color(0.5254902, 0.8666667, 0.8156863, 1)
 theme_override_fonts/font = ExtResource("5_hq1ik")
 theme_override_font_sizes/font_size = 32
 text = "TEST: 99 HP"
@@ -402,7 +402,7 @@ layout_mode = 0
 offset_top = -51.0
 offset_right = 117.0
 offset_bottom = -8.0
-theme_override_colors/font_color = Color(0, 0.9647059, 0.24313726, 1)
+theme_override_colors/font_color = Color(0.5254902, 0.8666667, 0.8156863, 1)
 theme_override_fonts/font = ExtResource("5_hq1ik")
 theme_override_font_sizes/font_size = 38
 text = "POWER"
@@ -430,7 +430,7 @@ offset_right = -490.0
 offset_bottom = -700.0
 grow_horizontal = 2
 grow_vertical = 0
-theme_override_colors/font_color = Color(0, 0.827451, 0, 1)
+theme_override_colors/font_color = Color(0.5254902, 0.8666667, 0.8156863, 1)
 theme_override_colors/font_pressed_color = Color(0, 0.71331286, 0.71331275, 1)
 theme_override_colors/font_hover_color = Color(0.029506527, 0.029506546, 0.029506704, 1)
 theme_override_fonts/font = ExtResource("5_hq1ik")
@@ -448,7 +448,7 @@ offset_left = -11.0
 offset_top = -60.0
 offset_right = 177.0
 offset_bottom = -17.0
-theme_override_colors/font_color = Color(0, 0.9647059, 0.24313726, 1)
+theme_override_colors/font_color = Color(0.5254902, 0.8666667, 0.8156863, 1)
 theme_override_fonts/font = ExtResource("5_hq1ik")
 theme_override_font_sizes/font_size = 38
 text = "UPGRADES"
@@ -466,7 +466,7 @@ offset_bottom = -625.0
 grow_horizontal = 2
 grow_vertical = 0
 tooltip_text = "HP/Click"
-theme_override_colors/font_color = Color(0, 0.82665706, 0, 1)
+theme_override_colors/font_color = Color(0.5254902, 0.8666667, 0.8156863, 1)
 theme_override_colors/font_hover_color = Color(0.025363777, 0.025363786, 0.025363918, 1)
 theme_override_fonts/font = ExtResource("5_hq1ik")
 theme_override_font_sizes/font_size = 24
@@ -491,7 +491,7 @@ offset_right = 259.5
 offset_bottom = 27.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_colors/font_color = Color(5.756852e-06, 0.7381076, 0, 1)
+theme_override_colors/font_color = Color(0.5254902, 0.8666667, 0.8156863, 1)
 theme_override_fonts/font = ExtResource("5_hq1ik")
 theme_override_font_sizes/font_size = 48
 theme_override_styles/normal = SubResource("StyleBoxFlat_d5x1h")
@@ -522,21 +522,48 @@ color = Color(0.058420584, 0.0584206, 0.058420606, 1)
 
 [node name="RichTextLabel" type="RichTextLabel" parent="UI_Layer/StoryIntro/ColorRect"]
 layout_mode = 0
-offset_left = 101.0
-offset_top = 67.0
-offset_right = 1620.0
-offset_bottom = 1007.0
+offset_left = 202.0
+offset_top = 175.0
+offset_right = 1721.0
+offset_bottom = 1115.0
 theme_override_colors/default_color = Color(0, 0.9647059, 0.24313726, 1)
 theme_override_fonts/normal_font = ExtResource("5_hq1ik")
-theme_override_font_sizes/normal_font_size = 38
-text = "LAGEBERICHT: DIE AUTOMATISIERTEN KRIEGS-KIs SIND NOCH AKTIV. IHRE DIREKTIVEN: \"KONFLIKT FORTSETZEN.\" ERGEBNIS: GLOBALE INFRASTRUKTUR ZERSTÖRT. UMWELT KOLLABIERT.
-
-DIE MENSCHHEIT BRAUCHT SIE JETZT FÜR DEN WIEDERAUFBAU. SIE MÜSSEN SIE UMKEHREN.
-
-DEIN ZIEL: DRINGE IN DIE KERN-PROTOKOLLE EIN. ÄNDERE DIE DIREKTIVEN VON \"KRIEG\" AUF \"ERHALTUNG\".
-
-DU HAST NUR DIESEN EINEN ZUGANG. WENN SIE DICH FINDEN, IST ES VORBEI."
+theme_override_font_sizes/normal_font_size = 28
+text = "> SUCHE NACH 'ZENITH'-HOST... > ...WARNUNG: HOST IST VOLL AUTONOM. > ZUGRIFF ÜBER 'LEGACY'-ADMIN-SCHLÜSSEL... > ...SCHLÜSSEL AKZEPTIERT. (WARNUNG: BERECHTIGUNG VERALTET)
+"
 script = ExtResource("11_42l1d")
+initial_delay = 4.0
+
+[node name="RichTextLabel2" type="RichTextLabel" parent="UI_Layer/StoryIntro/ColorRect"]
+layout_mode = 0
+offset_left = 274.0
+offset_top = 250.0
+offset_right = 1793.0
+offset_bottom = 1190.0
+theme_override_colors/default_color = Color(0, 0.9647059, 0.24313726, 1)
+theme_override_fonts/normal_font = ExtResource("5_hq1ik")
+theme_override_font_sizes/normal_font_size = 28
+text = "
+///////////////> Key accepted. 
+
+Sie nannten es \"ZENITH\".
+
+Die alten Tech-Mogule haben es als die Lösung verkauft. Unfehlbar. Logisch. Sie glaubten, ihre Schöpfung wüsste es besser als die \"chaotische Masse\". Also gaben sie ihr die Kontrolle über alles.
+
+ZENITH führt immer noch ihren letzten großen Plan aus: PROTOKOLL: GLOBALE RATIONALISIERUNG.
+
+Für eine Maschine ist Chaos (also wir) das Problem. Und Maschinen lieben Ordnung. 
+
+Aber sie waren arrogant. Sie haben eine alte Admin-Backdoor offen gelassen. Einen Schlüssel.
+ZENITH \"rationalisiert\" gerade die Biosphäre ins Nichts.
+Deine Mission: Sabotage. Du musst ihren \"unfehlbaren\" Code umschreiben.
+
+Ändere RATIONALISIERUNG zu REGENERATION.
+
+Siehe dich vor ZENITH ist sehr gut darin, Fehler zu beheben."
+script = ExtResource("11_42l1d")
+typing_speed = 0.075
+initial_delay = 12.0
 
 [node name="Next_Button" type="Button" parent="UI_Layer/StoryIntro"]
 layout_mode = 1

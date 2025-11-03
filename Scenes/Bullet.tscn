@@ -1,0 +1,49 @@
+[gd_scene load_steps=7 format=3 uid="uid://c1cf54lf12i3u"]
+
+[ext_resource type="Script" uid="uid://cito7y02pw1l8" path="res://bullet.gd" id="1_ayd6b"]
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_vlxeq"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_14k46"]
+noise = SubResource("FastNoiseLite_vlxeq")
+normalize = false
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_v8qja"]
+size = Vector2(85.5, 7)
+
+[sub_resource type="Gradient" id="Gradient_vlxeq"]
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_14k46"]
+gradient = SubResource("Gradient_vlxeq")
+fill = 1
+fill_from = Vector2(0.014150944, 0.018867925)
+
+[node name="Bullet" type="Area2D"]
+collision_layer = 0
+collision_mask = 2
+script = ExtResource("1_ayd6b")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+modulate = Color(0, 0.972549, 0, 1)
+position = Vector2(42.500008, 3)
+scale = Vector2(0.16601565, 0.01171875)
+texture = SubResource("NoiseTexture2D_14k46")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(42.25, 3)
+shape = SubResource("RectangleShape2D_v8qja")
+
+[node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="."]
+rect = Rect2(-2, -3, 12, 11)
+
+[node name="PointLight2D" type="PointLight2D" parent="."]
+position = Vector2(40.5, 2.5)
+scale = Vector2(1.8593752, 0.421875)
+color = Color(0.71538264, 0.99874157, 0.5055711, 1)
+energy = 2.18
+range_z_min = -1920
+range_z_max = 1920
+texture = SubResource("GradientTexture2D_14k46")
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
+[connection signal="screen_exited" from="VisibleOnScreenNotifier2D" to="." method="_on_visible_on_screen_notifier_2d_screen_exited"]
