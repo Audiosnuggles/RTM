@@ -17,14 +17,14 @@ const CLICKER_LEVEL_ASSETS = [
 		"hp_increase": 0.0 # Klicker Level 0 (Mission 1)
 	},
 	{
-		"sprite": preload("res://sprites/drohne_3_sheet.png"),
-		"background": preload("res://backgrounds/bg_3_space.png"),
-		"hp_increase": 200.0 # Klicker Level 1 (Mission 3)
-	},
-	{
 		"sprite": preload("res://sprites/drohne_2_sheet.png"),
 		"background": preload("res://backgrounds/bg_2_forest.png"),
-		"hp_increase": 450.0 # Klicker Level 2 (Mission 4)
+		"hp_increase": 200.0 # Klicker Level 2 (Mission 4)
+	},
+	{
+		"sprite": preload("res://sprites/drohne_3_sheet.png"),
+		"background": preload("res://backgrounds/bg_3_space.png"),
+		"hp_increase": 450.0 # Klicker Level 1 (Mission 3)
 	}
 	# Füge hier Asset 4 (Mission 5) hinzu, falls benötigt
 ]

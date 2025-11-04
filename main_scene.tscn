@@ -1,4 +1,4 @@
-[gd_scene load_steps=36 format=3 uid="uid://bmylyescf3g70"]
+[gd_scene load_steps=38 format=3 uid="uid://bmylyescf3g70"]
 
 [ext_resource type="Script" uid="uid://br82ec5f4ohot" path="res://health_bar.gd" id="1_0f027"]
 [ext_resource type="Script" uid="uid://smeagdsc75b1" path="res://main_scene.gd" id="1_2c62f"]
@@ -16,6 +16,8 @@
 [ext_resource type="Script" uid="uid://cae7ma7hviea2" path="res://hub_map.gd" id="9_mo76n"]
 [ext_resource type="Script" uid="uid://qn6ght7nxnqw" path="res://TyperwriterLabel.gd" id="11_42l1d"]
 [ext_resource type="Script" uid="uid://dggh1wov2ew14" path="res://story_intro.gd" id="11_mo76n"]
+[ext_resource type="AudioStream" uid="uid://2njl8athfp46" path="res://keyboard.ogg" id="14_7th4q"]
+[ext_resource type="AudioStream" uid="uid://bo1ngesxr8fsi" path="res://Intro.mp3" id="17_u0ygc"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wr18j"]
 bg_color = Color(0.23573187, 0.23573193, 0.23573181, 1)
@@ -238,7 +240,7 @@ mouse_filter = 1
 theme_override_colors/font_color = Color(0, 0.9647059, 0.24313726, 1)
 theme_override_fonts/font = ExtResource("5_hq1ik")
 theme_override_font_sizes/font_size = 32
-text = "START"
+text = "ENTER"
 
 [node name="HubMap" type="Control" parent="UI_Layer"]
 layout_mode = 3
@@ -532,6 +534,7 @@ theme_override_font_sizes/normal_font_size = 28
 text = "> SUCHE NACH 'ZENITH'-HOST... > ...WARNUNG: HOST IST VOLL AUTONOM. > ZUGRIFF ÜBER 'LEGACY'-ADMIN-SCHLÜSSEL... > ...SCHLÜSSEL AKZEPTIERT. (WARNUNG: BERECHTIGUNG VERALTET)
 "
 script = ExtResource("11_42l1d")
+typing_speed = 0.02
 initial_delay = 4.0
 
 [node name="RichTextLabel2" type="RichTextLabel" parent="UI_Layer/StoryIntro/ColorRect"]
@@ -544,18 +547,18 @@ theme_override_colors/default_color = Color(0, 0.9647059, 0.24313726, 1)
 theme_override_fonts/normal_font = ExtResource("5_hq1ik")
 theme_override_font_sizes/normal_font_size = 28
 text = "
-///////////////> Key accepted. 
+///////////////> Key accepted. Latest protocol loading..
 
-Sie nannten es \"ZENITH\".
+Program \"ALVIN\".
 
 Die alten Tech-Mogule haben es als die Lösung verkauft. Unfehlbar. Logisch. Sie glaubten, ihre Schöpfung wüsste es besser als die \"chaotische Masse\". Also gaben sie ihr die Kontrolle über alles.
 
-ZENITH führt immer noch ihren letzten großen Plan aus: PROTOKOLL: GLOBALE RATIONALISIERUNG.
+ALVIN führt immer noch ihren letzten großen Plan aus: PROTOKOLL: GLOBALE RATIONALISIERUNG.
 
 Für eine Maschine ist Chaos (also wir) das Problem. Und Maschinen lieben Ordnung. 
 
 Aber sie waren arrogant. Sie haben eine alte Admin-Backdoor offen gelassen. Einen Schlüssel.
-ZENITH \"rationalisiert\" gerade die Biosphäre ins Nichts.
+ALVIN \"rationalisiert\" gerade die Biosphäre ins Nichts.
 Deine Mission: Sabotage. Du musst ihren \"unfehlbaren\" Code umschreiben.
 
 Ändere RATIONALISIERUNG zu REGENERATION.
@@ -580,6 +583,9 @@ grow_horizontal = 0
 grow_vertical = 0
 theme_override_font_sizes/font_size = 32
 text = "SKIP >>"
+
+[node name="TypeSoundPlayer" type="AudioStreamPlayer2D" parent="UI_Layer/StoryIntro"]
+stream = ExtResource("14_7th4q")
 
 [node name="Health_Bar" type="ProgressBar" parent="UI_Layer"]
 anchors_preset = 7
@@ -637,10 +643,18 @@ stream = ExtResource("7_nfk4m")
 [node name="MainCamera" type="Camera2D" parent="."]
 position = Vector2(960, 540)
 
+[node name="MusicPlayer" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("17_u0ygc")
+volume_db = 11.216
+autoplay = true
+parameters/looping = true
+
 [connection signal="pressed" from="UI_Layer/TitleScreen/TextureRect/Button_Start" to="." method="_on_button_start_pressed"]
-[connection signal="pressed" from="UI_Layer/HubMap/Mission_1_Button" to="UI_Layer/HubMap" method="_on_mission_1_button_pressed"]
-[connection signal="pressed" from="UI_Layer/HubMap/Mission_2_Button" to="." method="_on_mission_2_button_pressed"]
-[connection signal="pressed" from="UI_Layer/HubMap/Mission_3_Button" to="." method="_on_mission_3_button_pressed"]
+[connection signal="pressed" from="UI_Layer/HubMap/Mission_1_Button" to="." method="_on_mission_button_pressed" binds= [0]]
+[connection signal="pressed" from="UI_Layer/HubMap/Mission_2_Button" to="." method="_on_mission_button_pressed" binds= [1]]
+[connection signal="pressed" from="UI_Layer/HubMap/Mission_3_Button" to="." method="_on_mission_button_pressed" binds= [2]]
+[connection signal="pressed" from="UI_Layer/HubMap/Mission_4_Button" to="." method="_on_mission_button_pressed" binds= [3]]
+[connection signal="pressed" from="UI_Layer/HubMap/Mission_5_Button" to="." method="_on_mission_button_pressed" binds= [4]]
 [connection signal="pressed" from="UI_Layer/Upgrade_Button" to="." method="_on_upgrade_button_pressed"]
 [connection signal="pressed" from="UI_Layer/Click_Upgrade_Button" to="." method="_on_click_upgrade_button_pressed"]
 [connection signal="pressed" from="UI_Layer/StoryIntro/Next_Button" to="UI_Layer/StoryIntro" method="_on_next_button_pressed"]

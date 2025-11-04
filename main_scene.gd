@@ -4,7 +4,8 @@ extends Node2D
 @export var main_camera: Camera2D
 @export var klicker_background: Sprite2D
 @export var klicker_roboter: Sprite2D
-# --- ENDE NEU ---
+
+@onready var music_player = $MusicPlayer
 
 const UI_LAYER_PATH = "UI_Layer/"
 var next_round_timer: Timer
@@ -13,8 +14,7 @@ var video_player: VideoStreamPlayer
 const MINIGAME_SCENE_PATH = preload("res://minigame_scene.tscn")
 var current_minigame: Node = null
 
-# --- KONSTANTEN ---
-# (Rest der Konstanten... bleibt gleich)
+# --- (Restliche Konstanten bleiben gleich) ---
 const MISSION_1_BUTTON_PATH = UI_LAYER_PATH + "HubMap/Mission_1_Button"
 const MISSION_2_BUTTON_PATH = UI_LAYER_PATH + "HubMap/Mission_2_Button"
 const MISSION_3_BUTTON_PATH = UI_LAYER_PATH + "HubMap/Mission_3_Button"
@@ -64,13 +64,9 @@ func _ready():
 	video_player = get_node("Video_Player")
 	var health_bar = get_node(UI_LAYER_PATH + "Health_Bar")
 
-	# --- KORREKTUR: get_tree().quit() ENTFERNT ---
 	if !is_instance_valid(main_camera) or !is_instance_valid(klicker_background) or !is_instance_valid(klicker_roboter):
 		print("FATALER FEHLER: 'Main Camera', 'Klicker Background' oder 'Klicker Roboter' wurden nicht im Inspektor der MainScene zugewiesen!")
-		# get_tree().quit() # <- DIESE ZEILE IST JETZT AUSKOMMENTIERT!
-		# return # Wir returnen auch nicht, wir machen weiter
-	# --- ENDE KORREKTUR ---
-
+	
 	if is_instance_valid(klicker_roboter):
 		Combat.healing_impulse_fired.connect(klicker_roboter.apply_healing_visual)
 		Combat.corrupted_healed.connect(_on_corrupted_healed)
@@ -87,7 +83,7 @@ func _ready():
 		main_camera.enabled = true
 		main_camera.make_current()
 
-	if is_instance_valid(klicker_roboter): # Zusätzliche Sicherheitsprüfung
+	if is_instance_valid(klicker_roboter):
 		klicker_roboter.hide()
 	_hide_ui()
 
@@ -100,17 +96,8 @@ func _unhandled_input(event):
 			Combat.healing_impulse_fired.emit(event.position)
 			get_viewport().set_input_as_handled()
 
-
-# --------------------------------------------------------------------------------------
-## NAVIGATIONS-FUNKTIONEN
-# --------------------------------------------------------------------------------------
-
 func goto_title_screen():
-	# --- KORREKTUR FÜR START-BUTTON ---
-	# Stellt sicher, dass das Spiel definitiv NICHT pausiert ist.
 	get_tree().paused = false
-	# --- ENDE KORREKTUR ---
-
 	current_state = GameState.STATE_TITLE
 	
 	var title_screen = get_node(UI_LAYER_PATH + "TitleScreen")
@@ -121,11 +108,12 @@ func goto_title_screen():
 	if is_instance_valid(hub_map): hub_map.hide()
 	if is_instance_valid(story_intro): story_intro.hide()
 	
+	if is_instance_valid(music_player):
+		music_player.volume_db = 0.0
+		if not music_player.is_playing():
+			music_player.play()
+	
 	print("Zustand: TITLE SCREEN.")
-
-# (Restliche Funktionen: goto_story_intro, goto_hub_map, goto_combat, _return_to_combat_after_transition...)
-# ... (ALLE ANDEREN FUNKTIONEN BLEIBEN EXAKT WIE IM "PLAN E"-CODE) ...
-# ... (Ich kürze sie hier ab, um die Antwort lesbar zu halten, aber sie sind identisch) ...
 
 func goto_story_intro():
 	current_state = GameState.STATE_STORY
@@ -166,17 +154,9 @@ func goto_hub_map():
 				button.disabled = true
 	print("Zustand: HUB/WORLDMAP.")
 
-func goto_combat(level_index: int):
-	if current_state != GameState.STATE_HUB_MAP: return
-	level_to_start = level_index
-	var hub_map_node = get_node(UI_LAYER_PATH + "HubMap")
-	if is_instance_valid(hub_map_node): hub_map_node.hide()
-	
-	if level_index == 1:
-		current_state = GameState.STATE_MINIGAME
-		start_minigame_level()
-	else:
-		_show_search_screen(true)
+# --------------------------------------------------------------------------------------
+## NAVIGATIONS-FUNKTIONEN (ANGEPASST)
+# --------------------------------------------------------------------------------------
 
 func _return_to_combat_after_transition():
 	var search_screen = get_node(UI_LAYER_PATH + "Search_Screen")
@@ -195,14 +175,12 @@ func _return_to_combat_after_transition():
 	var health_bar = get_node(UI_LAYER_PATH + "Health_Bar")
 	if is_instance_valid(health_bar): health_bar.show()
 	
-	var klicker_level_index = level_to_start
-	if level_to_start > 1: klicker_level_index = level_to_start - 1
-	start_next_corrupted(klicker_level_index)
+	start_next_corrupted(level_to_start)
+	
 	print("Zustand: COMBAT.")
 
-# --------------------------------------------------------------------------------------
-## MINIGAME-LOGIK (PLAN E: Mit explizitem Enable und Check)
-# --------------------------------------------------------------------------------------
+# ... (Alle MINIGAME-LOGIK Funktionen bleiben gleich) ...
+# ...
 func start_minigame_level():
 	print("start_minigame_level aufgerufen.")
 
@@ -220,7 +198,6 @@ func start_minigame_level():
 		else:
 			print("  WARNUNG: Minigame hat kein 'minigame_finished' Signal.")
 
-		# --- Kameras und BG ---
 		print("  Versuche Klicker-Welt zu verstecken und Kamera zu deaktivieren...")
 		if is_instance_valid(main_camera):
 			main_camera.enabled = false
@@ -240,11 +217,9 @@ func start_minigame_level():
 		else:
 			print("    FEHLER: klicker_roboter Variable ist leer!")
 
-		# --- Minigame hinzufügen ---
 		print("  Füge Minigame zum Baum hinzu.")
 		add_child(current_minigame)
 
-		# --- Kamera-Wechsel (Mit explizitem Enable und Check) ---
 		print("  Versuche Minigame-Kamera zu finden und zu aktivieren...")
 		
 		await get_tree().process_frame
@@ -305,11 +280,8 @@ func _on_minigame_finished(success: bool):
 
 	goto_hub_map()
 
-# --------------------------------------------------------------------------------------
-## KAMPF- UND ÜBERGANGSLOGIK
-# --------------------------------------------------------------------------------------
-# (Restlicher Code bleibt identisch zu Plan E)
-
+# ... (Alle KAMPF- UND ÜBERGANGSLOGIK Funktionen bleiben gleich) ...
+# ...
 func start_next_corrupted(level_index: int):
 	var asset_array = Combat.CLICKER_LEVEL_ASSETS
 	var asset_index_to_load = level_index % asset_array.size()
@@ -454,10 +426,8 @@ func _update_search_text(new_text: String):
 		search_label.text = final_text
 		search_label.start_typing()
 
-# --------------------------------------------------------------------------------------
-## HILFSFUNKTIONEN & PROCESS
-# --------------------------------------------------------------------------------------
-
+# ... (Alle HILFSFUNKTIONEN & PROCESS bleiben gleich) ...
+# ...
 func _hide_ui():
 	var nodes_to_hide = ["Fragment_Display", "Power_Display", "Upgrade_Button", "Click_Upgrade_Button", "Drone_Gallery", "Health_Bar", "Drone_Gallery_Label"]
 	for node_name in nodes_to_hide:
@@ -527,12 +497,18 @@ func _process(_delta):
 	if is_instance_valid(fragment_display) and fragment_display.visible:
 		_update_fragment_display()
 
+
 # --------------------------------------------------------------------------------------
 ## BUTTON-SIGNAL-HANDLER
 # --------------------------------------------------------------------------------------
 
 func _on_button_start_pressed():
+	var tween = create_tween()
+	if is_instance_valid(music_player):
+		tween.tween_property(music_player, "volume_db", -80.0, 1.5)
+		await tween.finished
 	goto_story_intro()
+
 
 func _on_upgrade_button_pressed():
 	if Combat.upgrade_healing_power():
@@ -550,8 +526,34 @@ func _on_click_upgrade_button_pressed():
 			button.text = "Upgrade Click (" + str(Combat.click_upgrade_cost) + " C)"
 			button.release_focus()
 
-func _on_mission_1_button_pressed(): goto_combat(0)
-func _on_mission_2_button_pressed(): goto_combat(1)
-func _on_mission_3_button_pressed(): goto_combat(2)
-func _on_mission_4_button_pressed(): goto_combat(3)
-func _on_mission_5_button_pressed(): goto_combat(4)
+# --- NEUE, SAUBERE LÖSUNG ---
+# Diese eine Funktion wird von ALLEN Missions-Buttons aufgerufen
+func _on_mission_button_pressed(mission_index: int):
+	# mission_index ist der Wert, den wir im Editor gebunden haben (0, 1, 2, 3, 4)
+	
+	if current_state != GameState.STATE_HUB_MAP: return
+	
+	var hub_map_node = get_node(UI_LAYER_PATH + "HubMap")
+	if is_instance_valid(hub_map_node): hub_map_node.hide()
+	
+	# mission_index 1 (Mission 2 Button) ist das Minigame
+	if mission_index == 1:
+		current_state = GameState.STATE_MINIGAME
+		start_minigame_level()
+	else:
+		# Dies ist ein Klicker-Level.
+		# Wir berechnen den KORREKTEN Klicker-Index SOFORT.
+		
+		var klicker_level_to_load = mission_index
+		if mission_index > 1:
+			# Wenn Mission 3 (Index 2) oder höher, ziehe 1 ab,
+			# um das Minigame (Index 1) in der Zählung zu überspringen.
+			klicker_level_to_load = mission_index - 1
+			
+		# Speichere den BEREITS KORRIGIERTEN Klicker-Index
+		level_to_start = klicker_level_to_load
+		
+		# Gehe zum Ladebildschirm
+		_show_search_screen(true)
+
+# (Die alten, leeren Funktionen von unten wurden entfernt)

@@ -957,6 +957,7 @@ shape = SubResource("RectangleShape2D_6jybn")
 
 [node name="Door" type="Area2D" parent="."]
 z_index = 10
+collision_mask = 2
 script = ExtResource("2_gbnch")
 
 [node name="ColorRect" type="ColorRect" parent="Door"]
