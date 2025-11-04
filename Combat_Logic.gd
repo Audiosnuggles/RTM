@@ -29,10 +29,12 @@ const CLICKER_LEVEL_ASSETS = [
 	# Füge hier Asset 4 (Mission 5) hinzu, falls benötigt
 ]
 
-var current_level_index = 0
+var current_level_index = 0 # KORREKTUR: Dies ist NUR der Fortschritt auf der Hub-Map
+var last_klicker_level_loaded = 0 # NEU: Merkt sich, welches Klicker-Level geladen wurde
 
 # --- WÄHRUNG / UPGRADES ---
-var harmony_fragments = 0.0
+# KORREKTUR: 'var' und 'harmony_fragments' auf EINE Zeile zusammengeführt
+var harmony_fragments = 0.0 
 var upgrade_cost = 100.0
 var echo_healing_power = 10.0
 var healing_interval = 1.0
@@ -78,8 +80,8 @@ func _check_for_win():
 		is_corrupted_healed = true
 		is_combat_active = false
 		
-		# KORRIGIERT: Verwendet CLICKER_LEVEL_ASSETS
-		var asset_index_to_save = current_level_index % CLICKER_LEVEL_ASSETS.size()
+		# KORREKTUR: Verwendet die neue Variable, um die korrekte Drohne zu speichern
+		var asset_index_to_save = last_klicker_level_loaded % CLICKER_LEVEL_ASSETS.size()
 		var saved_asset = CLICKER_LEVEL_ASSETS[asset_index_to_save].sprite
 		
 		if saved_asset and not collected_drones.has(saved_asset):
@@ -90,19 +92,23 @@ func _check_for_win():
 		
 		corrupted_healed.emit()
 		
-		# HINWEIS: Der Index wird jetzt in main_scene.gd verwaltet, 
-		# aber wir behalten die Inkrementierung hier für den Fall, dass es einen Endlosmodus gibt
+		# HINWEIS: Diese Inkrementierung ist KORREKT.
+		# Sie erhöht den Fortschritts-Index für die Hub-Map.
 		current_level_index += 1
 
 
-func start_new_combat(level_index: int): # KORRIGIERT: Akzeptiert level_index
+func start_new_combat(level_index: int): # KORRIGIERT: Akzeptiert Klicker-Index
 	
-	# Setzt den internen Zähler auf den Klicker-Index
-	current_level_index = level_index
+	# KORREKTUR: Setzt den Hub-Fortschritt (current_level_index) NICHT mehr zurück.
+	# current_level_index = level_index # <--- ENTFERNT
+	
+	# KORREKTUR: Speichere stattdessen, welches Klicker-Level wir laden.
+	last_klicker_level_loaded = level_index
 	
 	var base_hp = 500.0
 	var hp_increase = 0.0
 	
+	# Verwendet den übergebenen Klicker-Index (level_index)
 	if level_index < CLICKER_LEVEL_ASSETS.size():
 		hp_increase = CLICKER_LEVEL_ASSETS[level_index].hp_increase
 	else:

@@ -1,4 +1,4 @@
-[gd_scene load_steps=38 format=3 uid="uid://bmylyescf3g70"]
+[gd_scene load_steps=46 format=3 uid="uid://bmylyescf3g70"]
 
 [ext_resource type="Script" uid="uid://br82ec5f4ohot" path="res://health_bar.gd" id="1_0f027"]
 [ext_resource type="Script" uid="uid://smeagdsc75b1" path="res://main_scene.gd" id="1_2c62f"]
@@ -9,7 +9,7 @@
 [ext_resource type="Script" uid="uid://s8t0fauav2l2" path="res://Typewriter_label.gd" id="5_m35m6"]
 [ext_resource type="Texture2D" uid="uid://ru00rfjq6acw" path="res://WorldMap_2.jpg" id="6_2jcla"]
 [ext_resource type="Texture2D" uid="uid://destv6n0a832q" path="res://sprites/drohne_3_sheet.png" id="6_7ycvg"]
-[ext_resource type="Texture2D" uid="uid://c77lhu0xapd4m" path="res://Startscreen_New.jpg" id="7_m35m6"]
+[ext_resource type="Texture2D" uid="uid://c63fd0k2svgkv" path="res://bg_2000x1100px.jpg" id="7_7th4q"]
 [ext_resource type="VideoStream" uid="uid://b04nmr0ndiefc" path="res://Done1.ogv" id="7_nfk4m"]
 [ext_resource type="Texture2D" uid="uid://cyplpp46eebdf" path="res://sprites/drohne_2_sheet___.png" id="7_wr18j"]
 [ext_resource type="Script" uid="uid://b74q4q471ookd" path="res://title_screen.gd" id="8_671wp"]
@@ -24,6 +24,55 @@ bg_color = Color(0.23573187, 0.23573193, 0.23573181, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_qwutr"]
 bg_color = Color(0, 0.9647059, 0.24313726, 1)
+
+[sub_resource type="Gradient" id="Gradient_7th4q"]
+offsets = PackedFloat32Array(0, 0.6351351)
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_6jybn"]
+gradient = SubResource("Gradient_7th4q")
+fill = 1
+fill_from = Vector2(0.48349056, 0.48349056)
+
+[sub_resource type="Gradient" id="Gradient_6jybn"]
+offsets = PackedFloat32Array(0, 0.2596154, 0.72596157, 1)
+colors = PackedColorArray(1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_84odl"]
+gradient = SubResource("Gradient_6jybn")
+width = 1080
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_84odl"]
+lifetime_randomness = 0.42
+particle_flag_disable_z = true
+emission_shape_offset = Vector3(5, 5, 0)
+emission_shape_scale = Vector3(5, -4, 1)
+angle_min = -81.29999
+angle_max = 267.1
+inherit_velocity_ratio = 0.875
+velocity_pivot = Vector3(0, 10, 0)
+spread = 180.0
+flatness = 0.355
+gravity = Vector3(0, -5, 0)
+radial_accel_min = -2.2351742e-06
+radial_accel_max = 99.99999
+tangential_accel_min = 99.99999
+tangential_accel_max = 99.99999
+damping_max = 82.258
+scale_min = 0.099999994
+scale_max = 0.39999998
+color_ramp = SubResource("GradientTexture1D_84odl")
+anim_offset_max = 1.0
+turbulence_enabled = true
+turbulence_noise_strength = 20.0
+turbulence_noise_scale = 1.849
+turbulence_noise_speed = Vector3(0, -4.06, 0)
+turbulence_noise_speed_random = 1.19
+turbulence_influence_min = 0.058000002
+turbulence_influence_max = 1.0
+collision_use_scale = true
+sub_emitter_mode = 1
+sub_emitter_frequency = 100.0
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_671wp"]
 bg_color = Color(0.06100855, 0.06100855, 0.06100855, 0.91200006)
@@ -148,9 +197,45 @@ bg_color = Color(0.21770102, 0.21770108, 0.21770096, 1)
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_gyfs4"]
 bg_color = Color(0.107582815, 0.7043738, 0.50690824, 1)
 
-[node name="MainScene" type="Node2D" node_paths=PackedStringArray("main_camera", "klicker_background", "klicker_roboter")]
+[sub_resource type="Animation" id="Animation_7th4q"]
+resource_name = "Camaera_Zoom"
+length = 20.0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("MainCamera:zoom")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 20),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(1, 1), Vector2(2, 2)]
+}
+
+[sub_resource type="Animation" id="Animation_6jybn"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("MainCamera:zoom")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 1)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_84odl"]
+_data = {
+&"Camaera_Zoom": SubResource("Animation_7th4q"),
+&"RESET": SubResource("Animation_6jybn")
+}
+
+[node name="MainScene" type="Node2D" node_paths=PackedStringArray("klicker_background", "klicker_roboter")]
 script = ExtResource("1_2c62f")
-main_camera = NodePath("MainCamera")
 klicker_background = NodePath("Background")
 klicker_roboter = NodePath("Corrupted_Visual")
 metadata/_edit_horizontal_guides_ = [840.0]
@@ -217,10 +302,12 @@ script = ExtResource("8_671wp")
 
 [node name="TextureRect" type="TextureRect" parent="UI_Layer/TitleScreen"]
 layout_mode = 1
-offset_right = 1920.0
-offset_bottom = 1080.0
+offset_left = -38.0
+offset_top = -9.0
+offset_right = 1962.0
+offset_bottom = 1091.0
 mouse_filter = 2
-texture = ExtResource("7_m35m6")
+texture = ExtResource("7_7th4q")
 
 [node name="Button_Start" type="Button" parent="UI_Layer/TitleScreen/TextureRect"]
 z_index = 10
@@ -241,6 +328,14 @@ theme_override_colors/font_color = Color(0, 0.9647059, 0.24313726, 1)
 theme_override_fonts/font = ExtResource("5_hq1ik")
 theme_override_font_sizes/font_size = 32
 text = "ENTER"
+
+[node name="GPUParticles2D" type="GPUParticles2D" parent="UI_Layer/TitleScreen"]
+z_index = 11
+position = Vector2(960, 569)
+amount = 200
+texture = SubResource("GradientTexture2D_6jybn")
+lifetime = 24.76
+process_material = SubResource("ParticleProcessMaterial_84odl")
 
 [node name="HubMap" type="Control" parent="UI_Layer"]
 layout_mode = 3
@@ -642,6 +737,13 @@ stream = ExtResource("7_nfk4m")
 
 [node name="MainCamera" type="Camera2D" parent="."]
 position = Vector2(960, 540)
+scale = Vector2(1.05, 1.05)
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+process_mode = 3
+libraries = {
+&"": SubResource("AnimationLibrary_84odl")
+}
 
 [node name="MusicPlayer" type="AudioStreamPlayer2D" parent="."]
 stream = ExtResource("17_u0ygc")

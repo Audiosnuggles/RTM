@@ -1,11 +1,13 @@
 extends Node2D
 
 # --- NODE-VERKNÜPFUNGEN ---
-@export var main_camera: Camera2D
+# KORREKTUR: Jetzt mit der korrekten, case-sensitiven Groß-/Kleinschreibung für den Node-Pfad ($MainCamera)
+@onready var main_camera = $MainCamera 
 @export var klicker_background: Sprite2D
 @export var klicker_roboter: Sprite2D
 
 @onready var music_player = $MusicPlayer
+@onready var anim_player = $AnimationPlayer 
 
 const UI_LAYER_PATH = "UI_Layer/"
 var next_round_timer: Timer
@@ -99,6 +101,16 @@ func _unhandled_input(event):
 func goto_title_screen():
 	get_tree().paused = false
 	current_state = GameState.STATE_TITLE
+	
+	# --- DEBUGGING START ---
+	# (Stelle sicher, dass deine Animation im Editor "Camaera_Zoom" heißt)
+	if is_instance_valid(anim_player):
+		print("DEBUG: anim_player ist GÜLTIG. Versuche 'Camaera_Zoom' zu starten.")
+		# KORREKTUR: Wir rufen jetzt wieder die Zoom-Animation auf
+		anim_player.play("Camaera_Zoom") 
+	else:
+		print("DEBUG: FEHLER! anim_player ist UNGÜLTIG (null). Pfad @onready prüfen!")
+	# --- DEBUGGING ENDE ---
 	
 	var title_screen = get_node(UI_LAYER_PATH + "TitleScreen")
 	var hub_map = get_node(UI_LAYER_PATH + "HubMap")
@@ -287,7 +299,8 @@ func start_next_corrupted(level_index: int):
 	var asset_index_to_load = level_index % asset_array.size()
 	var current_assets = asset_array[asset_index_to_load]
 
-	Combat.current_level_index = level_index
+	# KORREKTUR: Diese Zeile hat den Hub-Fortschritt fälschlicherweise zurückgesetzt.
+	# Combat.current_level_index = level_index 
 
 	var background_node = klicker_background
 	var corrupted_node = klicker_roboter
@@ -356,7 +369,8 @@ func _on_corrupted_healed():
 		next_round_timer.start()
 		await next_round_timer.timeout
 
-	if Combat.current_level_index == 2:
+	# KORREKTUR: Prüft jetzt auf Level 3 (Mission 4), nicht mehr auf 2 (Mission 3)
+	if Combat.current_level_index == 3:
 		if is_instance_valid(video_player):
 			video_player.show()
 			video_player.play()
@@ -426,8 +440,6 @@ func _update_search_text(new_text: String):
 		search_label.text = final_text
 		search_label.start_typing()
 
-# ... (Alle HILFSFUNKTIONEN & PROCESS bleiben gleich) ...
-# ...
 func _hide_ui():
 	var nodes_to_hide = ["Fragment_Display", "Power_Display", "Upgrade_Button", "Click_Upgrade_Button", "Drone_Gallery", "Health_Bar", "Drone_Gallery_Label"]
 	for node_name in nodes_to_hide:
@@ -503,6 +515,12 @@ func _process(_delta):
 # --------------------------------------------------------------------------------------
 
 func _on_button_start_pressed():
+	# KORREKTUR: Wir aktivieren die Stop-Befehle wieder
+	if is_instance_valid(anim_player):
+		anim_player.stop() # Stoppt die "Camaera_Zoom"-Animation
+	if is_instance_valid(main_camera):
+		main_camera.zoom = Vector2(1, 1) # Setzt den Zoom auf den Standardwert zurück
+	
 	var tween = create_tween()
 	if is_instance_valid(music_player):
 		tween.tween_property(music_player, "volume_db", -80.0, 1.5)
@@ -526,34 +544,20 @@ func _on_click_upgrade_button_pressed():
 			button.text = "Upgrade Click (" + str(Combat.click_upgrade_cost) + " C)"
 			button.release_focus()
 
-# --- NEUE, SAUBERE LÖSUNG ---
-# Diese eine Funktion wird von ALLEN Missions-Buttons aufgerufen
 func _on_mission_button_pressed(mission_index: int):
-	# mission_index ist der Wert, den wir im Editor gebunden haben (0, 1, 2, 3, 4)
-	
 	if current_state != GameState.STATE_HUB_MAP: return
 	
 	var hub_map_node = get_node(UI_LAYER_PATH + "HubMap")
 	if is_instance_valid(hub_map_node): hub_map_node.hide()
 	
-	# mission_index 1 (Mission 2 Button) ist das Minigame
 	if mission_index == 1:
 		current_state = GameState.STATE_MINIGAME
 		start_minigame_level()
 	else:
-		# Dies ist ein Klicker-Level.
-		# Wir berechnen den KORREKTEN Klicker-Index SOFORT.
-		
 		var klicker_level_to_load = mission_index
 		if mission_index > 1:
-			# Wenn Mission 3 (Index 2) oder höher, ziehe 1 ab,
-			# um das Minigame (Index 1) in der Zählung zu überspringen.
 			klicker_level_to_load = mission_index - 1
 			
-		# Speichere den BEREITS KORRIGIERTEN Klicker-Index
 		level_to_start = klicker_level_to_load
 		
-		# Gehe zum Ladebildschirm
 		_show_search_screen(true)
-
-# (Die alten, leeren Funktionen von unten wurden entfernt)
