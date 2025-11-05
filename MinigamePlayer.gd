@@ -1,7 +1,7 @@
 extends CharacterBody2D
 
 const SPEED = 300.0
-const JUMP_VELOCITY = -600.0 
+const JUMP_VELOCITY = -650.0 
 
 @export var max_health: int = 3
 var current_health: int
@@ -132,6 +132,7 @@ func _on_animation_finished():
 # --- (Funktion für Schaden) ---
 # ------------------------------------------------------------------
 
+# Diese Funktion ist KORREKT. Sie benutzt 'body'.
 func _on_spikes_body_entered(body):
 	if body == self:
 		take_damage(1) 
@@ -187,9 +188,29 @@ func _on_camera_shake_timer_timeout():
 	camera.offset = Vector2.ZERO # WICHTIG: Kamera auf 0,0 zurücksetzen
 
 
-func _on_spikes_3_body_entered(body: Node2D) -> void:
+# --- START DER KORREKTUREN (UNBENUTZTE PARAMETER) ---
+
+func _on_spikes_3_body_entered(_body: Node2D) -> void:
 	pass # Replace with function body.
 
 
-func _on_spikes_2_body_entered(body: Node2D) -> void:
+func _on_spikes_2_body_entered(_body: Node2D) -> void:
 	pass # Replace with function body.
+
+
+func _on_spikes_5_body_entered(_body: Node2D) -> void:
+	pass # Replace with function body.
+
+
+func _on_spikes_6_body_entered(_body: Node2D) -> void:
+	pass # Replace with function body.
+
+
+func _on_spikes_7_body_entered(_body: Node2D) -> void:
+	pass # Replace with function body.
+
+
+func _on_spikes_8_body_entered(_body: Node2D) -> void:
+	pass # Replace with function body.
+
+# --- ENDE DER KORREKTUREN ---

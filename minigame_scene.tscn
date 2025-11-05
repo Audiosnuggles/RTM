@@ -1,15 +1,16 @@
-[gd_scene load_steps=133 format=3 uid="uid://dh2ue3w1qbcrr"]
+[gd_scene load_steps=134 format=3 uid="uid://dh2ue3w1qbcrr"]
 
 [ext_resource type="Script" uid="uid://ba1x8aq3ygvoy" path="res://minigame_scene.gd" id="1_vs5gd"]
 [ext_resource type="Script" uid="uid://cqkj0flrbeyyd" path="res://MinigamePlayer.gd" id="2_a3a31"]
 [ext_resource type="Script" uid="uid://bumxs0gthw5x7" path="res://door.gd" id="2_gbnch"]
-[ext_resource type="Texture2D" uid="uid://bnx1brex4vnbl" path="res://BG_Parallax_Mini_Far_1920.png" id="2_jtsu5"]
+[ext_resource type="Texture2D" uid="uid://c2rhix4q6rud2" path="res://hintergrund_minigame4.jpg" id="2_npmsg"]
 [ext_resource type="Texture2D" uid="uid://dmko6ysi0m3hd" path="res://BG_Parallax_Mini_Mid_2.png" id="3_jtsu5"]
 [ext_resource type="Texture2D" uid="uid://b6hncwpmdffxj" path="res://P1_crouching.png" id="5_sajbp"]
 [ext_resource type="Texture2D" uid="uid://corurcuugw3ut" path="res://sprite-256px-36.png" id="5_xfjop"]
 [ext_resource type="Texture2D" uid="uid://cguoi3w4l8gs2" path="res://jump_sprite-256px-36.png" id="6_6gwg8"]
 [ext_resource type="PackedScene" uid="uid://1rfuf7s0xt4n" path="res://Scenes/Enemy.tscn" id="8_e2w2n"]
 [ext_resource type="FontFile" uid="uid://diar4wg3jugva" path="res://OCR-a_.ttf" id="9_3wvma"]
+[ext_resource type="Texture2D" uid="uid://l4k25ajlj0ud" path="res://spike_asset.png" id="11_npmsg"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_fttra"]
 atlas = ExtResource("5_sajbp")
@@ -866,7 +867,7 @@ size = Vector2(10083, 40.5)
 size = Vector2(159, 281.5)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_gbnch"]
-size = Vector2(106.5, 21.5)
+size = Vector2(124, 21.5)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3wvma"]
 bg_color = Color(0, 0.9647059, 0.24313726, 1)
@@ -891,7 +892,7 @@ motion_scale = Vector2(0.1, 1)
 motion_mirroring = Vector2(1920, 0)
 
 [node name="Sprite2D" type="Sprite2D" parent="ParallaxBackground/Layer_Far"]
-texture = ExtResource("2_jtsu5")
+texture = ExtResource("2_npmsg")
 centered = false
 
 [node name="Layer_Mid" type="ParallaxLayer" parent="ParallaxBackground"]
@@ -975,29 +976,30 @@ shape = SubResource("RectangleShape2D_84odl")
 position = Vector2(-450, -2)
 collision_mask = 2
 
-[node name="ColorRect" type="ColorRect" parent="Spikes4"]
-custom_minimum_size = Vector2(60, 0)
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = 1463.0
-offset_top = 1009.0
-offset_right = 1566.0
-offset_bottom = 1030.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(0.6528191, 0, 0.3071221, 1)
-metadata/_edit_use_anchors_ = true
-
-[node name="Sprite2D" type="Sprite2D" parent="Spikes4"]
-position = Vector2(-1701, 0)
-
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Spikes4"]
-position = Vector2(1515, 1019.25)
+position = Vector2(1511, 1019.25)
 shape = SubResource("RectangleShape2D_gbnch")
-debug_color = Color(0.9598109, 0, 0, 1)
+debug_color = Color(0.9607843, 0, 0, 0.3372549)
+
+[node name="Sprite2D2" type="Sprite2D" parent="Spikes4"]
+position = Vector2(1512, 1014)
+scale = Vector2(0.5351026, 0.53510255)
+texture = ExtResource("11_npmsg")
+
+[node name="Spikes2" type="Area2D" parent="."]
+position = Vector2(-451, -2)
+collision_layer = 3
+collision_mask = 2
+
+[node name="Sprite2D3" type="Sprite2D" parent="Spikes2"]
+position = Vector2(2012.0001, 1016.99994)
+scale = Vector2(0.50704616, 0.4856356)
+texture = ExtResource("11_npmsg")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Spikes2"]
+position = Vector2(2014, 1019.25)
+shape = SubResource("RectangleShape2D_gbnch")
+debug_color = Color(0.9607843, 0, 0, 0.24313726)
 
 [node name="Spikes" type="Area2D" parent="."]
 position = Vector2(-451, -2)
@@ -1027,36 +1029,11 @@ position = Vector2(3216, 1019.25)
 shape = SubResource("RectangleShape2D_gbnch")
 debug_color = Color(0.9598109, 0, 0, 1)
 
-[node name="Spikes2" type="Area2D" parent="Spikes"]
-collision_layer = 3
-collision_mask = 2
-
-[node name="ColorRect" type="ColorRect" parent="Spikes/Spikes2"]
-custom_minimum_size = Vector2(60, 0)
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = 1962.0
-offset_top = 1009.0
-offset_right = 2065.0
-offset_bottom = 1030.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(0.6528191, 0, 0.3071221, 1)
-metadata/_edit_use_anchors_ = true
-
-[node name="Sprite2D" type="Sprite2D" parent="Spikes/Spikes2"]
-position = Vector2(-1202, 0)
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Spikes/Spikes2"]
-position = Vector2(2014, 1019.25)
-shape = SubResource("RectangleShape2D_gbnch")
-debug_color = Color(0.9598109, 0, 0, 1)
+[node name="Sprite2D2" type="Sprite2D" parent="Spikes"]
+position = Vector2(-1701, 0)
 
 [node name="Enemy" parent="." instance=ExtResource("8_e2w2n")]
-position = Vector2(2242, 975)
+position = Vector2(2061, 975)
 
 [node name="GameOverTimer" type="Timer" parent="."]
 process_mode = 2
@@ -1191,12 +1168,177 @@ position = Vector2(-952, -1377)
 shape = SubResource("RectangleShape2D_sajbp")
 one_way_collision = true
 
+[node name="Enemy3" parent="." instance=ExtResource("8_e2w2n")]
+position = Vector2(6213, 975)
+
+[node name="Platform8" type="StaticBody2D" parent="."]
+position = Vector2(6797, 2009)
+collision_layer = 3
+
+[node name="ColorRect" type="ColorRect" parent="Platform8"]
+offset_left = 402.0
+offset_top = -1281.0
+offset_right = 648.0
+offset_bottom = -1258.0
+color = Color(0.16862746, 0.88235295, 0.7058824, 1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platform8"]
+position = Vector2(525, -1270)
+shape = SubResource("RectangleShape2D_sajbp")
+one_way_collision = true
+
+[node name="Spikes5" type="Area2D" parent="."]
+position = Vector2(-450, -2)
+collision_mask = 2
+
+[node name="ColorRect" type="ColorRect" parent="Spikes5"]
+custom_minimum_size = Vector2(60, 0)
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 8210.0
+offset_top = 1009.0
+offset_right = 8313.0
+offset_bottom = 1030.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.6528191, 0, 0.3071221, 1)
+metadata/_edit_use_anchors_ = true
+
+[node name="Sprite2D" type="Sprite2D" parent="Spikes5"]
+position = Vector2(5046, 0)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Spikes5"]
+position = Vector2(8262, 1019.25)
+shape = SubResource("RectangleShape2D_gbnch")
+debug_color = Color(0.9598109, 0, 0, 1)
+
+[node name="Spikes5" type="Area2D" parent="Spikes5"]
+position = Vector2(-450, -2)
+collision_mask = 2
+
+[node name="ColorRect" type="ColorRect" parent="Spikes5/Spikes5"]
+custom_minimum_size = Vector2(60, 0)
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 8816.0
+offset_top = 1009.0
+offset_right = 8919.0
+offset_bottom = 1030.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.6528191, 0, 0.3071221, 1)
+metadata/_edit_use_anchors_ = true
+
+[node name="Sprite2D" type="Sprite2D" parent="Spikes5/Spikes5"]
+position = Vector2(5756, 0)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Spikes5/Spikes5"]
+position = Vector2(8868, 1019.25)
+shape = SubResource("RectangleShape2D_gbnch")
+debug_color = Color(0.9598109, 0, 0, 1)
+
+[node name="Spikes6" type="Area2D" parent="."]
+position = Vector2(-450, -2)
+collision_mask = 2
+
+[node name="ColorRect" type="ColorRect" parent="Spikes6"]
+custom_minimum_size = Vector2(60, 0)
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 8731.0
+offset_top = 1009.0
+offset_right = 8834.0
+offset_bottom = 1030.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.6528191, 0, 0.3071221, 1)
+metadata/_edit_use_anchors_ = true
+
+[node name="Sprite2D" type="Sprite2D" parent="Spikes6"]
+position = Vector2(5567, 0)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Spikes6"]
+position = Vector2(8783, 1019.25)
+shape = SubResource("RectangleShape2D_gbnch")
+debug_color = Color(0.9598109, 0, 0, 1)
+
+[node name="Spikes7" type="Area2D" parent="."]
+position = Vector2(-450, -2)
+collision_mask = 2
+
+[node name="ColorRect" type="ColorRect" parent="Spikes7"]
+custom_minimum_size = Vector2(60, 0)
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 8997.0
+offset_top = 1009.0
+offset_right = 9100.0
+offset_bottom = 1030.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.6528191, 0, 0.3071221, 1)
+metadata/_edit_use_anchors_ = true
+
+[node name="Sprite2D" type="Sprite2D" parent="Spikes7"]
+position = Vector2(5833, 0)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Spikes7"]
+position = Vector2(9049, 1019.25)
+shape = SubResource("RectangleShape2D_gbnch")
+debug_color = Color(0.9598109, 0, 0, 1)
+
+[node name="Spikes8" type="Area2D" parent="."]
+position = Vector2(-450, -2)
+collision_mask = 2
+
+[node name="ColorRect" type="ColorRect" parent="Spikes8"]
+custom_minimum_size = Vector2(60, 0)
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 9255.0
+offset_top = 1009.0
+offset_right = 9358.0
+offset_bottom = 1030.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.6528191, 0, 0.3071221, 1)
+metadata/_edit_use_anchors_ = true
+
+[node name="Sprite2D" type="Sprite2D" parent="Spikes8"]
+position = Vector2(6091, 0)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Spikes8"]
+position = Vector2(9307, 1019.25)
+shape = SubResource("RectangleShape2D_gbnch")
+debug_color = Color(0.9598109, 0, 0, 1)
+
 [connection signal="timeout" from="Player/CameraShakeTimer" to="Player" method="_on_camera_shake_timer_timeout"]
 [connection signal="timeout" from="Player/InvincibilityTimer" to="Player" method="_on_invincibility_timer_timeout"]
 [connection signal="timeout" from="Player/InvisibilityTimer" to="Player" method="_on_invisibility_timer_timeout"]
 [connection signal="body_entered" from="Door" to="." method="_on_door_body_entered"]
 [connection signal="body_entered" from="Spikes4" to="Player" method="_on_spikes_body_entered"]
+[connection signal="body_entered" from="Spikes2" to="Player" method="_on_spikes_body_entered"]
 [connection signal="body_entered" from="Spikes" to="Player" method="_on_spikes_body_entered"]
-[connection signal="body_entered" from="Spikes/Spikes2" to="Player" method="_on_spikes_body_entered"]
 [connection signal="player_hit" from="Enemy" to="Player" method="take_damage"]
 [connection signal="timeout" from="GameOverTimer" to="." method="_on_game_over_timer_timeout"]
+[connection signal="body_entered" from="Spikes5" to="Player" method="_on_spikes_body_entered"]
+[connection signal="body_entered" from="Spikes5/Spikes5" to="Player" method="_on_spikes_body_entered"]
+[connection signal="body_entered" from="Spikes6" to="Player" method="_on_spikes_body_entered"]
+[connection signal="body_entered" from="Spikes7" to="Player" method="_on_spikes_body_entered"]
+[connection signal="body_entered" from="Spikes8" to="." method="_on_spikes_body_entered"]
+[connection signal="body_entered" from="Spikes8" to="Player" method="_on_spikes_body_entered"]

@@ -28,6 +28,10 @@ func player_died():
 	
 	# "queue_free()" HIER ENTFERNT
 
-
-func _on_spikes_2_body_entered(body: Node2D) -> void:
+# --- KORREKTUR 1 (Unbenutzter Parameter) ---
+func _on_spikes_2_body_entered(_body: Node2D) -> void:
 	pass # Replace with function body.
+
+# --- KORREKTUR 2 (Fehlende Funktion) ---
+func _on_game_over_timer_timeout():
+	pass # Diese Funktion wurde vom GameOverTimer in der .tscn-Datei erwartet

@@ -1,13 +1,14 @@
 extends Node2D
 
 # --- NODE-VERKNÜPFUNGEN ---
-# KORREKTUR: Jetzt mit der korrekten, case-sensitiven Groß-/Kleinschreibung für den Node-Pfad ($MainCamera)
 @onready var main_camera = $MainCamera 
 @export var klicker_background: Sprite2D
 @export var klicker_roboter: Sprite2D
 
 @onready var music_player = $MusicPlayer
+@onready var hub_music_player = $HubMusicPlayer # Für die Hub-Musik
 @onready var anim_player = $AnimationPlayer 
+@onready var fade_screen = $UI_Layer/FadeScreen # NEU: Für den Fade-Übergang
 
 const UI_LAYER_PATH = "UI_Layer/"
 var next_round_timer: Timer
@@ -87,7 +88,17 @@ func _ready():
 
 	if is_instance_valid(klicker_roboter):
 		klicker_roboter.hide()
+		
+	# Zeige den Welt-Hintergrund für den Titelbildschirm
+	if is_instance_valid(klicker_background):
+		klicker_background.show() 
+		
 	_hide_ui()
+	
+	# FadeScreen zu Beginn unsichtbar machen
+	if is_instance_valid(fade_screen):
+		fade_screen.modulate.a = 0.0
+		fade_screen.hide()
 
 	goto_title_screen()
 
@@ -102,15 +113,14 @@ func goto_title_screen():
 	get_tree().paused = false
 	current_state = GameState.STATE_TITLE
 	
-	# --- DEBUGGING START ---
-	# (Stelle sicher, dass deine Animation im Editor "Camaera_Zoom" heißt)
+	# Stelle sicher, dass der Welt-Hintergrund sichtbar ist
+	if is_instance_valid(klicker_background):
+		klicker_background.show()
+	if is_instance_valid(klicker_roboter):
+		klicker_roboter.hide()
+	
 	if is_instance_valid(anim_player):
-		print("DEBUG: anim_player ist GÜLTIG. Versuche 'Camaera_Zoom' zu starten.")
-		# KORREKTUR: Wir rufen jetzt wieder die Zoom-Animation auf
 		anim_player.play("Camaera_Zoom") 
-	else:
-		print("DEBUG: FEHLER! anim_player ist UNGÜLTIG (null). Pfad @onready prüfen!")
-	# --- DEBUGGING ENDE ---
 	
 	var title_screen = get_node(UI_LAYER_PATH + "TitleScreen")
 	var hub_map = get_node(UI_LAYER_PATH + "HubMap")
@@ -120,6 +130,10 @@ func goto_title_screen():
 	if is_instance_valid(hub_map): hub_map.hide()
 	if is_instance_valid(story_intro): story_intro.hide()
 	
+	# --- MUSIK-LOGIK ---
+	if is_instance_valid(hub_music_player) and hub_music_player.is_playing():
+		hub_music_player.stop()
+		
 	if is_instance_valid(music_player):
 		music_player.volume_db = 0.0
 		if not music_player.is_playing():
@@ -131,12 +145,37 @@ func goto_story_intro():
 	current_state = GameState.STATE_STORY
 	var title_screen = get_node(UI_LAYER_PATH + "TitleScreen")
 	if is_instance_valid(title_screen): title_screen.hide()
+	
 	var story_intro = get_node(UI_LAYER_PATH + "StoryIntro")
 	if is_instance_valid(story_intro): story_intro.show()
+	
 	print("Zustand: STORY INTRO.")
+	
+	# --- START: KORREKTUR FÜR INTRO-TEXT ---
+	var intro_label_1 = get_node(UI_LAYER_PATH + "StoryIntro/ColorRect/RichTextLabel")
+	var intro_label_2 = get_node(UI_LAYER_PATH + "StoryIntro/ColorRect/RichTextLabel2")
+	if is_instance_valid(intro_label_1) and intro_label_1.has_method("start_typing"):
+		intro_label_1.start_typing()
+	if is_instance_valid(intro_label_2) and intro_label_2.has_method("start_typing"):
+		intro_label_2.start_typing()
+	# --- ENDE: KORREKTUR FÜR INTRO-TEXT ---
+	
+	# --- NEU: Vom Schwarz weich einblenden ---
+	if is_instance_valid(fade_screen) and fade_screen.modulate.a > 0.9:
+		var fade_out_tween = create_tween()
+		fade_out_tween.tween_property(fade_screen, "modulate:a", 0.0, 1.0)
+		await fade_out_tween.finished
+		fade_screen.hide()
 
 func goto_hub_map():
 	current_state = GameState.STATE_HUB_MAP
+	
+	# --- NEUER MUSIK-CODE START ---
+	if is_instance_valid(music_player) and music_player.is_playing():
+		music_player.stop() 
+	if is_instance_valid(hub_music_player) and not hub_music_player.is_playing():
+		hub_music_player.play()
+	# --- NEUER MUSIK-CODE ENDE ---
 	
 	if is_instance_valid(klicker_roboter): klicker_roboter.hide()
 	if is_instance_valid(klicker_background): klicker_background.show()
@@ -299,9 +338,6 @@ func start_next_corrupted(level_index: int):
 	var asset_index_to_load = level_index % asset_array.size()
 	var current_assets = asset_array[asset_index_to_load]
 
-	# KORREKTUR: Diese Zeile hat den Hub-Fortschritt fälschlicherweise zurückgesetzt.
-	# Combat.current_level_index = level_index 
-
 	var background_node = klicker_background
 	var corrupted_node = klicker_roboter
 
@@ -369,7 +405,6 @@ func _on_corrupted_healed():
 		next_round_timer.start()
 		await next_round_timer.timeout
 
-	# KORREKTUR: Prüft jetzt auf Level 3 (Mission 4), nicht mehr auf 2 (Mission 3)
 	if Combat.current_level_index == 3:
 		if is_instance_valid(video_player):
 			video_player.show()
@@ -515,17 +550,37 @@ func _process(_delta):
 # --------------------------------------------------------------------------------------
 
 func _on_button_start_pressed():
-	# KORREKTUR: Wir aktivieren die Stop-Befehle wieder
-	if is_instance_valid(anim_player):
-		anim_player.stop() # Stoppt die "Camaera_Zoom"-Animation
-	if is_instance_valid(main_camera):
-		main_camera.zoom = Vector2(1, 1) # Setzt den Zoom auf den Standardwert zurück
+	# --- START: NEUER "WARP"-ÜBERGANG ---
 	
+	# (Optional) Zoom beschleunigen
+	if is_instance_valid(anim_player):
+		anim_player.speed_scale = 2.5 # Schneller zoomen
+
 	var tween = create_tween()
+	
+	# 1. Musik ausblenden
 	if is_instance_valid(music_player):
-		tween.tween_property(music_player, "volume_db", -80.0, 1.5)
-		await tween.finished
+		tween.tween_property(music_player, "volume_db", -80.0, 1.0)
+
+	# 2. Schwarz einblenden (FadeScreen)
+	if is_instance_valid(fade_screen):
+		fade_screen.modulate.a = 0.0
+		fade_screen.show()
+		tween.tween_property(fade_screen, "modulate:a", 1.0, 1.0) # 1 Sekunde Fade-In
+	
+	# Warten, bis der Fade-In (und Musik-Fade) fertig ist
+	await tween.finished
+	
+	# Jetzt, wo es schwarz ist, aufräumen:
+	if is_instance_valid(anim_player):
+		anim_player.stop() # Normales Stop, setzt auf RESET
+		anim_player.speed_scale = 1.0
+	if is_instance_valid(main_camera):
+		main_camera.zoom = Vector2(1, 1)
+
+	# Szene wechseln
 	goto_story_intro()
+	# --- ENDE: NEUER "WARP"-ÜBERGANG ---
 
 
 func _on_upgrade_button_pressed():
@@ -546,6 +601,11 @@ func _on_click_upgrade_button_pressed():
 
 func _on_mission_button_pressed(mission_index: int):
 	if current_state != GameState.STATE_HUB_MAP: return
+	
+	# --- NEUER MUSIK-CODE START ---
+	if is_instance_valid(hub_music_player) and hub_music_player.is_playing():
+		hub_music_player.stop()
+	# --- NEUER MUSIK-CODE ENDE ---
 	
 	var hub_map_node = get_node(UI_LAYER_PATH + "HubMap")
 	if is_instance_valid(hub_map_node): hub_map_node.hide()
