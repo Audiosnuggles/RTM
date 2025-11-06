@@ -1,0 +1,189 @@
+[gd_scene load_steps=11 format=3 uid="uid://4kdoyieyqx7d"]
+
+[ext_resource type="Script" uid="uid://c0mgrw64vl3ts" path="res://hacking_minigame.gd" id="1_5y2vv"]
+[ext_resource type="Texture2D" uid="uid://dd4s3kjpkod6x" path="res://backgrounds/Bg_Puzzle.jpg" id="2_cq4yu"]
+[ext_resource type="FontFile" uid="uid://diar4wg3jugva" path="res://OCR-a_.ttf" id="3_bel8c"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_5y2vv"]
+size = Vector2(171, 142)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_cq4yu"]
+size = Vector2(48, 125)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_bel8c"]
+size = Vector2(74, 142)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_d5u2o"]
+size = Vector2(43, 36)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5y2vv"]
+bg_color = Color(0.5254902, 0.8666667, 0.8156863, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_cq4yu"]
+bg_color = Color(0, 0.9647059, 0.24313726, 1)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_t2p27"]
+size = Vector2(256, 287)
+
+[node name="HackingMinigame" type="CanvasLayer"]
+script = ExtResource("1_5y2vv")
+
+[node name="LabRoomScreen" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="TextureRect" type="TextureRect" parent="LabRoomScreen"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+mouse_filter = 2
+texture = ExtResource("2_cq4yu")
+
+[node name="Clickable_Computer" type="Area2D" parent="LabRoomScreen" groups=["clickable"]]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="LabRoomScreen/Clickable_Computer"]
+position = Vector2(715.5, 642)
+shape = SubResource("RectangleShape2D_5y2vv")
+
+[node name="Clickable_Whiteboard" type="Area2D" parent="LabRoomScreen" groups=["clickable"]]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="LabRoomScreen/Clickable_Whiteboard"]
+position = Vector2(904, 562.5)
+shape = SubResource("RectangleShape2D_cq4yu")
+
+[node name="Clickable_Desk" type="Area2D" parent="LabRoomScreen" groups=["clickable"]]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="LabRoomScreen/Clickable_Desk"]
+position = Vector2(967, 821)
+shape = SubResource("RectangleShape2D_bel8c")
+
+[node name="Clickable_IDCard" type="Area2D" parent="LabRoomScreen" groups=["clickable"]]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="LabRoomScreen/Clickable_IDCard"]
+position = Vector2(1210, 873)
+shape = SubResource("RectangleShape2D_d5u2o")
+
+[node name="ClueWindow" type="Panel" parent="LabRoomScreen"]
+layout_mode = 0
+offset_left = 468.0
+offset_top = 286.0
+offset_right = 1449.0
+offset_bottom = 759.0
+
+[node name="ClueText" type="RichTextLabel" parent="LabRoomScreen/ClueWindow"]
+layout_mode = 0
+offset_left = 380.0
+offset_top = 114.0
+offset_right = 550.0
+offset_bottom = 154.0
+text = "HELLO HELLO"
+
+[node name="CloseClueButton" type="Button" parent="LabRoomScreen/ClueWindow"]
+layout_mode = 0
+offset_left = 916.0
+offset_top = 18.0
+offset_right = 948.0
+offset_bottom = 49.0
+text = "X"
+
+[node name="HackingTerminalScreen" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="ColorRect" type="ColorRect" parent="HackingTerminalScreen"]
+layout_mode = 0
+offset_right = 1920.0
+offset_bottom = 1080.0
+color = Color(0.029506557, 0.029506557, 0.029506557, 1)
+
+[node name="LoginWindow" type="Control" parent="HackingTerminalScreen"]
+anchors_preset = 0
+offset_left = 468.0
+offset_top = -131.0
+offset_right = 508.0
+offset_bottom = -91.0
+
+[node name="Label" type="Label" parent="HackingTerminalScreen/LoginWindow"]
+layout_mode = 1
+offset_left = 380.0
+offset_top = 576.0
+offset_right = 640.0
+offset_bottom = 604.0
+theme_override_fonts/font = ExtResource("3_bel8c")
+theme_override_font_sizes/font_size = 24
+text = "Enter password"
+
+[node name="PasswordInput" type="LineEdit" parent="HackingTerminalScreen/LoginWindow"]
+layout_mode = 0
+offset_left = 380.0
+offset_top = 626.0
+offset_right = 636.0
+offset_bottom = 664.0
+theme_override_constants/outline_size = 1
+theme_override_fonts/font = ExtResource("3_bel8c")
+theme_override_font_sizes/font_size = 25
+placeholder_text = "*********"
+caret_blink = true
+
+[node name="SubmitButton" type="Button" parent="HackingTerminalScreen/LoginWindow"]
+layout_mode = 0
+offset_left = 380.0
+offset_top = 727.0
+offset_right = 634.0
+offset_bottom = 770.0
+theme_override_colors/font_color = Color(0.0068854266, 0.0068853837, 0.0068853926, 1)
+theme_override_fonts/font = ExtResource("3_bel8c")
+theme_override_font_sizes/font_size = 24
+theme_override_styles/normal = SubResource("StyleBoxFlat_5y2vv")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_cq4yu")
+text = "SUBMIT
+"
+
+[node name="ErrorLabel" type="Label" parent="HackingTerminalScreen/LoginWindow"]
+layout_mode = 0
+offset_left = 380.0
+offset_top = 681.0
+offset_right = 504.0
+offset_bottom = 704.0
+theme_override_colors/font_color = Color(1, 0, 0, 1)
+theme_override_fonts/font = ExtResource("3_bel8c")
+text = "ACCESS DENIED"
+
+[node name="ExitButton" type="Button" parent="HackingTerminalScreen/LoginWindow"]
+layout_mode = 0
+offset_left = 658.0
+offset_top = 503.0
+offset_right = 720.0
+offset_bottom = 534.0
+text = "close X"
+
+[node name="SuccessWindow" type="Panel" parent="HackingTerminalScreen"]
+visible = false
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="SuccessText" type="RichTextLabel" parent="HackingTerminalScreen/SuccessWindow"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+theme_override_colors/default_color = Color(0, 0.9647059, 0.24313726, 1)
+theme_override_fonts/normal_font = ExtResource("3_bel8c")
+text = "ACCESS GRANTED"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+visible = false
+position = Vector2(1605, 388.5)
+shape = SubResource("RectangleShape2D_t2p27")
+one_way_collision = true
+
+[connection signal="input_event" from="LabRoomScreen/Clickable_Computer" to="." method="_on_Clickable_Computer_input_event"]
+[connection signal="input_event" from="LabRoomScreen/Clickable_Whiteboard" to="." method="_on_clickable_whiteboard_input_event"]
+[connection signal="input_event" from="LabRoomScreen/Clickable_Desk" to="." method="_on_clickable_desk_input_event"]
+[connection signal="input_event" from="LabRoomScreen/Clickable_IDCard" to="." method="_on_clickable_id_card_input_event"]
+[connection signal="pressed" from="HackingTerminalScreen/LoginWindow/SubmitButton" to="." method="_on_submit_button_pressed"]
+[connection signal="pressed" from="HackingTerminalScreen/LoginWindow/ExitButton" to="." method="_on_exit_button_pressed"]

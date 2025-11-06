@@ -1,4 +1,4 @@
-[gd_scene load_steps=134 format=3 uid="uid://dh2ue3w1qbcrr"]
+[gd_scene load_steps=177 format=3 uid="uid://dh2ue3w1qbcrr"]
 
 [ext_resource type="Script" uid="uid://ba1x8aq3ygvoy" path="res://minigame_scene.gd" id="1_vs5gd"]
 [ext_resource type="Script" uid="uid://cqkj0flrbeyyd" path="res://MinigamePlayer.gd" id="2_a3a31"]
@@ -6,11 +6,16 @@
 [ext_resource type="Texture2D" uid="uid://cvgr4xejdiut8" path="res://hintergrund_minigame6.jpg" id="2_sajbp"]
 [ext_resource type="Texture2D" uid="uid://bc8ssosxhv3t" path="res://DOOR.png" id="4_npmsg"]
 [ext_resource type="Texture2D" uid="uid://xrint7hjaggn" path="res://spike_2.png" id="4_sajbp"]
+[ext_resource type="Texture2D" uid="uid://odo77k0vteva" path="res://Trash_Object.png" id="5_34y8s"]
 [ext_resource type="Texture2D" uid="uid://b6hncwpmdffxj" path="res://P1_crouching.png" id="5_sajbp"]
 [ext_resource type="Texture2D" uid="uid://corurcuugw3ut" path="res://sprite-256px-36.png" id="5_xfjop"]
 [ext_resource type="Texture2D" uid="uid://cguoi3w4l8gs2" path="res://jump_sprite-256px-36.png" id="6_6gwg8"]
+[ext_resource type="Texture2D" uid="uid://chlkhlsp14mgs" path="res://Milfs2_Object.png" id="6_ub7ad"]
+[ext_resource type="Texture2D" uid="uid://btv16iooj3p42" path="res://Geländer_Object.png" id="7_87wk0"]
 [ext_resource type="PackedScene" uid="uid://1rfuf7s0xt4n" path="res://Scenes/Enemy.tscn" id="8_e2w2n"]
 [ext_resource type="FontFile" uid="uid://diar4wg3jugva" path="res://OCR-a_.ttf" id="9_3wvma"]
+[ext_resource type="Texture2D" uid="uid://dlsud6hepc12r" path="res://sprite-256px-36_P1_Dying.png" id="9_i8wsy"]
+[ext_resource type="Shader" uid="uid://bbormptmqs8q5" path="res://minigame_scene.gdshader" id="12_x42hv"]
 
 [sub_resource type="Environment" id="Environment_sajbp"]
 background_mode = 3
@@ -24,8 +29,17 @@ size = Vector2(159, 281.5)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_6jybn"]
 size = Vector2(10083, 40.5)
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ub7ad"]
+size = Vector2(255.75, 197)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_87wk0"]
+size = Vector2(70, 228.5)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_wvn5a"]
+size = Vector2(256, 287)
+
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_sajbp"]
-size = Vector2(255.75, 27.25)
+size = Vector2(200, 383.625)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_gbnch"]
 size = Vector2(99, 83)
@@ -173,6 +187,114 @@ region = Rect2(0, 807, 295, 269)
 [sub_resource type="AtlasTexture" id="AtlasTexture_67663"]
 atlas = ExtResource("5_sajbp")
 region = Rect2(295, 807, 295, 269)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_uxgaf"]
+atlas = ExtResource("9_i8wsy")
+region = Rect2(0, 0, 373, 283)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_shb63"]
+atlas = ExtResource("9_i8wsy")
+region = Rect2(373, 0, 373, 283)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0kmg0"]
+atlas = ExtResource("9_i8wsy")
+region = Rect2(746, 0, 373, 283)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_eutik"]
+atlas = ExtResource("9_i8wsy")
+region = Rect2(1119, 0, 373, 283)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_k1je0"]
+atlas = ExtResource("9_i8wsy")
+region = Rect2(1492, 0, 373, 283)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0nqcx"]
+atlas = ExtResource("9_i8wsy")
+region = Rect2(1865, 0, 373, 283)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_osj28"]
+atlas = ExtResource("9_i8wsy")
+region = Rect2(0, 283, 373, 283)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_r2kty"]
+atlas = ExtResource("9_i8wsy")
+region = Rect2(373, 283, 373, 283)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_av12t"]
+atlas = ExtResource("9_i8wsy")
+region = Rect2(746, 283, 373, 283)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5h1y8"]
+atlas = ExtResource("9_i8wsy")
+region = Rect2(1119, 283, 373, 283)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mk5cr"]
+atlas = ExtResource("9_i8wsy")
+region = Rect2(1492, 283, 373, 283)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hiro0"]
+atlas = ExtResource("9_i8wsy")
+region = Rect2(1865, 283, 373, 283)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_yilqu"]
+atlas = ExtResource("9_i8wsy")
+region = Rect2(0, 566, 373, 283)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_s4w0d"]
+atlas = ExtResource("9_i8wsy")
+region = Rect2(373, 566, 373, 283)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_s2w64"]
+atlas = ExtResource("9_i8wsy")
+region = Rect2(746, 566, 373, 283)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_iw0jn"]
+atlas = ExtResource("9_i8wsy")
+region = Rect2(1119, 566, 373, 283)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_i3bof"]
+atlas = ExtResource("9_i8wsy")
+region = Rect2(1492, 566, 373, 283)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_x4yvc"]
+atlas = ExtResource("9_i8wsy")
+region = Rect2(1865, 566, 373, 283)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_415pi"]
+atlas = ExtResource("9_i8wsy")
+region = Rect2(0, 849, 373, 283)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_a6ha5"]
+atlas = ExtResource("9_i8wsy")
+region = Rect2(373, 849, 373, 283)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3ylqh"]
+atlas = ExtResource("9_i8wsy")
+region = Rect2(746, 849, 373, 283)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tc0vf"]
+atlas = ExtResource("9_i8wsy")
+region = Rect2(1119, 849, 373, 283)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4vwwa"]
+atlas = ExtResource("9_i8wsy")
+region = Rect2(1492, 849, 373, 283)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kcvc3"]
+atlas = ExtResource("9_i8wsy")
+region = Rect2(1865, 849, 373, 283)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hi3hy"]
+atlas = ExtResource("9_i8wsy")
+region = Rect2(0, 1132, 373, 283)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lom3w"]
+atlas = ExtResource("9_i8wsy")
+region = Rect2(373, 1132, 373, 283)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_061rt"]
+atlas = ExtResource("9_i8wsy")
+region = Rect2(746, 1132, 373, 283)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_xfjop"]
 atlas = ExtResource("5_xfjop")
@@ -611,6 +733,110 @@ animations = [{
 "speed": 20.0
 }, {
 "frames": [{
+"duration": 1.5,
+"texture": SubResource("AtlasTexture_uxgaf")
+}, {
+"duration": 1.5,
+"texture": SubResource("AtlasTexture_shb63")
+}, {
+"duration": 1.5,
+"texture": SubResource("AtlasTexture_0kmg0")
+}, {
+"duration": 1.5,
+"texture": SubResource("AtlasTexture_eutik")
+}, {
+"duration": 1.5,
+"texture": SubResource("AtlasTexture_k1je0")
+}, {
+"duration": 1.5,
+"texture": SubResource("AtlasTexture_0nqcx")
+}, {
+"duration": 1.5,
+"texture": SubResource("AtlasTexture_osj28")
+}, {
+"duration": 1.5,
+"texture": SubResource("AtlasTexture_r2kty")
+}, {
+"duration": 1.5,
+"texture": SubResource("AtlasTexture_av12t")
+}, {
+"duration": 1.5,
+"texture": SubResource("AtlasTexture_5h1y8")
+}, {
+"duration": 1.5,
+"texture": SubResource("AtlasTexture_mk5cr")
+}, {
+"duration": 1.5,
+"texture": SubResource("AtlasTexture_hiro0")
+}, {
+"duration": 1.5,
+"texture": SubResource("AtlasTexture_yilqu")
+}, {
+"duration": 1.5,
+"texture": SubResource("AtlasTexture_s4w0d")
+}, {
+"duration": 1.5,
+"texture": SubResource("AtlasTexture_s2w64")
+}, {
+"duration": 1.5,
+"texture": SubResource("AtlasTexture_iw0jn")
+}, {
+"duration": 1.5,
+"texture": SubResource("AtlasTexture_i3bof")
+}, {
+"duration": 1.5,
+"texture": SubResource("AtlasTexture_x4yvc")
+}, {
+"duration": 1.5,
+"texture": SubResource("AtlasTexture_415pi")
+}, {
+"duration": 1.5,
+"texture": SubResource("AtlasTexture_a6ha5")
+}, {
+"duration": 1.5,
+"texture": SubResource("AtlasTexture_3ylqh")
+}, {
+"duration": 1.5,
+"texture": SubResource("AtlasTexture_tc0vf")
+}, {
+"duration": 1.5,
+"texture": SubResource("AtlasTexture_4vwwa")
+}, {
+"duration": 1.5,
+"texture": SubResource("AtlasTexture_kcvc3")
+}, {
+"duration": 1.5,
+"texture": SubResource("AtlasTexture_hi3hy")
+}, {
+"duration": 1.5,
+"texture": SubResource("AtlasTexture_lom3w")
+}, {
+"duration": 1.5,
+"texture": SubResource("AtlasTexture_061rt")
+}, {
+"duration": 1.5,
+"texture": SubResource("AtlasTexture_lom3w")
+}, {
+"duration": 1.5,
+"texture": SubResource("AtlasTexture_hi3hy")
+}, {
+"duration": 1.5,
+"texture": SubResource("AtlasTexture_kcvc3")
+}, {
+"duration": 1.5,
+"texture": SubResource("AtlasTexture_4vwwa")
+}, {
+"duration": 1.5,
+"texture": SubResource("AtlasTexture_tc0vf")
+}, {
+"duration": 1.5,
+"texture": SubResource("AtlasTexture_3ylqh")
+}],
+"loop": false,
+"name": &"Death",
+"speed": 32.0
+}, {
+"frames": [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_xfjop")
 }],
@@ -878,12 +1104,45 @@ height = 308.0
 radius = 40.0
 height = 80.0
 
+[sub_resource type="Gradient" id="Gradient_i8wsy"]
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_34y8s"]
+gradient = SubResource("Gradient_i8wsy")
+fill = 1
+fill_from = Vector2(0.50213677, 0.47008547)
+
+[sub_resource type="Gradient" id="Gradient_ub7ad"]
+colors = PackedColorArray(0.12955844, 0.12955847, 0.12955844, 1, 0.12941177, 0.12941177, 0.12941177, 0)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_87wk0"]
+gradient = SubResource("Gradient_ub7ad")
+
+[sub_resource type="Curve" id="Curve_wvn5a"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_adwht"]
+curve = SubResource("Curve_wvn5a")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_jcji4"]
+particle_flag_disable_z = true
+gravity = Vector3(0, -50, 0)
+scale_min = 0.5
+scale_curve = SubResource("CurveTexture_adwht")
+color_ramp = SubResource("GradientTexture1D_87wk0")
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3wvma"]
 bg_color = Color(0, 0.9647059, 0.24313726, 1)
 
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_i8wsy"]
+shader = ExtResource("12_x42hv")
+shader_parameter/subdivisions = 20
+shader_parameter/movement = 0.0
+
 [node name="MinigameScene" type="Node2D"]
 script = ExtResource("1_vs5gd")
-metadata/_edit_vertical_guides_ = [8005.0]
+metadata/_edit_vertical_guides_ = [8005.0, 963.0]
 
 [node name="ParallaxBackground" type="ParallaxBackground" parent="."]
 
@@ -934,36 +1193,65 @@ color = Color(0.40982348, 0.1434182, 0.029744148, 1)
 position = Vector2(3262.5, 534)
 shape = SubResource("RectangleShape2D_6jybn")
 
-[node name="Platform1" type="StaticBody2D" parent="."]
-position = Vector2(1592, 520)
+[node name="TrashObject2" type="StaticBody2D" parent="."]
+position = Vector2(2324, 1040)
 collision_layer = 3
 
-[node name="ColorRect" type="ColorRect" parent="Platform1"]
+[node name="ColorRect" type="ColorRect" parent="TrashObject2"]
+visible = false
 offset_left = 1018.0
 offset_top = 324.0
 offset_right = 1264.0
 offset_bottom = 347.0
 color = Color(0.08627451, 0.92156863, 0.7607843, 1)
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Platform1"]
-position = Vector2(1143.125, 338)
-shape = SubResource("RectangleShape2D_sajbp")
+[node name="TrashObject" type="Sprite2D" parent="TrashObject2"]
+position = Vector2(-1028, -85.5)
+texture = ExtResource("5_34y8s")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="TrashObject2"]
+position = Vector2(-1028, -84)
+shape = SubResource("RectangleShape2D_ub7ad")
 one_way_collision = true
 
-[node name="Platform2" type="StaticBody2D" parent="."]
+[node name="TrashObject" type="StaticBody2D" parent="."]
 position = Vector2(1592, 520)
 collision_layer = 3
 
-[node name="ColorRect" type="ColorRect" parent="Platform2"]
-offset_left = 1431.0
-offset_top = 227.0
-offset_right = 1677.0
-offset_bottom = 250.0
-color = Color(0.078431375, 0.91764706, 0.73333335, 1)
+[node name="ColorRect" type="ColorRect" parent="TrashObject"]
+visible = false
+offset_left = 1018.0
+offset_top = 324.0
+offset_right = 1264.0
+offset_bottom = 347.0
+color = Color(0.08627451, 0.92156863, 0.7607843, 1)
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Platform2"]
-position = Vector2(1554, 238)
-shape = SubResource("RectangleShape2D_sajbp")
+[node name="TrashObject" type="Sprite2D" parent="TrashObject"]
+position = Vector2(1146, 430)
+texture = ExtResource("5_34y8s")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="TrashObject"]
+position = Vector2(1143.125, 431.5)
+shape = SubResource("RectangleShape2D_ub7ad")
+one_way_collision = true
+
+[node name="BusObject" type="StaticBody2D" parent="."]
+position = Vector2(1592, 520)
+collision_layer = 3
+
+[node name="Sprite2D" type="Sprite2D" parent="BusObject"]
+position = Vector2(1511, 397)
+rotation = 0.005951265
+texture = ExtResource("6_ub7ad")
+
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="BusObject"]
+position = Vector2(1440, 418.75)
+shape = SubResource("RectangleShape2D_87wk0")
+one_way_collision = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="BusObject"]
+position = Vector2(1605, 388.5)
+shape = SubResource("RectangleShape2D_wvn5a")
 one_way_collision = true
 
 [node name="Platform5" type="StaticBody2D" parent="."]
@@ -1003,14 +1291,20 @@ position = Vector2(1592, 520)
 collision_layer = 3
 
 [node name="ColorRect" type="ColorRect" parent="Platform3"]
+visible = false
 offset_left = 1833.0
 offset_top = 152.0
 offset_right = 2079.0
 offset_bottom = 175.0
 color = Color(0.16862746, 0.88235295, 0.7058824, 1)
 
+[node name="Sprite2D" type="Sprite2D" parent="Platform3"]
+position = Vector2(1960, 338)
+scale = Vector2(1.1, 1.1)
+texture = ExtResource("7_87wk0")
+
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Platform3"]
-position = Vector2(1956, 163)
+position = Vector2(1960, 341.1875)
 shape = SubResource("RectangleShape2D_sajbp")
 one_way_collision = true
 
@@ -1067,7 +1361,7 @@ position = Vector2(-450, -2)
 collision_mask = 2
 
 [node name="Sprite2D2" type="Sprite2D" parent="Spikes5"]
-position = Vector2(8262, 981)
+position = Vector2(8262, 984.99994)
 scale = Vector2(0.69, 0.69)
 texture = ExtResource("4_sajbp")
 
@@ -1081,7 +1375,7 @@ position = Vector2(-450, -2)
 collision_mask = 2
 
 [node name="Sprite2D2" type="Sprite2D" parent="Spikes5/Spikes5"]
-position = Vector2(8867, 980.00006)
+position = Vector2(8867, 985)
 scale = Vector2(0.69, 0.69)
 texture = ExtResource("4_sajbp")
 
@@ -1095,7 +1389,7 @@ position = Vector2(-450, -2)
 collision_mask = 2
 
 [node name="Sprite2D2" type="Sprite2D" parent="Spikes6"]
-position = Vector2(8781, 979)
+position = Vector2(8781, 983.99994)
 scale = Vector2(0.69, 0.69)
 texture = ExtResource("4_sajbp")
 
@@ -1109,7 +1403,7 @@ position = Vector2(-450, -2)
 collision_mask = 2
 
 [node name="Sprite2D2" type="Sprite2D" parent="Spikes7"]
-position = Vector2(9048, 978)
+position = Vector2(9048, 982.99994)
 scale = Vector2(0.69, 0.69)
 texture = ExtResource("4_sajbp")
 
@@ -1123,7 +1417,7 @@ position = Vector2(-450, -2)
 collision_mask = 2
 
 [node name="Sprite2D2" type="Sprite2D" parent="Spikes8"]
-position = Vector2(9307, 980)
+position = Vector2(9307, 984.99994)
 scale = Vector2(0.69, 0.69)
 texture = ExtResource("4_sajbp")
 
@@ -1167,12 +1461,12 @@ collision_layer = 3
 collision_mask = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Spikes"]
-position = Vector2(3216, 1019.25)
+position = Vector2(5076, 1019.25)
 shape = SubResource("RectangleShape2D_gbnch")
 debug_color = Color(0.9598109, 0, 0, 1)
 
 [node name="Sprite2D2" type="Sprite2D" parent="Spikes"]
-position = Vector2(3214, 979)
+position = Vector2(5076, 989)
 scale = Vector2(0.69, 0.69)
 texture = ExtResource("4_sajbp")
 
@@ -1194,7 +1488,7 @@ health_bar = NodePath("../MinigameUI/MinigameHealthBar")
 [node name="AnimatedSprite" type="AnimatedSprite2D" parent="Player"]
 position = Vector2(540, 893)
 sprite_frames = SubResource("SpriteFrames_73lsg")
-animation = &"Jump_Loop"
+animation = &"Death"
 
 [node name="Camera2D" type="Camera2D" parent="Player"]
 anchor_mode = 0
@@ -1206,7 +1500,7 @@ limit_bottom = 1120
 [node name="StandShape" type="CollisionShape2D" parent="Player"]
 position = Vector2(549, 876)
 shape = SubResource("CapsuleShape2D_7th4q")
-debug_color = Color(0.8232569, 0.1428257, 1, 1)
+debug_color = Color(0.8235294, 0.14117648, 1, 0.24313726)
 
 [node name="CrouchShape" type="CollisionShape2D" parent="Player"]
 process_mode = 4
@@ -1223,8 +1517,15 @@ one_shot = true
 [node name="InvisibilityTimer" type="Timer" parent="Player"]
 one_shot = true
 
-[node name="GameOverTimer" type="Timer" parent="."]
-process_mode = 2
+[node name="DeathSmoke" type="GPUParticles2D" parent="Player"]
+position = Vector2(476, 971)
+emitting = false
+amount = 30
+texture = SubResource("GradientTexture2D_34y8s")
+lifetime = 2.0
+one_shot = true
+explosiveness = 1.0
+process_material = SubResource("ParticleProcessMaterial_jcji4")
 
 [node name="MinigameUI" type="CanvasLayer" parent="."]
 
@@ -1237,6 +1538,40 @@ theme_override_colors/font_color = Color(0, 0.9647059, 0.24313726, 1)
 theme_override_fonts/font = ExtResource("9_3wvma")
 theme_override_styles/fill = SubResource("StyleBoxFlat_3wvma")
 value = 100.0
+
+[node name="GameOverScreen" type="CanvasLayer" parent="."]
+layer = 10
+
+[node name="MeltEffect" type="ColorRect" parent="GameOverScreen"]
+material = SubResource("ShaderMaterial_i8wsy")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 1)
+
+[node name="GameOverUI" type="CanvasLayer" parent="."]
+layer = 11
+
+[node name="TryAgainLabel" type="Label" parent="GameOverUI"]
+modulate = Color(1, 1, 1, 0)
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -79.5
+offset_top = -35.5
+offset_right = 257.5
+offset_bottom = 35.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.5254902, 0.8666667, 0.8156863, 1)
+theme_override_fonts/font = ExtResource("9_3wvma")
+theme_override_font_sizes/font_size = 64
+text = "SWEET"
 
 [connection signal="body_entered" from="Door" to="." method="_on_door_body_entered"]
 [connection signal="body_entered" from="Spikes5" to="Player" method="_on_spikes_body_entered"]
@@ -1252,4 +1587,3 @@ value = 100.0
 [connection signal="timeout" from="Player/CameraShakeTimer" to="Player" method="_on_camera_shake_timer_timeout"]
 [connection signal="timeout" from="Player/InvincibilityTimer" to="Player" method="_on_invincibility_timer_timeout"]
 [connection signal="timeout" from="Player/InvisibilityTimer" to="Player" method="_on_invisibility_timer_timeout"]
-[connection signal="timeout" from="GameOverTimer" to="." method="_on_game_over_timer_timeout"]

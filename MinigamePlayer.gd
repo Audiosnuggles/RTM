@@ -12,6 +12,9 @@ var gravity = ProjectSettings.get_setting("physics/2d/default_gravity")
 @onready var animated_sprite = $AnimatedSprite
 @onready var minigame_scene = get_parent() 
 
+# --- RAUCH-EFFEKT ---
+@onready var death_smoke_effect = $DeathSmoke 
+
 @onready var stand_shape = $StandShape
 @onready var crouch_shape = $CrouchShape
 
@@ -21,11 +24,12 @@ var is_invincible = false
 
 var is_crouching = false
 
-# NEU: Referenz zur Kamera und Shake-Variablen
 @onready var camera = $Camera2D
 @onready var camera_shake_timer = $CameraShakeTimer
-var shake_intensity = 10.0 # Wie stark wackelt es (in Pixel)
+var shake_intensity = 10.0
 var is_shaking = false
+
+var is_dead: bool = false
 
 
 func _ready():
@@ -39,18 +43,25 @@ func _ready():
 	stand_shape.disabled = false
 	crouch_shape.disabled = true
 	
+	is_dead = false
+	set_physics_process(true)
+	
 	if not animated_sprite.animation_finished.is_connected(_on_animation_finished):
 		animated_sprite.animation_finished.connect(_on_animation_finished)
 
 
 func _physics_process(delta):
+	if is_dead:
+		velocity.x = 0 
+		move_and_slide() 
+		return
+
 	if not is_on_floor():
 		velocity.y += gravity * delta
 
 	var crouch_input = Input.is_action_pressed("ui_down")
 	var direction = Input.get_axis("ui_left", "ui_right")
 	
-	# 3. Ducken-Zustand (State Machine)
 	var wants_to_crouch = crouch_input and is_on_floor()
 
 	if wants_to_crouch and not is_crouching:
@@ -68,7 +79,6 @@ func _physics_process(delta):
 		if animated_sprite.animation == "Crouch_Idle":
 			animated_sprite.play("Crouch_End")
 	
-	# 4. Horizontale Bewegung
 	if is_crouching or animated_sprite.animation in ["Crouch_Start", "Crouch_End"]:
 		velocity.x = 0
 	else:
@@ -77,14 +87,11 @@ func _physics_process(delta):
 		else:
 			velocity.x = move_toward(velocity.x, 0, SPEED)
 
-	# 5. Vertikale Bewegung (Sprung)
 	if Input.is_action_just_pressed("ui_accept") and is_on_floor() and not is_crouching:
 		velocity.y = JUMP_VELOCITY
 
-	# 6. Bewegung ausführen
 	move_and_slide()
 
-	# 7. Animationen & Sprite-Drehung
 	if direction != 0:
 		animated_sprite.flip_h = (direction < 0) 
 
@@ -99,21 +106,18 @@ func _physics_process(delta):
 			if animated_sprite.animation != "Idle":
 				animated_sprite.play("Idle")
 				
-	# NEU: Kamera-Shake Logik (jeden Frame anwenden)
 	if is_shaking:
-		# Setzt den Kamera-Offset auf einen zufälligen Vektor
 		camera.offset = Vector2(
 			randf_range(-shake_intensity, shake_intensity),
 			randf_range(-shake_intensity, shake_intensity)
 		)
 
-
-# ------------------------------------------------------------------
-# --- (Funktion für Animationen) ---
-# ------------------------------------------------------------------
 func _on_animation_finished():
 	
 	var anim_name = animated_sprite.animation
+	
+	if anim_name == "Death":
+		return
 	
 	if anim_name == "Crouch_Start":
 		if is_crouching:
@@ -128,17 +132,12 @@ func _on_animation_finished():
 		else:
 			animated_sprite.play("Idle")
 
-# ------------------------------------------------------------------
-# --- (Funktion für Schaden) ---
-# ------------------------------------------------------------------
-
-# Diese Funktion ist KORREKT. Sie benutzt 'body'.
 func _on_spikes_body_entered(body):
 	if body == self:
 		take_damage(1) 
 
 func take_damage(damage_amount: int = 1):
-	if is_invincible:
+	if is_invincible or is_dead:
 		return 
 
 	print("Player took damage: ", damage_amount)
@@ -149,24 +148,50 @@ func take_damage(damage_amount: int = 1):
 	else:
 		print("HealthBar nicht gefunden, kann Wert nicht aktualisieren.")
 
-	is_invincible = true
-	invincibility_timer.start(1.0) 
-	invisibility_timer.start(0.1) 
-	modulate.a = 0.5 
+	# --- KORREKTUR: Unverwundbarkeit nur setzen, WENN man noch lebt ---
+	if current_health > 0:
+		is_invincible = true
+		invincibility_timer.start(1.0) 
+		invisibility_timer.start(0.1) 
+		modulate.a = 0.5 
+	# --- ENDE KORREKTUR ---
 
-	# NEU: Starte den Kamera-Shake
 	is_shaking = true
-	camera_shake_timer.start(0.2) # Dauer des Wackelns in Sekunden
+	camera_shake_timer.start(0.2)
 
-	if current_health <= 0:
-		print("Player health is zero. Calling player_died()")
-		await get_tree().create_timer(0.5).timeout
+	if current_health <= 0 and not is_dead:
+		print("Player health is zero. Starte Todes-Sequenz...")
 		
+		# 1. Spieler als "tot" markieren
+		is_dead = true
+		
+		# --- KORREKTUR: Stelle sicher, dass der Spieler sichtbar ist ---
+		modulate.a = 1.0
+		# --- ENDE KORREKTUR ---
+		
+		# 2. "Death"-Animation abspielen
+		print("DEBUG: Spiele 'Death'-Animation...")
+		animated_sprite.play("Death")
+		
+		# 3. RAUCH-EFFEKT
+		if is_instance_valid(death_smoke_effect):
+			death_smoke_effect.emitting = true 
+		else:
+			print("WARNUNG: 'DeathSmoke'-Node nicht gefunden!")
+		
+		# 4. Warte, bis die "Death"-Animation fertig ist
+		await animated_sprite.animation_finished
+		print("DEBUG: 'Death'-Animation beendet.")
+		
+		# 5. Erst DANACH rufe die Game-Over-Szene (DOOM-EffEkt) auf
 		if minigame_scene.has_method("player_died"):
-			minigame_scene.player_died()
+			print("DEBUG [take_damage]: Rufe 'await minigame_scene.player_died()' auf...")
+			await minigame_scene.player_died()
+			print("DEBUG [take_damage]: 'await minigame_scene.player_died()' ist BEENDET.")
 		else:
 			print("FEHLER: player_died() Methode nicht in minigame_scene gefunden!")
-	else:
+			
+	elif current_health > 0:
 		print("Player health remaining: ", current_health)
 
 
@@ -182,13 +207,10 @@ func _on_invisibility_timer_timeout():
 		invisibility_timer.start(0.1)
 
 
-# NEU: Diese Funktion wird aufgerufen, wenn der Shake-Timer abläuft
 func _on_camera_shake_timer_timeout():
 	is_shaking = false
-	camera.offset = Vector2.ZERO # WICHTIG: Kamera auf 0,0 zurücksetzen
+	camera.offset = Vector2.ZERO
 
-
-# --- START DER KORREKTUREN (UNBENUTZTE PARAMETER) ---
 
 func _on_spikes_3_body_entered(_body: Node2D) -> void:
 	pass # Replace with function body.
@@ -212,5 +234,3 @@ func _on_spikes_7_body_entered(_body: Node2D) -> void:
 
 func _on_spikes_8_body_entered(_body: Node2D) -> void:
 	pass # Replace with function body.
-
-# --- ENDE DER KORREKTUREN ---

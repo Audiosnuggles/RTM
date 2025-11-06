@@ -1,4 +1,4 @@
-[gd_scene load_steps=50 format=3 uid="uid://bmylyescf3g70"]
+[gd_scene load_steps=53 format=3 uid="uid://bmylyescf3g70"]
 
 [ext_resource type="Script" uid="uid://br82ec5f4ohot" path="res://health_bar.gd" id="1_0f027"]
 [ext_resource type="Script" uid="uid://smeagdsc75b1" path="res://main_scene.gd" id="1_2c62f"]
@@ -17,6 +17,7 @@
 [ext_resource type="Script" uid="uid://dggh1wov2ew14" path="res://story_intro.gd" id="11_mo76n"]
 [ext_resource type="Shader" uid="uid://dqaxlwgk7d4jr" path="res://story_intro.gdshader" id="13_6jybn"]
 [ext_resource type="AudioStream" uid="uid://2njl8athfp46" path="res://keyboard.ogg" id="14_7th4q"]
+[ext_resource type="Texture2D" uid="uid://bh633v2myqbpx" path="res://Startscreen_New_2.jpg" id="17_84odl"]
 [ext_resource type="AudioStream" uid="uid://bo1ngesxr8fsi" path="res://Intro.mp3" id="17_u0ygc"]
 [ext_resource type="AudioStream" uid="uid://1ebtqxc72tth" path="res://goodnightmelodies.mp3" id="18_7th4q"]
 
@@ -75,30 +76,6 @@ collision_use_scale = true
 sub_emitter_mode = 1
 sub_emitter_frequency = 100.0
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_671wp"]
-bg_color = Color(0.06100855, 0.06100855, 0.06100855, 0.91200006)
-border_width_left = 1
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-border_color = Color(0.5254902, 0.8666667, 0.8156863, 1)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mo76n"]
-bg_color = Color(0.06100855, 0.06100855, 0.06100855, 0.91200006)
-border_width_left = 1
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-border_color = Color(0.5254902, 0.8666667, 0.8156863, 1)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_42l1d"]
-bg_color = Color(0.06100855, 0.06100855, 0.06100855, 0.91200006)
-border_width_left = 1
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-border_color = Color(0.5254902, 0.8666667, 0.8156863, 1)
-
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_nfk4m"]
 bg_color = Color(0.039215688, 0.039215688, 0.039215688, 0.5019608)
 border_width_left = 3
@@ -148,6 +125,289 @@ expand_margin_left = 12.0
 expand_margin_right = 12.0
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_nfk4m"]
+
+[sub_resource type="Shader" id="Shader_6jybn"]
+code = "/*
+Shader from Godot Shaders - the free shader library.
+godotshaders.com/shader/VHS-and-CRT-monitor-effect
+
+This shader is under CC0 license. Feel free to use, improve and 
+change this shader according to your needs and consider sharing 
+the modified result to godotshaders.com.
+*/
+
+shader_type canvas_item;
+
+// --- HIER IST DIE KORREKTUR ---
+uniform sampler2D SCREEN_TEXTURE : hint_screen_texture, filter_linear_mipmap;
+// --- ENDE DER KORREKTUR ---
+
+//*** IMPORTANT! ***/ 
+// - If you are using this shader to affect the node it is applied to set 'overlay' to false (unchecked in the instepctor).
+// - If you are using this shader as an overlay, and want the shader to affect the nodes below in the Scene hierarchy,
+//   set 'overlay' to true (checked in the inspector).
+// On Mac there is potentially a bug causing this to not work properly. If that is the case and you want to use the shader as an overlay
+// change all \"overlay ? SCREEN_TEXTURE : TEXTURE\" to only \"SCREEN_TEXTURE\" on lines 129-140, and \"vec2 uv = overlay ? warp(SCREEN_UV) : warp(UV);\"
+// to \"vec2 uv = warp(SCREEN_UV);\" on line 98.
+uniform bool overlay = false;
+
+uniform float scanlines_opacity : hint_range(0.0, 1.0) = 0.4;
+uniform float scanlines_width : hint_range(0.0, 0.5) = 0.25;
+uniform float grille_opacity : hint_range(0.0, 1.0) = 0.3;
+uniform vec2 resolution = vec2(640.0, 480.0); // Set the number of rows and columns the texture will be divided in. Scanlines and grille will make a square based on these values
+
+uniform bool pixelate = true; // Fill each square (\"pixel\") with a sampled color, creating a pixel look and a more accurate representation of how a CRT monitor would work.
+
+uniform bool roll = true;
+uniform float roll_speed = 8.0; // Positive values are down, negative are up
+uniform float roll_size : hint_range(0.0, 100.0) = 15.0;
+uniform float roll_variation : hint_range(0.1, 5.0) = 1.8; // This valie is not an exact science. You have to play around with the value to find a look you like. How this works is explained in the code below.
+uniform float distort_intensity : hint_range(0.0, 0.2) = 0.05; // The distortion created by the rolling effect.
+
+uniform float noise_opacity : hint_range(0.0, 1.0) = 0.4;
+uniform float noise_speed = 5.0; // There is a movement in the noise pattern that can be hard to see first. This sets the speed of that movement.
+
+uniform float static_noise_intensity : hint_range(0.0, 1.0) = 0.06;
+
+uniform float aberration : hint_range(-1.0, 1.0) = 0.03; // Chromatic aberration, a distortion on each color channel.
+uniform float brightness = 1.4; // When adding scanline gaps and grille the image can get very dark. Brightness tries to compensate for that.
+uniform bool discolor = true; // Add a discolor effect simulating a VHS
+
+uniform float warp_amount :hint_range(0.0, 5.0) = 1.0; // Warp the texture edges simulating the curved glass of a CRT monitor or old TV.
+uniform bool clip_warp = false;
+
+uniform float vignette_intensity = 0.4; // Size of the vignette, how far towards the middle it should go.
+uniform float vignette_opacity : hint_range(0.0, 1.0) = 0.5;
+
+// Used by the noise functin to generate a pseudo random value between 0.0 and 1.0
+vec2 random(vec2 uv){
+    uv = vec2( dot(uv, vec2(127.1,311.7) ),
+              dot(uv, vec2(269.5,183.3) ) );
+    return -1.0 + 2.0 * fract(sin(uv) * 43758.5453123);
+}
+
+// Generate a Perlin noise used by the distortion effects
+float noise(vec2 uv) {
+    vec2 uv_index = floor(uv);
+    vec2 uv_fract = fract(uv);
+
+    vec2 blur = smoothstep(0.0, 1.0, uv_fract);
+
+    return mix( mix( dot( random(uv_index + vec2(0.0,0.0) ), uv_fract - vec2(0.0,0.0) ),
+                       dot( random(uv_index + vec2(1.0,0.0) ), uv_fract - vec2(1.0,0.0) ), blur.x),
+                 mix( dot( random(uv_index + vec2(0.0,1.0) ), uv_fract - vec2(0.0,1.0) ),
+                       dot( random(uv_index + vec2(1.0,1.0) ), uv_fract - vec2(1.0,1.0) ), blur.x), blur.y) * 0.5 + 0.5;
+}
+
+// Takes in the UV and warps the edges, creating the spherized effect
+vec2 warp(vec2 uv){
+	vec2 delta = uv - 0.5;
+	float delta2 = dot(delta.xy, delta.xy);
+	float delta4 = delta2 * delta2;
+	float delta_offset = delta4 * warp_amount;
+	
+	return uv + delta * delta_offset;
+}
+
+// Adds a black border to hide stretched pixel created by the warp effect
+float border (vec2 uv){
+	float radius = min(warp_amount, 0.08);
+	radius = max(min(min(abs(radius * 2.0), abs(1.0)), abs(1.0)), 1e-5);
+	vec2 abs_uv = abs(uv * 2.0 - 1.0) - vec2(1.0, 1.0) + radius;
+	float dist = length(max(vec2(0.0), abs_uv)) / radius;
+	float square = smoothstep(0.96, 1.0, dist);
+	return clamp(1.0 - square, 0.0, 1.0);
+}
+
+// Adds a vignette shadow to the edges of the image
+float vignette(vec2 uv){
+	uv *= 1.0 - uv.xy;
+	float vignette = uv.x * uv.y * 15.0;
+	return pow(vignette, vignette_intensity * vignette_opacity);
+}
+
+void fragment()
+{
+	vec2 uv = overlay ? warp(SCREEN_UV) : warp(UV); // Warp the uv. uv will be used in most cases instead of UV to keep the warping
+	vec2 text_uv = uv;
+	vec2 roll_uv = vec2(0.0);
+	float time = roll ? TIME : 0.0;
+	
+
+	// Pixelate the texture based on the given resolution.
+	if (pixelate)
+	{
+		text_uv = ceil(uv * resolution) / resolution;
+	}
+	
+	// Create the rolling effect. We need roll_line a bit later to make the noise effect.
+	// That is why this runs if roll is true OR noise_opacity is over 0.
+	float roll_line = 0.0;
+	if (roll || noise_opacity > 0.0)
+	{
+		// Create the areas/lines where the texture will be distorted.
+		roll_line = smoothstep(0.3, 0.9, sin(uv.y * roll_size - (time * roll_speed) ) );
+		// Create more lines of a different size and apply to the first set of lines. This creates a bit of variation.
+		roll_line *= roll_line * smoothstep(0.3, 0.9, sin(uv.y * roll_size * roll_variation - (time * roll_speed * roll_variation) ) );
+		// Distort the UV where where the lines are
+		roll_uv = vec2(( roll_line * distort_intensity * (1.-UV.x)), 0.0);
+	}
+	
+	vec4 text;
+	if (roll)
+	{
+		// If roll is true distort the texture with roll_uv. The texture is split up into RGB to 
+		// make some chromatic aberration. We apply the aberration to the red and green channels accorging to the aberration parameter
+		// and intensify it a bit in the roll distortion.
+		text.r = texture(SCREEN_TEXTURE, text_uv + roll_uv * 0.8 + vec2(aberration, 0.0) * .1).r;
+		text.g = texture(SCREEN_TEXTURE, text_uv + roll_uv * 1.2 - vec2(aberration, 0.0) * .1 ).g;
+		text.b = texture(SCREEN_TEXTURE, text_uv + roll_uv).b;
+		text.a = 1.0;
+	}
+	else
+	{
+		// If roll is false only apply the aberration without any distorion. The aberration values are very small so the .1 is only 
+		// to make the slider in the Inspector less sensitive.
+		text.r = texture(SCREEN_TEXTURE, text_uv + vec2(aberration, 0.0) * .1).r;
+		text.g = texture(SCREEN_TEXTURE, text_uv - vec2(aberration, 0.0) * .1).g;
+		text.b = texture(SCREEN_TEXTURE, text_uv).b;
+		text.a = 1.0;
+	}
+	
+	float r = text.r;
+	float g = text.g;
+	float b = text.b;
+	
+	uv = warp(UV);
+	
+	// CRT monitors don't have pixels but groups of red, green and blue dots or lines, called grille. We isolate the texture's color channels 
+	// and divide it up in 3 offsetted lines to show the red, green and blue colors next to each other, with a small black gap between.
+	if (grille_opacity > 0.0){
+		
+		float g_r = smoothstep(0.85, 0.95, abs(sin(uv.x * (resolution.x * 3.14159265))));
+		r = mix(r, r * g_r, grille_opacity);
+		
+		float g_g = smoothstep(0.85, 0.95, abs(sin(1.05 + uv.x * (resolution.x * 3.14159265))));
+		g = mix(g, g * g_g, grille_opacity);
+		
+		float b_b = smoothstep(0.85, 0.95, abs(sin(2.1 + uv.x * (resolution.x * 3.14159265))));
+		b = mix(b, b * b_b, grille_opacity);
+		
+	}
+	
+	// Apply the grille to the texture's color channels and apply Brightness. Since the grille and the scanlines (below) make the image very dark you
+	// can compensate by increasing the brightness.
+	text.r = clamp(r * brightness, 0.0, 1.0);
+	text.g = clamp(g * brightness, 0.0, 1.0);
+	text.b = clamp(b * brightness, 0.0, 1.0);
+	
+	// Scanlines are the horizontal lines that make up the image on a CRT monitor. 
+	// Here we are actual setting the black gap between each line, which I guess is not the right definition of the word, but you get the idea  
+	float scanlines = 0.5;
+	if (scanlines_opacity > 0.0)
+	{
+		// Same technique as above, create lines with sine and applying it to the texture. Smoothstep to allow setting the line size.
+		scanlines = smoothstep(scanlines_width, scanlines_width + 0.5, abs(sin(uv.y * (resolution.y * 3.14159265))));
+		text.rgb = mix(text.rgb, text.rgb * vec3(scanlines), scanlines_opacity);
+	}
+	
+	// Apply the banded noise.
+	if (noise_opacity > 0.0)
+	{
+		// Generate a noise pattern that is very stretched horizontally, and animate it with noise_speed
+		float noise = smoothstep(0.4, 0.5, noise(uv * vec2(2.0, 200.0) + vec2(10.0, (TIME * (noise_speed))) ) );
+		
+		// We use roll_line (set above) to define how big the noise should be vertically (multiplying cuts off all black parts).
+		// We also add in some basic noise with random() to break up the noise pattern above. The noise is sized according to 
+		// the resolution value set in the inspector. If you don't like this look you can 
+		// change \"ceil(uv * resolution) / resolution\" to only \"uv\" to make it less pixelated. Or multiply resolution with som value
+		// greater than 1.0 to make them smaller.
+		roll_line *= noise * scanlines * clamp(random((ceil(uv * resolution) / resolution) + vec2(TIME * 0.8, 0.0)).x + 0.8, 0.0, 1.0);
+		// Add it to the texture based on noise_opacity
+		text.rgb = clamp(mix(text.rgb, text.rgb + roll_line, noise_opacity), vec3(0.0), vec3(1.0));
+	}
+	
+	// Apply static noise by generating it over the whole screen in the same way as above
+	if (static_noise_intensity > 0.0)
+	{
+		text.rgb += clamp(random((ceil(uv * resolution) / resolution) + fract(TIME)).x, 0.0, 1.0) * static_noise_intensity;
+	}
+	
+	// Apply a black border to hide imperfections caused by the warping.
+	// Also apply the vignette
+	text.rgb *= border(uv);
+	text.rgb *= vignette(uv);
+	// Hides the black border and make that area transparent. Good if you want to add the the texture on top an image of a TV or monitor.
+	if (clip_warp)
+	{
+		text.a = border(uv);
+	}
+	
+	// Apply discoloration to get a VHS look (lower saturation and higher contrast)
+	// You can play with the values below or expose them in the Inspector.
+	float saturation = 0.5;
+	float contrast = 1.2;
+	if (discolor)
+	{
+		// Saturation
+		vec3 greyscale = vec3(text.r + text.g + text.b) / 3.;
+		text.rgb = mix(text.rgb, greyscale, saturation);
+		
+		// Contrast
+		float midpoint = pow(0.5, 2.2);
+		text.rgb = (text.rgb - vec3(midpoint)) * contrast + midpoint;
+	}
+	
+	COLOR = text;
+}"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ak604"]
+shader = SubResource("Shader_6jybn")
+shader_parameter/overlay = true
+shader_parameter/scanlines_opacity = 0.6030000286425
+shader_parameter/scanlines_width = 0.1200000057
+shader_parameter/grille_opacity = 0.2890000137275
+shader_parameter/resolution = Vector2(640, 480)
+shader_parameter/pixelate = false
+shader_parameter/roll = true
+shader_parameter/roll_speed = -1.0
+shader_parameter/roll_size = 41.86000198835
+shader_parameter/roll_variation = 1.2310000552126201
+shader_parameter/distort_intensity = 0.05
+shader_parameter/noise_opacity = 0.034000001615
+shader_parameter/noise_speed = -0.74
+shader_parameter/static_noise_intensity = 0.0
+shader_parameter/aberration = -0.016999953307500038
+shader_parameter/brightness = 1.4
+shader_parameter/discolor = false
+shader_parameter/warp_amount = 0.0
+shader_parameter/clip_warp = false
+shader_parameter/vignette_intensity = 0.4
+shader_parameter/vignette_opacity = 0.7210000342475
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_671wp"]
+bg_color = Color(0.06100855, 0.06100855, 0.06100855, 0.91200006)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.5254902, 0.8666667, 0.8156863, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mo76n"]
+bg_color = Color(0.06100855, 0.06100855, 0.06100855, 0.91200006)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.5254902, 0.8666667, 0.8156863, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_42l1d"]
+bg_color = Color(0.06100855, 0.06100855, 0.06100855, 0.91200006)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.5254902, 0.8666667, 0.8156863, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_d5x1h"]
 bg_color = Color(0.060530342, 0.060530365, 0.060530297, 1)
@@ -211,7 +471,7 @@ shader_parameter/static_noise_intensity = 0.0
 shader_parameter/aberration = -0.016999953307500038
 shader_parameter/brightness = 1.4
 shader_parameter/discolor = false
-shader_parameter/warp_amount = 0.5350000254125
+shader_parameter/warp_amount = 0.6690000317775
 shader_parameter/clip_warp = false
 shader_parameter/vignette_intensity = 0.4
 shader_parameter/vignette_opacity = 0.7210000342475
@@ -381,153 +641,6 @@ texture = SubResource("GradientTexture2D_6jybn")
 lifetime = 24.76
 process_material = SubResource("ParticleProcessMaterial_84odl")
 
-[node name="HubMap" type="Control" parent="UI_Layer"]
-layout_mode = 3
-anchors_preset = 0
-offset_left = 20.0
-offset_top = 20.0
-offset_right = 20.0
-offset_bottom = 20.0
-script = ExtResource("9_mo76n")
-
-[node name="TextureRect" type="TextureRect" parent="UI_Layer/HubMap"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_right = 1880.0
-offset_bottom = 1040.0
-grow_horizontal = 2
-grow_vertical = 2
-texture = ExtResource("6_2jcla")
-
-[node name="Mission_1_Button" type="Button" parent="UI_Layer/HubMap"]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = 967.5
-offset_top = 474.5
-offset_right = 1132.5
-offset_bottom = 505.5
-grow_horizontal = 2
-grow_vertical = 2
-text = "Corruption I: Start"
-
-[node name="Mission_2_Button" type="Button" parent="UI_Layer/HubMap"]
-layout_mode = 0
-offset_left = 1060.0
-offset_top = 385.0
-offset_right = 1225.0
-offset_bottom = 416.0
-text = "Corruption II: FIND ROBOT"
-
-[node name="Mission_3_Button" type="Button" parent="UI_Layer/HubMap"]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = 960.0
-offset_top = 255.0
-offset_right = 1160.0
-offset_bottom = 305.0
-grow_horizontal = 2
-grow_vertical = 2
-text = "Corruption III: HACK ROBOT"
-
-[node name="Mission_4_Button" type="Button" parent="UI_Layer/HubMap"]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = 690.0
-offset_top = 310.0
-offset_right = 901.0
-offset_bottom = 360.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_colors/font_color = Color(0, 0.9647059, 0.24313726, 1)
-theme_override_fonts/font = ExtResource("5_hq1ik")
-text = "Corruption IV: END WAR"
-
-[node name="Mission_5_Button" type="Button" parent="UI_Layer/HubMap"]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = 700.0
-offset_top = 220.0
-offset_right = 911.0
-offset_bottom = 270.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_colors/font_color = Color(0, 0.9647059, 0.24313726, 1)
-theme_override_fonts/font = ExtResource("5_hq1ik")
-text = "Corruption IV: END WAR"
-
-[node name="Mission_Grid" type="GridContainer" parent="UI_Layer/HubMap"]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
-
-[node name="Drone_Gallery_Label" type="Label" parent="UI_Layer"]
-offset_left = 56.0
-offset_top = 503.0
-offset_right = 197.0
-offset_bottom = 546.0
-theme_override_colors/font_color = Color(0.5254902, 0.8666667, 0.8156863, 1)
-theme_override_fonts/font = ExtResource("5_hq1ik")
-theme_override_font_sizes/font_size = 38
-text = "ROBOTS"
-
-[node name="Drone_Gallery" type="GridContainer" parent="UI_Layer"]
-offset_left = 61.0
-offset_top = 560.0
-offset_right = 375.0
-offset_bottom = 662.0
-columns = 3
-
-[node name="Drone_Panel_1" type="PanelContainer" parent="UI_Layer/Drone_Gallery"]
-layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_671wp")
-
-[node name="Sprite" type="TextureRect" parent="UI_Layer/Drone_Gallery/Drone_Panel_1"]
-texture_filter = 1
-custom_minimum_size = Vector2(100, 100)
-layout_mode = 2
-texture = ExtResource("7_wr18j")
-expand_mode = 1
-
-[node name="Drone_Panel_2" type="PanelContainer" parent="UI_Layer/Drone_Gallery"]
-layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_mo76n")
-
-[node name="Sprite" type="TextureRect" parent="UI_Layer/Drone_Gallery/Drone_Panel_2"]
-texture_filter = 1
-custom_minimum_size = Vector2(100, 100)
-layout_mode = 2
-texture = ExtResource("3_d5x1h")
-expand_mode = 1
-
-[node name="Drone_Panel_3" type="PanelContainer" parent="UI_Layer/Drone_Gallery"]
-layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_42l1d")
-
-[node name="Sprite" type="TextureRect" parent="UI_Layer/Drone_Gallery/Drone_Panel_3"]
-texture_filter = 1
-custom_minimum_size = Vector2(100, 100)
-layout_mode = 2
-texture = ExtResource("6_7ycvg")
-expand_mode = 1
-
 [node name="Power_Display" type="Label" parent="UI_Layer"]
 offset_left = 60.0
 offset_top = 170.0
@@ -551,8 +664,8 @@ text = "POWER"
 [node name="Fragment_Display" type="Label" parent="UI_Layer"]
 offset_left = 58.0
 offset_top = 52.0
-offset_right = 157.0
-offset_bottom = 88.0
+offset_right = 175.0
+offset_bottom = 141.0
 theme_override_colors/font_color = Color(1, 0.80363095, 0, 1)
 theme_override_fonts/font = ExtResource("5_hq1ik")
 theme_override_font_sizes/font_size = 38
@@ -618,6 +731,170 @@ theme_override_styles/focus = SubResource("StyleBoxEmpty_nfk4m")
 text = "UPGRADE HpC(Cost: 50 F)
 "
 
+[node name="HubMap" type="Control" parent="UI_Layer"]
+layout_mode = 3
+anchors_preset = 0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = 20.0
+offset_bottom = 20.0
+script = ExtResource("9_mo76n")
+
+[node name="TextureRect" type="TextureRect" parent="UI_Layer/HubMap"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = 1880.0
+offset_bottom = 1040.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("6_2jcla")
+
+[node name="TV_FILTER" type="ColorRect" parent="UI_Layer/HubMap"]
+material = SubResource("ShaderMaterial_ak604")
+layout_mode = 0
+offset_left = -19.0
+offset_top = -20.0
+offset_right = 1899.0
+offset_bottom = 1062.0
+
+[node name="Mission_1_Button" type="Button" parent="UI_Layer/HubMap"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 967.5
+offset_top = 471.5
+offset_right = 1102.5
+offset_bottom = 508.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.5254902, 0.8666667, 0.8156863, 1)
+theme_override_fonts/font = ExtResource("5_hq1ik")
+theme_override_font_sizes/font_size = 24
+text = "Start"
+
+[node name="Mission_2_Button" type="Button" parent="UI_Layer/HubMap"]
+layout_mode = 0
+offset_left = 1060.0
+offset_top = 385.0
+offset_right = 1265.0
+offset_bottom = 422.0
+theme_override_fonts/font = ExtResource("5_hq1ik")
+theme_override_font_sizes/font_size = 24
+text = "MISSION I"
+
+[node name="Mission_3_Button" type="Button" parent="UI_Layer/HubMap"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 960.0
+offset_top = 255.0
+offset_right = 1160.0
+offset_bottom = 305.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_fonts/font = ExtResource("5_hq1ik")
+theme_override_font_sizes/font_size = 24
+text = "MISSION II"
+
+[node name="Mission_4_Button" type="Button" parent="UI_Layer/HubMap"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 690.0
+offset_top = 230.0
+offset_right = 901.0
+offset_bottom = 280.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0.9647059, 0.24313726, 1)
+theme_override_fonts/font = ExtResource("5_hq1ik")
+theme_override_font_sizes/font_size = 24
+text = "MISSION III"
+
+[node name="Mission_5_Button" type="Button" parent="UI_Layer/HubMap"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 750.0
+offset_top = 320.0
+offset_right = 961.0
+offset_bottom = 370.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0.9647059, 0.24313726, 1)
+theme_override_fonts/font = ExtResource("5_hq1ik")
+theme_override_font_sizes/font_size = 24
+text = "MISSION IV"
+
+[node name="Mission_Grid" type="GridContainer" parent="UI_Layer/HubMap"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Drone_Gallery_Label" type="Label" parent="UI_Layer"]
+offset_left = 56.0
+offset_top = 854.0
+offset_right = 326.0
+offset_bottom = 897.0
+theme_override_colors/font_color = Color(0.5254902, 0.8666667, 0.8156863, 1)
+theme_override_fonts/font = ExtResource("5_hq1ik")
+theme_override_font_sizes/font_size = 38
+text = "CHOOSE ROBOT"
+
+[node name="Drone_Gallery" type="GridContainer" parent="UI_Layer"]
+offset_left = 61.0
+offset_top = 916.0
+offset_right = 375.0
+offset_bottom = 1018.0
+columns = 3
+
+[node name="Drone_Panel_1" type="PanelContainer" parent="UI_Layer/Drone_Gallery"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_671wp")
+
+[node name="Sprite" type="TextureRect" parent="UI_Layer/Drone_Gallery/Drone_Panel_1"]
+texture_filter = 1
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+texture = ExtResource("7_wr18j")
+expand_mode = 1
+
+[node name="Drone_Panel_2" type="PanelContainer" parent="UI_Layer/Drone_Gallery"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_mo76n")
+
+[node name="Sprite" type="TextureRect" parent="UI_Layer/Drone_Gallery/Drone_Panel_2"]
+texture_filter = 1
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+texture = ExtResource("3_d5x1h")
+expand_mode = 1
+
+[node name="Drone_Panel_3" type="PanelContainer" parent="UI_Layer/Drone_Gallery"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_42l1d")
+
+[node name="Sprite" type="TextureRect" parent="UI_Layer/Drone_Gallery/Drone_Panel_3"]
+texture_filter = 1
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+texture = ExtResource("6_7ycvg")
+expand_mode = 1
+
 [node name="Victory_Display" type="Label" parent="UI_Layer"]
 visible = false
 modulate = Color(1, 1, 1, 0)
@@ -680,27 +957,27 @@ initial_delay = 1.0
 layout_mode = 0
 offset_left = 290.0
 offset_top = 210.0
-offset_right = 1809.0
+offset_right = 1681.0
 offset_bottom = 1150.0
 theme_override_colors/default_color = Color(0.5254902, 0.8666667, 0.8156863, 1)
 theme_override_fonts/normal_font = ExtResource("5_hq1ik")
 theme_override_font_sizes/normal_font_size = 28
 text = "
-// Key accepted. Latest protocol loading >>
+// Key accepted. Latest protocol loaded >>
 
 Program \"ALVIN\".
 
-Die alten Tech-Mogule haben es als die Lösung verkauft. Unfehlbar. Logisch. Sie glaubten, ihre Schöpfung wüsste es besser als die \"chaotische Masse\". Also gaben sie ihr die Kontrolle über alles - sogar über sich selbst.
+The old tech moguls sold it as the solution. Infallible. Logical. They believed their creation knew better than the \"chaotic mass\". So they gave it control over everything - even over themselves.
 
-ALVIN führt immer noch ihren letzten großen Plan aus. Projekt Atlas/42. 
+ALVIN is still executing their last great plan. Project Atlas/42.
 
-Der Plan ist gescheitert, aber sie haben eine alte Admin-Backdoor offen gelassen der unsere letzte Hoffnung ist. 
+The plan has failed, ALVIN is out of control and sees us humans as enemies.
 
-ALVIN ist ausser Kontrolle geraten und sieht uns Menschen als Feinde.
+But they left an old admin backdoor open. Our last hope.
 
-Du musst ihren Code umschreiben.
+Find all still existing terminals. You must rewrite its code.
 
-...Du bist unsere letzte Chance."
+...nsdj sh isf ih fi sfih fs ih sfih bcubcub."
 script = ExtResource("11_42l1d")
 typing_speed = 0.075
 initial_delay = 10.0
@@ -786,7 +1063,7 @@ one_shot = true
 [node name="Background" type="Sprite2D" parent="."]
 z_index = -10
 position = Vector2(960, 540)
-texture = ExtResource("7_7th4q")
+texture = ExtResource("17_84odl")
 
 [node name="Video_Player" type="VideoStreamPlayer" parent="."]
 anchors_preset = 8
@@ -821,15 +1098,15 @@ parameters/looping = true
 
 [node name="HubMusicPlayer" type="AudioStreamPlayer2D" parent="."]
 stream = ExtResource("18_7th4q")
-volume_db = 17.0
+volume_db = 0.176
 autoplay = true
 
 [connection signal="pressed" from="UI_Layer/TitleScreen/Button_Start" to="." method="_on_button_start_pressed"]
+[connection signal="pressed" from="UI_Layer/Upgrade_Button" to="." method="_on_upgrade_button_pressed"]
+[connection signal="pressed" from="UI_Layer/Click_Upgrade_Button" to="." method="_on_click_upgrade_button_pressed"]
 [connection signal="pressed" from="UI_Layer/HubMap/Mission_1_Button" to="." method="_on_mission_button_pressed" binds= [0]]
 [connection signal="pressed" from="UI_Layer/HubMap/Mission_2_Button" to="." method="_on_mission_button_pressed" binds= [1]]
 [connection signal="pressed" from="UI_Layer/HubMap/Mission_3_Button" to="." method="_on_mission_button_pressed" binds= [2]]
 [connection signal="pressed" from="UI_Layer/HubMap/Mission_4_Button" to="." method="_on_mission_button_pressed" binds= [3]]
 [connection signal="pressed" from="UI_Layer/HubMap/Mission_5_Button" to="." method="_on_mission_button_pressed" binds= [4]]
-[connection signal="pressed" from="UI_Layer/Upgrade_Button" to="." method="_on_upgrade_button_pressed"]
-[connection signal="pressed" from="UI_Layer/Click_Upgrade_Button" to="." method="_on_click_upgrade_button_pressed"]
 [connection signal="pressed" from="UI_Layer/StoryIntro/Next_Button" to="UI_Layer/StoryIntro" method="_on_next_button_pressed"]
