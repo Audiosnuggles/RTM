@@ -464,7 +464,7 @@ func _on_mission_button_pressed(level_index: int):
 # --- ENDE KORREKTUR ---
 
 
-func _on_Upgrade_Button_pressed():
+func _on_upgrade_button_pressed():
 	if Combat.upgrade_healing_power():
 		_update_fragment_display()
 		var button = get_node(UI_LAYER_PATH + "Upgrade_Button")
@@ -472,7 +472,7 @@ func _on_Upgrade_Button_pressed():
 			button.text = "Upgrade Healing (" + str(Combat.upgrade_cost) + " C)"
 			button.release_focus()
 
-func _on_Click_Upgrade_Button_pressed():
+func _on_click_upgrade_button_pressed():
 	if Combat.upgrade_click_power():
 		_update_fragment_display()
 		var button = get_node(UI_LAYER_PATH + "Click_Upgrade_Button")
@@ -698,3 +698,10 @@ func _process(_delta):
 				progress_bar.value = simulated_progress
 	if is_instance_valid(fragment_display) and fragment_display.visible:
 		_update_fragment_display()
+
+func _on_Upgrade_Button_pressed() -> void:
+	pass # Replace with function body.
+
+
+func _on_click_Upgrade_Button_pressed() -> void:
+	pass # Replace with function body.
