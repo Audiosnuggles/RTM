@@ -3,14 +3,32 @@
 [ext_resource type="Script" uid="uid://ba1x8aq3ygvoy" path="res://minigame_scene.gd" id="1_vs5gd"]
 [ext_resource type="Script" uid="uid://cqkj0flrbeyyd" path="res://MinigamePlayer.gd" id="2_a3a31"]
 [ext_resource type="Script" uid="uid://bumxs0gthw5x7" path="res://door.gd" id="2_gbnch"]
-[ext_resource type="Texture2D" uid="uid://c2rhix4q6rud2" path="res://hintergrund_minigame4.jpg" id="2_npmsg"]
-[ext_resource type="Texture2D" uid="uid://dmko6ysi0m3hd" path="res://BG_Parallax_Mini_Mid_2.png" id="3_jtsu5"]
+[ext_resource type="Texture2D" uid="uid://cvgr4xejdiut8" path="res://hintergrund_minigame6.jpg" id="2_sajbp"]
+[ext_resource type="Texture2D" uid="uid://bc8ssosxhv3t" path="res://DOOR.png" id="4_npmsg"]
+[ext_resource type="Texture2D" uid="uid://xrint7hjaggn" path="res://spike_2.png" id="4_sajbp"]
 [ext_resource type="Texture2D" uid="uid://b6hncwpmdffxj" path="res://P1_crouching.png" id="5_sajbp"]
 [ext_resource type="Texture2D" uid="uid://corurcuugw3ut" path="res://sprite-256px-36.png" id="5_xfjop"]
 [ext_resource type="Texture2D" uid="uid://cguoi3w4l8gs2" path="res://jump_sprite-256px-36.png" id="6_6gwg8"]
 [ext_resource type="PackedScene" uid="uid://1rfuf7s0xt4n" path="res://Scenes/Enemy.tscn" id="8_e2w2n"]
 [ext_resource type="FontFile" uid="uid://diar4wg3jugva" path="res://OCR-a_.ttf" id="9_3wvma"]
-[ext_resource type="Texture2D" uid="uid://l4k25ajlj0ud" path="res://spike_asset.png" id="11_npmsg"]
+
+[sub_resource type="Environment" id="Environment_sajbp"]
+background_mode = 3
+glow_enabled = true
+fog_light_color = Color(0.7716614, 0.7942721, 0.8294512, 1)
+fog_light_energy = 2.13
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_84odl"]
+size = Vector2(159, 281.5)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_6jybn"]
+size = Vector2(10083, 40.5)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_sajbp"]
+size = Vector2(255.75, 27.25)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_gbnch"]
+size = Vector2(99, 83)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_fttra"]
 atlas = ExtResource("5_sajbp")
@@ -860,26 +878,8 @@ height = 308.0
 radius = 40.0
 height = 80.0
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_6jybn"]
-size = Vector2(10083, 40.5)
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_84odl"]
-size = Vector2(159, 281.5)
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_gbnch"]
-size = Vector2(124, 21.5)
-
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3wvma"]
 bg_color = Color(0, 0.9647059, 0.24313726, 1)
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_sajbp"]
-size = Vector2(255.75, 27.25)
-
-[sub_resource type="Environment" id="Environment_sajbp"]
-background_mode = 3
-glow_enabled = true
-fog_light_color = Color(0.7716614, 0.7942721, 0.8294512, 1)
-fog_light_energy = 2.13
 
 [node name="MinigameScene" type="Node2D"]
 script = ExtResource("1_vs5gd")
@@ -892,7 +892,7 @@ motion_scale = Vector2(0.1, 1)
 motion_mirroring = Vector2(1920, 0)
 
 [node name="Sprite2D" type="Sprite2D" parent="ParallaxBackground/Layer_Far"]
-texture = ExtResource("2_npmsg")
+texture = ExtResource("2_sajbp")
 centered = false
 
 [node name="Layer_Mid" type="ParallaxLayer" parent="ParallaxBackground"]
@@ -900,46 +900,24 @@ motion_scale = Vector2(0.3, 1)
 
 [node name="Sprite2D" type="Sprite2D" parent="ParallaxBackground/Layer_Mid"]
 position = Vector2(0, -253)
-texture = ExtResource("3_jtsu5")
 centered = false
 
-[node name="Player" type="CharacterBody2D" parent="." node_paths=PackedStringArray("health_bar")]
-collision_layer = 34
-collision_mask = 43
-script = ExtResource("2_a3a31")
-health_bar = NodePath("../MinigameUI/MinigameHealthBar")
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_sajbp")
 
-[node name="AnimatedSprite" type="AnimatedSprite2D" parent="Player"]
-position = Vector2(540, 893)
-sprite_frames = SubResource("SpriteFrames_73lsg")
-animation = &"Jump_Loop"
+[node name="Door" type="Area2D" parent="."]
+z_index = 10
+collision_mask = 2
+script = ExtResource("2_gbnch")
 
-[node name="Camera2D" type="Camera2D" parent="Player"]
-anchor_mode = 0
-limit_left = 0
-limit_top = 0
-limit_right = 8000
-limit_bottom = 1120
+[node name="Sprite2D" type="Sprite2D" parent="Door"]
+position = Vector2(9552, 864)
+scale = Vector2(1.6860465, 1.1451613)
+texture = ExtResource("4_npmsg")
 
-[node name="StandShape" type="CollisionShape2D" parent="Player"]
-position = Vector2(549, 876)
-shape = SubResource("CapsuleShape2D_7th4q")
-debug_color = Color(0.8232569, 0.1428257, 1, 1)
-
-[node name="CrouchShape" type="CollisionShape2D" parent="Player"]
-process_mode = 4
-position = Vector2(549, 990)
-shape = SubResource("CapsuleShape2D_sajbp")
-debug_color = Color(0.47427702, 0.1428257, 1, 1)
-
-[node name="CameraShakeTimer" type="Timer" parent="Player"]
-one_shot = true
-
-[node name="InvincibilityTimer" type="Timer" parent="Player"]
-one_shot = true
-
-[node name="InvisibilityTimer" type="Timer" parent="Player"]
-one_shot = true
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Door"]
+position = Vector2(9557, 887)
+shape = SubResource("RectangleShape2D_84odl")
 
 [node name="Floor" type="StaticBody2D" parent="."]
 position = Vector2(1592, 520)
@@ -955,103 +933,6 @@ color = Color(0.40982348, 0.1434182, 0.029744148, 1)
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Floor"]
 position = Vector2(3262.5, 534)
 shape = SubResource("RectangleShape2D_6jybn")
-
-[node name="Door" type="Area2D" parent="."]
-z_index = 10
-collision_mask = 2
-script = ExtResource("2_gbnch")
-
-[node name="ColorRect" type="ColorRect" parent="Door"]
-offset_left = 9480.0
-offset_top = 752.0
-offset_right = 9634.0
-offset_bottom = 1027.0
-color = Color(0.2285108, 0.2285108, 0.2285108, 1)
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Door"]
-position = Vector2(9557, 887)
-shape = SubResource("RectangleShape2D_84odl")
-
-[node name="Spikes4" type="Area2D" parent="."]
-position = Vector2(-450, -2)
-collision_mask = 2
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Spikes4"]
-position = Vector2(1511, 1019.25)
-shape = SubResource("RectangleShape2D_gbnch")
-debug_color = Color(0.9607843, 0, 0, 0.3372549)
-
-[node name="Sprite2D2" type="Sprite2D" parent="Spikes4"]
-position = Vector2(1512, 1014)
-scale = Vector2(0.5351026, 0.53510255)
-texture = ExtResource("11_npmsg")
-
-[node name="Spikes2" type="Area2D" parent="."]
-position = Vector2(-451, -2)
-collision_layer = 3
-collision_mask = 2
-
-[node name="Sprite2D3" type="Sprite2D" parent="Spikes2"]
-position = Vector2(2012.0001, 1016.99994)
-scale = Vector2(0.50704616, 0.4856356)
-texture = ExtResource("11_npmsg")
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Spikes2"]
-position = Vector2(2014, 1019.25)
-shape = SubResource("RectangleShape2D_gbnch")
-debug_color = Color(0.9607843, 0, 0, 0.24313726)
-
-[node name="Spikes" type="Area2D" parent="."]
-position = Vector2(-451, -2)
-collision_layer = 3
-collision_mask = 2
-
-[node name="ColorRect" type="ColorRect" parent="Spikes"]
-custom_minimum_size = Vector2(60, 0)
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = 3164.0
-offset_top = 1009.0
-offset_right = 3267.0
-offset_bottom = 1030.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(0.6528191, 0, 0.3071221, 1)
-metadata/_edit_use_anchors_ = true
-
-[node name="Sprite2D" type="Sprite2D" parent="Spikes"]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Spikes"]
-position = Vector2(3216, 1019.25)
-shape = SubResource("RectangleShape2D_gbnch")
-debug_color = Color(0.9598109, 0, 0, 1)
-
-[node name="Sprite2D2" type="Sprite2D" parent="Spikes"]
-position = Vector2(-1701, 0)
-
-[node name="Enemy" parent="." instance=ExtResource("8_e2w2n")]
-position = Vector2(2061, 975)
-
-[node name="GameOverTimer" type="Timer" parent="."]
-process_mode = 2
-
-[node name="MinigameUI" type="CanvasLayer" parent="."]
-
-[node name="MinigameHealthBar" type="ProgressBar" parent="MinigameUI"]
-offset_left = 20.0
-offset_top = 20.0
-offset_right = 420.0
-offset_bottom = 70.0
-theme_override_colors/font_color = Color(0, 0.9647059, 0.24313726, 1)
-theme_override_fonts/font = ExtResource("9_3wvma")
-theme_override_styles/fill = SubResource("StyleBoxFlat_3wvma")
-value = 100.0
-
-[node name="Enemy2" parent="." instance=ExtResource("8_e2w2n")]
-position = Vector2(3877, 963)
 
 [node name="Platform1" type="StaticBody2D" parent="."]
 position = Vector2(1592, 520)
@@ -1133,9 +1014,6 @@ position = Vector2(1956, 163)
 shape = SubResource("RectangleShape2D_sajbp")
 one_way_collision = true
 
-[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
-environment = SubResource("Environment_sajbp")
-
 [node name="Platform6" type="StaticBody2D" parent="."]
 position = Vector2(6797, 2009)
 collision_layer = 3
@@ -1168,22 +1046,19 @@ position = Vector2(-952, -1377)
 shape = SubResource("RectangleShape2D_sajbp")
 one_way_collision = true
 
-[node name="Enemy3" parent="." instance=ExtResource("8_e2w2n")]
-position = Vector2(6213, 975)
-
 [node name="Platform8" type="StaticBody2D" parent="."]
 position = Vector2(6797, 2009)
 collision_layer = 3
 
 [node name="ColorRect" type="ColorRect" parent="Platform8"]
 offset_left = 402.0
-offset_top = -1281.0
+offset_top = -1199.0
 offset_right = 648.0
-offset_bottom = -1258.0
+offset_bottom = -1176.0
 color = Color(0.16862746, 0.88235295, 0.7058824, 1)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Platform8"]
-position = Vector2(525, -1270)
+position = Vector2(525, -1188)
 shape = SubResource("RectangleShape2D_sajbp")
 one_way_collision = true
 
@@ -1191,24 +1066,10 @@ one_way_collision = true
 position = Vector2(-450, -2)
 collision_mask = 2
 
-[node name="ColorRect" type="ColorRect" parent="Spikes5"]
-custom_minimum_size = Vector2(60, 0)
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = 8210.0
-offset_top = 1009.0
-offset_right = 8313.0
-offset_bottom = 1030.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(0.6528191, 0, 0.3071221, 1)
-metadata/_edit_use_anchors_ = true
-
-[node name="Sprite2D" type="Sprite2D" parent="Spikes5"]
-position = Vector2(5046, 0)
+[node name="Sprite2D2" type="Sprite2D" parent="Spikes5"]
+position = Vector2(8262, 981)
+scale = Vector2(0.69, 0.69)
+texture = ExtResource("4_sajbp")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Spikes5"]
 position = Vector2(8262, 1019.25)
@@ -1219,24 +1080,10 @@ debug_color = Color(0.9598109, 0, 0, 1)
 position = Vector2(-450, -2)
 collision_mask = 2
 
-[node name="ColorRect" type="ColorRect" parent="Spikes5/Spikes5"]
-custom_minimum_size = Vector2(60, 0)
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = 8816.0
-offset_top = 1009.0
-offset_right = 8919.0
-offset_bottom = 1030.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(0.6528191, 0, 0.3071221, 1)
-metadata/_edit_use_anchors_ = true
-
-[node name="Sprite2D" type="Sprite2D" parent="Spikes5/Spikes5"]
-position = Vector2(5756, 0)
+[node name="Sprite2D2" type="Sprite2D" parent="Spikes5/Spikes5"]
+position = Vector2(8867, 980.00006)
+scale = Vector2(0.69, 0.69)
+texture = ExtResource("4_sajbp")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Spikes5/Spikes5"]
 position = Vector2(8868, 1019.25)
@@ -1247,24 +1094,10 @@ debug_color = Color(0.9598109, 0, 0, 1)
 position = Vector2(-450, -2)
 collision_mask = 2
 
-[node name="ColorRect" type="ColorRect" parent="Spikes6"]
-custom_minimum_size = Vector2(60, 0)
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = 8731.0
-offset_top = 1009.0
-offset_right = 8834.0
-offset_bottom = 1030.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(0.6528191, 0, 0.3071221, 1)
-metadata/_edit_use_anchors_ = true
-
-[node name="Sprite2D" type="Sprite2D" parent="Spikes6"]
-position = Vector2(5567, 0)
+[node name="Sprite2D2" type="Sprite2D" parent="Spikes6"]
+position = Vector2(8781, 979)
+scale = Vector2(0.69, 0.69)
+texture = ExtResource("4_sajbp")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Spikes6"]
 position = Vector2(8783, 1019.25)
@@ -1275,24 +1108,10 @@ debug_color = Color(0.9598109, 0, 0, 1)
 position = Vector2(-450, -2)
 collision_mask = 2
 
-[node name="ColorRect" type="ColorRect" parent="Spikes7"]
-custom_minimum_size = Vector2(60, 0)
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = 8997.0
-offset_top = 1009.0
-offset_right = 9100.0
-offset_bottom = 1030.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(0.6528191, 0, 0.3071221, 1)
-metadata/_edit_use_anchors_ = true
-
-[node name="Sprite2D" type="Sprite2D" parent="Spikes7"]
-position = Vector2(5833, 0)
+[node name="Sprite2D2" type="Sprite2D" parent="Spikes7"]
+position = Vector2(9048, 978)
+scale = Vector2(0.69, 0.69)
+texture = ExtResource("4_sajbp")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Spikes7"]
 position = Vector2(9049, 1019.25)
@@ -1303,42 +1122,134 @@ debug_color = Color(0.9598109, 0, 0, 1)
 position = Vector2(-450, -2)
 collision_mask = 2
 
-[node name="ColorRect" type="ColorRect" parent="Spikes8"]
-custom_minimum_size = Vector2(60, 0)
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = 9255.0
-offset_top = 1009.0
-offset_right = 9358.0
-offset_bottom = 1030.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(0.6528191, 0, 0.3071221, 1)
-metadata/_edit_use_anchors_ = true
-
-[node name="Sprite2D" type="Sprite2D" parent="Spikes8"]
-position = Vector2(6091, 0)
+[node name="Sprite2D2" type="Sprite2D" parent="Spikes8"]
+position = Vector2(9307, 980)
+scale = Vector2(0.69, 0.69)
+texture = ExtResource("4_sajbp")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Spikes8"]
 position = Vector2(9307, 1019.25)
 shape = SubResource("RectangleShape2D_gbnch")
 debug_color = Color(0.9598109, 0, 0, 1)
 
-[connection signal="timeout" from="Player/CameraShakeTimer" to="Player" method="_on_camera_shake_timer_timeout"]
-[connection signal="timeout" from="Player/InvincibilityTimer" to="Player" method="_on_invincibility_timer_timeout"]
-[connection signal="timeout" from="Player/InvisibilityTimer" to="Player" method="_on_invisibility_timer_timeout"]
+[node name="Spikes4" type="Area2D" parent="."]
+position = Vector2(-450, -2)
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Spikes4"]
+position = Vector2(1503.5, 1027.5)
+shape = SubResource("RectangleShape2D_gbnch")
+debug_color = Color(0.9607843, 0, 0, 0.3372549)
+
+[node name="Sprite2D2" type="Sprite2D" parent="Spikes4"]
+position = Vector2(1501.6334, 991.9229)
+scale = Vector2(0.6899538, 0.6899539)
+texture = ExtResource("4_sajbp")
+
+[node name="Spikes2" type="Area2D" parent="."]
+position = Vector2(-451, -2)
+collision_layer = 3
+collision_mask = 2
+
+[node name="Sprite2D2" type="Sprite2D" parent="Spikes2"]
+position = Vector2(2012, 997.2957)
+scale = Vector2(0.6489766, 0.64897686)
+texture = ExtResource("4_sajbp")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Spikes2"]
+position = Vector2(2014, 1019.25)
+shape = SubResource("RectangleShape2D_gbnch")
+debug_color = Color(0.9607843, 0, 0, 0.24313726)
+
+[node name="Spikes" type="Area2D" parent="."]
+position = Vector2(-264, -2)
+collision_layer = 3
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Spikes"]
+position = Vector2(3216, 1019.25)
+shape = SubResource("RectangleShape2D_gbnch")
+debug_color = Color(0.9598109, 0, 0, 1)
+
+[node name="Sprite2D2" type="Sprite2D" parent="Spikes"]
+position = Vector2(3214, 979)
+scale = Vector2(0.69, 0.69)
+texture = ExtResource("4_sajbp")
+
+[node name="Enemy" parent="." instance=ExtResource("8_e2w2n")]
+position = Vector2(2061, 975)
+
+[node name="Enemy2" parent="." instance=ExtResource("8_e2w2n")]
+position = Vector2(3975, 963)
+
+[node name="Enemy3" parent="." instance=ExtResource("8_e2w2n")]
+position = Vector2(6213, 975)
+
+[node name="Player" type="CharacterBody2D" parent="." node_paths=PackedStringArray("health_bar")]
+collision_layer = 34
+collision_mask = 43
+script = ExtResource("2_a3a31")
+health_bar = NodePath("../MinigameUI/MinigameHealthBar")
+
+[node name="AnimatedSprite" type="AnimatedSprite2D" parent="Player"]
+position = Vector2(540, 893)
+sprite_frames = SubResource("SpriteFrames_73lsg")
+animation = &"Jump_Loop"
+
+[node name="Camera2D" type="Camera2D" parent="Player"]
+anchor_mode = 0
+limit_left = 0
+limit_top = 0
+limit_right = 8000
+limit_bottom = 1120
+
+[node name="StandShape" type="CollisionShape2D" parent="Player"]
+position = Vector2(549, 876)
+shape = SubResource("CapsuleShape2D_7th4q")
+debug_color = Color(0.8232569, 0.1428257, 1, 1)
+
+[node name="CrouchShape" type="CollisionShape2D" parent="Player"]
+process_mode = 4
+position = Vector2(549, 990)
+shape = SubResource("CapsuleShape2D_sajbp")
+debug_color = Color(0.47427702, 0.1428257, 1, 1)
+
+[node name="CameraShakeTimer" type="Timer" parent="Player"]
+one_shot = true
+
+[node name="InvincibilityTimer" type="Timer" parent="Player"]
+one_shot = true
+
+[node name="InvisibilityTimer" type="Timer" parent="Player"]
+one_shot = true
+
+[node name="GameOverTimer" type="Timer" parent="."]
+process_mode = 2
+
+[node name="MinigameUI" type="CanvasLayer" parent="."]
+
+[node name="MinigameHealthBar" type="ProgressBar" parent="MinigameUI"]
+offset_left = 20.0
+offset_top = 20.0
+offset_right = 420.0
+offset_bottom = 70.0
+theme_override_colors/font_color = Color(0, 0.9647059, 0.24313726, 1)
+theme_override_fonts/font = ExtResource("9_3wvma")
+theme_override_styles/fill = SubResource("StyleBoxFlat_3wvma")
+value = 100.0
+
 [connection signal="body_entered" from="Door" to="." method="_on_door_body_entered"]
-[connection signal="body_entered" from="Spikes4" to="Player" method="_on_spikes_body_entered"]
-[connection signal="body_entered" from="Spikes2" to="Player" method="_on_spikes_body_entered"]
-[connection signal="body_entered" from="Spikes" to="Player" method="_on_spikes_body_entered"]
-[connection signal="player_hit" from="Enemy" to="Player" method="take_damage"]
-[connection signal="timeout" from="GameOverTimer" to="." method="_on_game_over_timer_timeout"]
 [connection signal="body_entered" from="Spikes5" to="Player" method="_on_spikes_body_entered"]
 [connection signal="body_entered" from="Spikes5/Spikes5" to="Player" method="_on_spikes_body_entered"]
 [connection signal="body_entered" from="Spikes6" to="Player" method="_on_spikes_body_entered"]
 [connection signal="body_entered" from="Spikes7" to="Player" method="_on_spikes_body_entered"]
 [connection signal="body_entered" from="Spikes8" to="." method="_on_spikes_body_entered"]
 [connection signal="body_entered" from="Spikes8" to="Player" method="_on_spikes_body_entered"]
+[connection signal="body_entered" from="Spikes4" to="Player" method="_on_spikes_body_entered"]
+[connection signal="body_entered" from="Spikes2" to="Player" method="_on_spikes_body_entered"]
+[connection signal="body_entered" from="Spikes" to="Player" method="_on_spikes_body_entered"]
+[connection signal="player_hit" from="Enemy" to="Player" method="take_damage"]
+[connection signal="timeout" from="Player/CameraShakeTimer" to="Player" method="_on_camera_shake_timer_timeout"]
+[connection signal="timeout" from="Player/InvincibilityTimer" to="Player" method="_on_invincibility_timer_timeout"]
+[connection signal="timeout" from="Player/InvisibilityTimer" to="Player" method="_on_invisibility_timer_timeout"]
+[connection signal="timeout" from="GameOverTimer" to="." method="_on_game_over_timer_timeout"]

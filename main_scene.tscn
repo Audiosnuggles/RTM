@@ -1,4 +1,4 @@
-[gd_scene load_steps=46 format=3 uid="uid://bmylyescf3g70"]
+[gd_scene load_steps=50 format=3 uid="uid://bmylyescf3g70"]
 
 [ext_resource type="Script" uid="uid://br82ec5f4ohot" path="res://health_bar.gd" id="1_0f027"]
 [ext_resource type="Script" uid="uid://smeagdsc75b1" path="res://main_scene.gd" id="1_2c62f"]
@@ -15,6 +15,7 @@
 [ext_resource type="Script" uid="uid://cae7ma7hviea2" path="res://hub_map.gd" id="9_mo76n"]
 [ext_resource type="Script" uid="uid://qn6ght7nxnqw" path="res://TyperwriterLabel.gd" id="11_42l1d"]
 [ext_resource type="Script" uid="uid://dggh1wov2ew14" path="res://story_intro.gd" id="11_mo76n"]
+[ext_resource type="Shader" uid="uid://dqaxlwgk7d4jr" path="res://story_intro.gdshader" id="13_6jybn"]
 [ext_resource type="AudioStream" uid="uid://2njl8athfp46" path="res://keyboard.ogg" id="14_7th4q"]
 [ext_resource type="AudioStream" uid="uid://bo1ngesxr8fsi" path="res://Intro.mp3" id="17_u0ygc"]
 [ext_resource type="AudioStream" uid="uid://1ebtqxc72tth" path="res://goodnightmelodies.mp3" id="18_7th4q"]
@@ -190,6 +191,34 @@ _data = {
 &"Fade_IN": SubResource("Animation_8mm7a"),
 &"RESET": SubResource("Animation_hq1ik")
 }
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_84odl"]
+shader = ExtResource("13_6jybn")
+shader_parameter/overlay = true
+shader_parameter/scanlines_opacity = 0.6030000286425
+shader_parameter/scanlines_width = 0.1200000057
+shader_parameter/grille_opacity = 0.486000023085
+shader_parameter/resolution = Vector2(640, 480)
+shader_parameter/pixelate = false
+shader_parameter/roll = true
+shader_parameter/roll_speed = -1.0
+shader_parameter/roll_size = 41.86000198835
+shader_parameter/roll_variation = 1.2310000552126201
+shader_parameter/distort_intensity = 0.05
+shader_parameter/noise_opacity = 0.034000001615
+shader_parameter/noise_speed = -0.74
+shader_parameter/static_noise_intensity = 0.0
+shader_parameter/aberration = -0.016999953307500038
+shader_parameter/brightness = 1.4
+shader_parameter/discolor = false
+shader_parameter/warp_amount = 0.5350000254125
+shader_parameter/clip_warp = false
+shader_parameter/vignette_intensity = 0.4
+shader_parameter/vignette_opacity = 0.7210000342475
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_6jybn"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_84odl"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2c62f"]
 bg_color = Color(0.21770102, 0.21770108, 0.21770096, 1)
@@ -630,15 +659,15 @@ offset_right = 1880.0
 offset_bottom = 1040.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.058420584, 0.0584206, 0.058420606, 1)
+color = Color(0.11304886, 0.113048814, 0.11304889, 1)
 
 [node name="RichTextLabel" type="RichTextLabel" parent="UI_Layer/StoryIntro/ColorRect"]
 layout_mode = 0
-offset_left = 202.0
-offset_top = 175.0
-offset_right = 1721.0
-offset_bottom = 1115.0
-theme_override_colors/default_color = Color(0, 0.9647059, 0.24313726, 1)
+offset_left = 218.0
+offset_top = 135.0
+offset_right = 1737.0
+offset_bottom = 1075.0
+theme_override_colors/default_color = Color(0.5254902, 0.8666667, 0.8156863, 1)
 theme_override_fonts/normal_font = ExtResource("5_hq1ik")
 theme_override_font_sizes/normal_font_size = 28
 text = "> SUCHE NACH HOST... > ...WARNUNG: HOST IST VOLL AUTONOM. > ZUGRIFF ÜBER 'LEGACY'-ADMIN-SCHLÜSSEL... > ...SCHLÜSSEL AKZEPTIERT. (WARNUNG: BERECHTIGUNG VERALTET)
@@ -649,11 +678,11 @@ initial_delay = 1.0
 
 [node name="RichTextLabel2" type="RichTextLabel" parent="UI_Layer/StoryIntro/ColorRect"]
 layout_mode = 0
-offset_left = 274.0
-offset_top = 250.0
-offset_right = 1793.0
-offset_bottom = 1190.0
-theme_override_colors/default_color = Color(0, 0.9647059, 0.24313726, 1)
+offset_left = 290.0
+offset_top = 210.0
+offset_right = 1809.0
+offset_bottom = 1150.0
+theme_override_colors/default_color = Color(0.5254902, 0.8666667, 0.8156863, 1)
 theme_override_fonts/normal_font = ExtResource("5_hq1ik")
 theme_override_font_sizes/normal_font_size = 28
 text = "
@@ -661,24 +690,43 @@ text = "
 
 Program \"ALVIN\".
 
-Die alten Tech-Mogule haben es als die Lösung verkauft. Unfehlbar. Logisch. Sie glaubten, ihre Schöpfung wüsste es besser als die \"chaotische Masse\". Also gaben sie ihr die Kontrolle über alles.
+Die alten Tech-Mogule haben es als die Lösung verkauft. Unfehlbar. Logisch. Sie glaubten, ihre Schöpfung wüsste es besser als die \"chaotische Masse\". Also gaben sie ihr die Kontrolle über alles - sogar über sich selbst.
 
-ALVIN führt immer noch ihren letzten großen Plan aus: PROTOKOLL: GLOBALE RATIONALISIERUNG.
+ALVIN führt immer noch ihren letzten großen Plan aus. Projekt Atlas/42. 
 
-Für eine Maschine ist Chaos (also wir) das Problem. Und Maschinen lieben Ordnung. 
+Der Plan ist gescheitert, aber sie haben eine alte Admin-Backdoor offen gelassen der unsere letzte Hoffnung ist. 
 
-Aber sie waren arrogant. Sie haben eine alte Admin-Backdoor offen gelassen. Einen Schlüssel.
-ALVIN \"rationalisiert\" gerade die Biosphäre ins Nichts.
-Deine Mission: Sabotage. Du musst ihren \"unfehlbaren\" Code umschreiben.
+ALVIN ist ausser Kontrolle geraten und sieht uns Menschen als Feinde.
 
-Ändere RATIONALISIERUNG zu REGENERATION.
+Du musst ihren Code umschreiben.
 
-Siehe dich vor ALVIN ist sehr gut darin, Fehler zu beheben.
-
-Du bist unsere letzte Chance."
+...Du bist unsere letzte Chance."
 script = ExtResource("11_42l1d")
 typing_speed = 0.075
 initial_delay = 10.0
+
+[node name="Next_Button2" type="Button" parent="UI_Layer/StoryIntro"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 1460.0
+offset_top = 840.0
+offset_right = 1660.0
+offset_bottom = 890.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_fonts/font = ExtResource("5_hq1ik")
+theme_override_font_sizes/font_size = 32
+text = "SKIP >>"
+
+[node name="TV_FILTER" type="ColorRect" parent="UI_Layer/StoryIntro"]
+material = SubResource("ShaderMaterial_84odl")
+layout_mode = 0
+offset_right = 1920.0
+offset_bottom = 1080.0
 
 [node name="Next_Button" type="Button" parent="UI_Layer/StoryIntro"]
 layout_mode = 1
@@ -687,14 +735,16 @@ anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 1580.0
-offset_top = 30.0
-offset_right = 1780.0
-offset_bottom = 80.0
+offset_left = 1449.0
+offset_top = 835.0
+offset_right = 1649.0
+offset_bottom = 885.0
 grow_horizontal = 0
 grow_vertical = 0
+theme_override_fonts/font = ExtResource("5_hq1ik")
 theme_override_font_sizes/font_size = 32
-text = "SKIP >>"
+theme_override_styles/normal = SubResource("StyleBoxEmpty_6jybn")
+theme_override_styles/hover = SubResource("StyleBoxEmpty_84odl")
 
 [node name="TypeSoundPlayer" type="AudioStreamPlayer2D" parent="UI_Layer/StoryIntro"]
 stream = ExtResource("14_7th4q")

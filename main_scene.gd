@@ -621,3 +621,7 @@ func _on_mission_button_pressed(mission_index: int):
 		level_to_start = klicker_level_to_load
 		
 		_show_search_screen(true)
+
+
+func _on_next_button_pressed() -> void:
+	pass # Replace with function body.
