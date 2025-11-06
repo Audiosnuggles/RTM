@@ -699,9 +699,9 @@ func _process(_delta):
 	if is_instance_valid(fragment_display) and fragment_display.visible:
 		_update_fragment_display()
 
-func _on_Upgrade_Button_pressed() -> void:
+func _on_click_Upgrade_Button_pressed() -> void:
 	pass # Replace with function body.
 
 
-func _on_click_Upgrade_Button_pressed() -> void:
+func _on_Upgrade_Button_pressed() -> void:
 	pass # Replace with function body.
