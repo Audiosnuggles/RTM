@@ -8,13 +8,15 @@ extends Node2D
 @onready var music_player = $MusicPlayer
 @onready var hub_music_player = $HubMusicPlayer # Für die Hub-Musik
 @onready var anim_player = $AnimationPlayer 
-@onready var fade_screen = $UI_Layer/FadeScreen # NEU: Für den Fade-Übergang
+@onready var fade_screen = $UI_Layer/FadeScreen # Für den Fade-Übergang
 
 const UI_LAYER_PATH = "UI_Layer/"
 var next_round_timer: Timer
 var video_player: VideoStreamPlayer
 
-const MINIGAME_SCENE_PATH = preload("res://minigame_scene.tscn")
+# --- HACKING KORREKTUR: Neue Konstante für Hacking-Szene ---
+const HACKING_MINIGAME_PATH = preload("res://hacking_minigame.tscn") # FÜR AUTOMATISCHEN START
+const PLATFORMER_MINIGAME_PATH = preload("res://minigame_scene.tscn") # FÜR MISSION 1 BUTTON
 var current_minigame: Node = null
 
 # --- (Restliche Konstanten bleiben gleich) ---
@@ -109,6 +111,24 @@ func _unhandled_input(event):
 			Combat.healing_impulse_fired.emit(event.position)
 			get_viewport().set_input_as_handled()
 
+# --- FUNKTION FÜR TITLESCREEN-BUTTON ---
+func _on_button_start_pressed():
+	# Diese Funktion wird vom Button auf dem TitleScreen aufgerufen (per Signalverbindung).
+	
+	if is_instance_valid(anim_player):
+		anim_player.stop() 
+	if is_instance_valid(main_camera):
+		main_camera.zoom = Vector2(1, 1)
+	
+	var tween = create_tween()
+	if is_instance_valid(music_player):
+		tween.tween_property(music_player, "volume_db", -80.0, 1.5)
+		await tween.finished
+		
+	goto_story_intro()
+# --- ENDE FUNKTION ---
+
+
 func goto_title_screen():
 	get_tree().paused = false
 	current_state = GameState.STATE_TITLE
@@ -166,13 +186,27 @@ func goto_story_intro():
 		fade_out_tween.tween_property(fade_screen, "modulate:a", 0.0, 1.0)
 		await fade_out_tween.finished
 		fade_screen.hide()
+		
+	# --- KORREKTUR: PROGRESSION NACH STORY INTRO ---
+	# Wir starten hier NICHTS. Wir warten darauf, dass story_intro.gd
+	# am Ende "main_scene_node.goto_hub_map()" aufruft.
+	# --- ENDE KORREKTUR ---
 
 func goto_hub_map():
+	# --- KORREKTUR: FÄNGT DEN AUFRUF VOM STORY INTRO AB ---
+	# Wenn wir noch am Anfang sind (Level 0), starte das Hacking Game statt der Hub Map.
+	if Combat.current_level_index == 0:
+		start_hacking_minigame()
+		return # Verhindert, dass der Rest von goto_hub_map ausgeführt wird
+	# --- ENDE KORREKTUR ---
+	
 	current_state = GameState.STATE_HUB_MAP
 	
 	# --- NEUER MUSIK-CODE START ---
 	if is_instance_valid(music_player) and music_player.is_playing():
 		music_player.stop() 
+	if is_instance_valid(hub_music_player) and hub_music_player.is_playing():
+		hub_music_player.stop()
 	if is_instance_valid(hub_music_player) and not hub_music_player.is_playing():
 		hub_music_player.play()
 	# --- NEUER MUSIK-CODE ENDE ---
@@ -230,16 +264,43 @@ func _return_to_combat_after_transition():
 	
 	print("Zustand: COMBAT.")
 
-# ... (Alle MINIGAME-LOGIK Funktionen bleiben gleich) ...
-# ...
+# --- NEUE FUNKTION ZUM STARTEN DES HACKING-SPIELS ---
+func start_hacking_minigame():
+	print("start_hacking_minigame aufgerufen.")
+	
+	if is_instance_valid(current_minigame):
+		current_minigame.queue_free()
+
+	var minigame_scene_resource = HACKING_MINIGAME_PATH
+	if minigame_scene_resource:
+		current_minigame = minigame_scene_resource.instantiate()
+		
+		if current_minigame.has_signal("minigame_finished"):
+			current_minigame.minigame_finished.connect(_on_minigame_finished)
+		else:
+			print("  WARNUNG: Hacking-Minigame hat kein 'minigame_finished' Signal.")
+		
+		# Verstecke die Hauptwelt (keine Kamera-Anpassung nötig, da Hacking-Szene ein CanvasLayer ist)
+		if is_instance_valid(main_camera): main_camera.enabled = false
+		if is_instance_valid(klicker_background): klicker_background.hide()
+		if is_instance_valid(klicker_roboter): klicker_roboter.hide()
+		_hide_ui()
+		
+		add_child(current_minigame)
+	else:
+		print("  FEHLER: Hacking-Minigame-Szene konnte nicht geladen werden.")
+
+
+# --- start_minigame_level (Platformer) verwendet den neuen Pfad PLATFORMER_MINIGAME_PATH ---
 func start_minigame_level():
 	print("start_minigame_level aufgerufen.")
-
+	
+	var minigame_scene_resource = PLATFORMER_MINIGAME_PATH
+	
 	if is_instance_valid(current_minigame):
 		print("  Altes Minigame wird entfernt.")
 		current_minigame.queue_free()
 
-	var minigame_scene_resource = MINIGAME_SCENE_PATH
 	if minigame_scene_resource:
 		print("  Neues Minigame wird instanziiert.")
 		current_minigame = minigame_scene_resource.instantiate()
@@ -313,8 +374,19 @@ func start_minigame_level():
 		print("  FEHLER: Minigame-Szene konnte nicht geladen werden.")
 
 
+# --- KORREKTUR: _on_minigame_finished unterscheidet jetzt die Level ---
 func _on_minigame_finished(success: bool):
 
+	# 1. Zeige den FadeScreen (der noch 0 Alpha hat) und blende ihn ein
+	if is_instance_valid(fade_screen):
+		fade_screen.modulate.a = 0.0 # Stelle sicher, dass er transparent ist
+		fade_screen.show()
+		
+		var fade_in_tween = create_tween()
+		fade_in_tween.tween_property(fade_screen, "modulate:a", 1.0, 0.5) 
+		await fade_in_tween.finished
+	
+	# 2. JETZT (wo der Bildschirm schwarz ist), räume die Szene auf
 	if is_instance_valid(main_camera):
 		main_camera.enabled = true
 		main_camera.make_current()
@@ -322,14 +394,95 @@ func _on_minigame_finished(success: bool):
 	if is_instance_valid(current_minigame):
 		current_minigame.queue_free()
 		current_minigame = null
-
+		
+	# --- HIER IST DIE LÖSUNG FÜR DEN SCHWARZEN BILDSCHIRM ---
+	# Stelle sicher, dass der Hintergrund der Hauptszene wieder sichtbar ist!
+	if is_instance_valid(klicker_background):
+		klicker_background.show()
+	# --- ENDE DER LÖSUNG ---
+	
+	# 3. KORREKTUR: Fortschritt basierend auf dem Level setzen
 	if success:
 		print("Minigame erfolgreich abgeschlossen!")
-		Combat.current_level_index = 2
+		
+		if Combat.current_level_index == 0: 
+			# Hacking Game (Mission 0) fertig -> Starte Klicker Level 1 (Index 0)
+			Combat.current_level_index = 1 # Schalte Mission 1 (Platformer) frei
+			level_to_start = 0 # Klicker Level Index 0
+			_show_search_screen(true) # Starte Klicker Level 1
+			return # Wichtig: Verlasse die Funktion, damit goto_hub_map nicht aufgerufen wird
+			
+		elif Combat.current_level_index == 1: 
+			# Platformer (Mission 1) fertig -> Schalte Klicker Level 2 (Mission 2) frei
+			Combat.current_level_index = 2 # Schaltet Mission 2 frei
+			
 	else:
 		print("Minigame fehlgeschlagen. Zurück zur Karte.")
-
+		
+	# 4. Wechsle zur Hub-Map (passiert sofort hinter dem schwarzen Bildschirm)
 	goto_hub_map()
+	
+	# 5. Blende den FadeScreen wieder aus, um die Hub-Map zu enthüllen
+	if is_instance_valid(fade_screen):
+		var fade_out_tween = create_tween()
+		fade_out_tween.tween_property(fade_screen, "modulate:a", 0.0, 1.0) # 1 Sekunde Fade-Out
+		await fade_out_tween.finished
+		fade_screen.hide()
+
+
+# --- KORREKTUR: MISSION BUTTON HANDLER (Behebt die UNUSED_PARAMETER Warnung) ---
+func _on_mission_button_pressed(level_index: int):
+	# Das Argument wird nun korrekt als level_index empfangen und verwendet
+	if current_state != GameState.STATE_HUB_MAP: return
+	
+	# Musik stoppen
+	if is_instance_valid(hub_music_player) and hub_music_player.is_playing():
+		hub_music_player.stop()
+	
+	var hub_map_node = get_node(UI_LAYER_PATH + "HubMap")
+	if is_instance_valid(hub_map_node): hub_map_node.hide()
+
+	# --- START DER NEUEN LOGIK ---
+	if level_index == 0:
+		# MISSION 1 (Index 0) startet das PLATTFORMER SPIEL
+		current_state = GameState.STATE_MINIGAME
+		start_minigame_level()
+	elif level_index == 1:
+		# MISSION 2 (Index 1) startet das KLICKER SPIEL 2 (Klicker Index 1)
+		# (Klicker 1 (Index 0) wurde nach dem Hacking Game gespielt)
+		current_state = GameState.STATE_COMBAT
+		level_to_start = 1 # Klicker Level 1
+		_show_search_screen(true)
+	else:
+		# MISSION 3-5 (Index 2, 3, 4): KLICKER SPIELE STARTEN
+		# Klicker Level 2 ist Index 2
+		# Klicker Level 3 ist Index 3
+		# Klicker Level 4 ist Index 4
+		level_to_start = level_index
+		_show_search_screen(true)
+	# --- ENDE DER NEUEN LOGIK ---
+# --- ENDE KORREKTUR ---
+
+
+func _on_upgrade_button_pressed():
+	if Combat.upgrade_healing_power():
+		_update_fragment_display()
+		var button = get_node(UI_LAYER_PATH + "Upgrade_Button")
+		if is_instance_valid(button):
+			button.text = "Upgrade Healing (" + str(Combat.upgrade_cost) + " C)"
+			button.release_focus()
+
+func _on_click_upgrade_button_pressed():
+	if Combat.upgrade_click_power():
+		_update_fragment_display()
+		var button = get_node(UI_LAYER_PATH + "Click_Upgrade_Button")
+		if is_instance_valid(button):
+			button.text = "Upgrade Click (" + str(Combat.click_upgrade_cost) + " C)"
+			button.release_focus()
+
+
+func _on_next_button_pressed() -> void:
+	pass # Replace with function body.
 
 # ... (Alle KAMPF- UND ÜBERGANGSLOGIK Funktionen bleiben gleich) ...
 # ...
@@ -338,6 +491,7 @@ func start_next_corrupted(level_index: int):
 	var asset_index_to_load = level_index % asset_array.size()
 	var current_assets = asset_array[asset_index_to_load]
 
+	
 	var background_node = klicker_background
 	var corrupted_node = klicker_roboter
 
@@ -412,6 +566,7 @@ func _on_corrupted_healed():
 			await video_player.finished
 			video_player.hide()
 
+	# KORREKTUR: Nach JEDEM Klicker-Sieg zur Hub-Map zurückkehren
 	goto_hub_map()
 
 
@@ -543,85 +698,3 @@ func _process(_delta):
 				progress_bar.value = simulated_progress
 	if is_instance_valid(fragment_display) and fragment_display.visible:
 		_update_fragment_display()
-
-
-# --------------------------------------------------------------------------------------
-## BUTTON-SIGNAL-HANDLER
-# --------------------------------------------------------------------------------------
-
-func _on_button_start_pressed():
-	# --- START: NEUER "WARP"-ÜBERGANG ---
-	
-	# (Optional) Zoom beschleunigen
-	if is_instance_valid(anim_player):
-		anim_player.speed_scale = 2.5 # Schneller zoomen
-
-	var tween = create_tween()
-	
-	# 1. Musik ausblenden
-	if is_instance_valid(music_player):
-		tween.tween_property(music_player, "volume_db", -80.0, 1.0)
-
-	# 2. Schwarz einblenden (FadeScreen)
-	if is_instance_valid(fade_screen):
-		fade_screen.modulate.a = 0.0
-		fade_screen.show()
-		tween.tween_property(fade_screen, "modulate:a", 1.0, 1.0) # 1 Sekunde Fade-In
-	
-	# Warten, bis der Fade-In (und Musik-Fade) fertig ist
-	await tween.finished
-	
-	# Jetzt, wo es schwarz ist, aufräumen:
-	if is_instance_valid(anim_player):
-		anim_player.stop() # Normales Stop, setzt auf RESET
-		anim_player.speed_scale = 1.0
-	if is_instance_valid(main_camera):
-		main_camera.zoom = Vector2(1, 1)
-
-	# Szene wechseln
-	goto_story_intro()
-	# --- ENDE: NEUER "WARP"-ÜBERGANG ---
-
-
-func _on_upgrade_button_pressed():
-	if Combat.upgrade_healing_power():
-		_update_fragment_display()
-		var button = get_node(UI_LAYER_PATH + "Upgrade_Button")
-		if is_instance_valid(button):
-			button.text = "Upgrade Healing (" + str(Combat.upgrade_cost) + " C)"
-			button.release_focus()
-
-func _on_click_upgrade_button_pressed():
-	if Combat.upgrade_click_power():
-		_update_fragment_display()
-		var button = get_node(UI_LAYER_PATH + "Click_Upgrade_Button")
-		if is_instance_valid(button):
-			button.text = "Upgrade Click (" + str(Combat.click_upgrade_cost) + " C)"
-			button.release_focus()
-
-func _on_mission_button_pressed(mission_index: int):
-	if current_state != GameState.STATE_HUB_MAP: return
-	
-	# --- NEUER MUSIK-CODE START ---
-	if is_instance_valid(hub_music_player) and hub_music_player.is_playing():
-		hub_music_player.stop()
-	# --- NEUER MUSIK-CODE ENDE ---
-	
-	var hub_map_node = get_node(UI_LAYER_PATH + "HubMap")
-	if is_instance_valid(hub_map_node): hub_map_node.hide()
-	
-	if mission_index == 1:
-		current_state = GameState.STATE_MINIGAME
-		start_minigame_level()
-	else:
-		var klicker_level_to_load = mission_index
-		if mission_index > 1:
-			klicker_level_to_load = mission_index - 1
-			
-		level_to_start = klicker_level_to_load
-		
-		_show_search_screen(true)
-
-
-func _on_next_button_pressed() -> void:
-	pass # Replace with function body.

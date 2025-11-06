@@ -372,12 +372,12 @@ shader_parameter/pixelate = false
 shader_parameter/roll = true
 shader_parameter/roll_speed = -1.0
 shader_parameter/roll_size = 41.86000198835
-shader_parameter/roll_variation = 1.2310000552126201
+shader_parameter/roll_variation = 1.23100005521262
 shader_parameter/distort_intensity = 0.05
 shader_parameter/noise_opacity = 0.034000001615
 shader_parameter/noise_speed = -0.74
 shader_parameter/static_noise_intensity = 0.0
-shader_parameter/aberration = -0.016999953307500038
+shader_parameter/aberration = -0.01699995330750003
 shader_parameter/brightness = 1.4
 shader_parameter/discolor = false
 shader_parameter/warp_amount = 0.0
@@ -463,12 +463,12 @@ shader_parameter/pixelate = false
 shader_parameter/roll = true
 shader_parameter/roll_speed = -1.0
 shader_parameter/roll_size = 41.86000198835
-shader_parameter/roll_variation = 1.2310000552126201
+shader_parameter/roll_variation = 1.23100005521262
 shader_parameter/distort_intensity = 0.05
 shader_parameter/noise_opacity = 0.034000001615
 shader_parameter/noise_speed = -0.74
 shader_parameter/static_noise_intensity = 0.0
-shader_parameter/aberration = -0.016999953307500038
+shader_parameter/aberration = -0.01699995330750003
 shader_parameter/brightness = 1.4
 shader_parameter/discolor = false
 shader_parameter/warp_amount = 0.6690000317775
@@ -1102,8 +1102,8 @@ volume_db = 0.176
 autoplay = true
 
 [connection signal="pressed" from="UI_Layer/TitleScreen/Button_Start" to="." method="_on_button_start_pressed"]
-[connection signal="pressed" from="UI_Layer/Upgrade_Button" to="." method="_on_upgrade_button_pressed"]
-[connection signal="pressed" from="UI_Layer/Click_Upgrade_Button" to="." method="_on_click_upgrade_button_pressed"]
+[connection signal="pressed" from="UI_Layer/Upgrade_Button" to="." method="_on_Upgrade_Button_pressed"]
+[connection signal="pressed" from="UI_Layer/Click_Upgrade_Button" to="." method="_on_Click_Upgrade_Button_pressed"]
 [connection signal="pressed" from="UI_Layer/HubMap/Mission_1_Button" to="." method="_on_mission_button_pressed" binds= [0]]
 [connection signal="pressed" from="UI_Layer/HubMap/Mission_2_Button" to="." method="_on_mission_button_pressed" binds= [1]]
 [connection signal="pressed" from="UI_Layer/HubMap/Mission_3_Button" to="." method="_on_mission_button_pressed" binds= [2]]

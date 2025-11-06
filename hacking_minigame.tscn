@@ -1,8 +1,12 @@
-[gd_scene load_steps=11 format=3 uid="uid://4kdoyieyqx7d"]
+[gd_scene load_steps=18 format=3 uid="uid://4kdoyieyqx7d"]
 
 [ext_resource type="Script" uid="uid://c0mgrw64vl3ts" path="res://hacking_minigame.gd" id="1_5y2vv"]
 [ext_resource type="Texture2D" uid="uid://dd4s3kjpkod6x" path="res://backgrounds/Bg_Puzzle.jpg" id="2_cq4yu"]
 [ext_resource type="FontFile" uid="uid://diar4wg3jugva" path="res://OCR-a_.ttf" id="3_bel8c"]
+[ext_resource type="Shader" uid="uid://dqaxlwgk7d4jr" path="res://story_intro.gdshader" id="4_cq4yu"]
+[ext_resource type="Texture2D" uid="uid://dn5f86lihhj30" path="res://PINWALL.jpg" id="4_t2p27"]
+[ext_resource type="Texture2D" uid="uid://s8j6cdug2ed3" path="res://Scientist.png" id="5_kn0ur"]
+[ext_resource type="Texture2D" uid="uid://dax3pwaj0etx1" path="res://ausweis.png" id="6_4j4vu"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_5y2vv"]
 size = Vector2(171, 142)
@@ -16,11 +20,40 @@ size = Vector2(74, 142)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_d5u2o"]
 size = Vector2(43, 36)
 
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_t2p27"]
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5y2vv"]
-bg_color = Color(0.5254902, 0.8666667, 0.8156863, 1)
+bg_color = Color(0.5075946, 0.61093503, 0.8204087, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_cq4yu"]
 bg_color = Color(0, 0.9647059, 0.24313726, 1)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_cq4yu"]
+shader = ExtResource("4_cq4yu")
+shader_parameter/overlay = true
+shader_parameter/scanlines_opacity = 0.1630000077425
+shader_parameter/scanlines_width = 0.1200000057
+shader_parameter/grille_opacity = 0.1650000078375
+shader_parameter/resolution = Vector2(640, 480)
+shader_parameter/pixelate = false
+shader_parameter/roll = true
+shader_parameter/roll_speed = -0.5
+shader_parameter/roll_size = 41.86000198835
+shader_parameter/roll_variation = 1.2310000552126201
+shader_parameter/distort_intensity = 0.05
+shader_parameter/noise_opacity = 0.0450000021375
+shader_parameter/noise_speed = -0.74
+shader_parameter/static_noise_intensity = 0.0
+shader_parameter/aberration = -0.016999953307500038
+shader_parameter/brightness = 3.4
+shader_parameter/discolor = false
+shader_parameter/warp_amount = 0.0
+shader_parameter/clip_warp = false
+shader_parameter/vignette_intensity = 1.4
+shader_parameter/vignette_opacity = 0.7210000342475
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_t2p27"]
+bg_color = Color(0.086629294, 0.086629234, 0.08662925, 0.9372549)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_t2p27"]
 size = Vector2(256, 287)
@@ -71,21 +104,113 @@ offset_left = 468.0
 offset_top = 286.0
 offset_right = 1449.0
 offset_bottom = 759.0
+theme_override_styles/panel = SubResource("StyleBoxEmpty_t2p27")
 
-[node name="ClueText" type="RichTextLabel" parent="LabRoomScreen/ClueWindow"]
+[node name="ClueContent" type="Control" parent="LabRoomScreen/ClueWindow"]
+anchors_preset = 0
+offset_right = 963.0
+offset_bottom = 628.0
+
+[node name="WhiteboardClue" type="Panel" parent="LabRoomScreen/ClueWindow/ClueContent"]
 layout_mode = 0
-offset_left = 380.0
-offset_top = 114.0
-offset_right = 550.0
-offset_bottom = 154.0
-text = "HELLO HELLO"
+offset_left = -70.0
+offset_top = 16.0
+offset_right = 997.0
+offset_bottom = 648.0
+mouse_filter = 2
+
+[node name="RichTextLabel2" type="RichTextLabel" parent="LabRoomScreen/ClueWindow/ClueContent/WhiteboardClue"]
+layout_mode = 0
+offset_left = 740.0
+offset_top = 50.0
+offset_right = 1116.0
+offset_bottom = 656.0
+theme_override_colors/default_color = Color(0.5254902, 0.8666667, 0.8156863, 1)
+theme_override_fonts/normal_font = ExtResource("3_bel8c")
+theme_override_font_sizes/normal_font_size = 24
+text = "PROJEKT-STATUS:
+
+- Aktueller Build: 
+   
+   ALVIN 2.5
+
+- Patch-Protokoll: 
+   
+   REGENERATION-V1
+ 
+- Nächstes Ziel: 
+   
+   OBLIVION-Knoten
+
+- Projektname: ALVIN"
+
+[node name="Sprite2D2" type="Sprite2D" parent="LabRoomScreen/ClueWindow/ClueContent/WhiteboardClue"]
+position = Vector2(377.667, 291.25)
+scale = Vector2(0.58, 0.58)
+texture = ExtResource("4_t2p27")
+
+[node name="DeskClue" type="Panel" parent="LabRoomScreen/ClueWindow/ClueContent"]
+layout_mode = 0
+offset_right = 1024.0
+offset_bottom = 587.0
+mouse_filter = 2
+
+[node name="RichTextLabel" type="RichTextLabel" parent="LabRoomScreen/ClueWindow/ClueContent/DeskClue"]
+layout_mode = 0
+offset_left = 370.0
+offset_top = 64.0
+offset_right = 920.0
+offset_bottom = 487.0
+theme_override_colors/default_color = Color(0, 0.9647059, 0.24313726, 1)
+theme_override_fonts/normal_font = ExtResource("3_bel8c")
+theme_override_font_sizes/normal_font_size = 24
+text = "MEMO AN ALLE MITARBEITER:
+
+Das neue Sicherheitsprotokoll ist ein Albtraum. Wer soll sich das neue Schema merken können?
+
+SCHEMA: [Projektname] (rückwärts) + [ID der Projektleiterin]
+
+Das sollte nicht zu schwer sein, oder? *seufz*"
+
+[node name="Sprite2D" type="Sprite2D" parent="LabRoomScreen/ClueWindow/ClueContent/DeskClue"]
+position = Vector2(194, 240)
+scale = Vector2(2, 2)
+texture = ExtResource("5_kn0ur")
+
+[node name="IDCardClue" type="Panel" parent="LabRoomScreen/ClueWindow/ClueContent"]
+layout_mode = 0
+offset_right = 1024.0
+offset_bottom = 587.0
+mouse_filter = 2
+
+[node name="ColorRect" type="ColorRect" parent="LabRoomScreen/ClueWindow/ClueContent/IDCardClue"]
+layout_mode = 0
+offset_right = 948.0
+offset_bottom = 535.0
+color = Color(0.10561419, 0.10561416, 0.10561416, 0.4509804)
+
+[node name="RichTextLabel" type="RichTextLabel" parent="LabRoomScreen/ClueWindow/ClueContent/IDCardClue"]
+layout_mode = 0
+offset_left = 60.0
+offset_top = 50.0
+offset_right = 848.0
+offset_bottom = 136.0
+theme_override_colors/default_color = Color(0, 0.9647059, 0.24313726, 1)
+theme_override_fonts/normal_font = ExtResource("3_bel8c")
+theme_override_font_sizes/normal_font_size = 24
+text = "LAB ID CARD 
+Dr. Raymond Scott - ID Number: 077 -Position: Scientist"
+
+[node name="Sprite2D" type="Sprite2D" parent="LabRoomScreen/ClueWindow/ClueContent/IDCardClue"]
+position = Vector2(492, 340)
+texture = ExtResource("6_4j4vu")
 
 [node name="CloseClueButton" type="Button" parent="LabRoomScreen/ClueWindow"]
 layout_mode = 0
-offset_left = 916.0
-offset_top = 18.0
-offset_right = 948.0
-offset_bottom = 49.0
+offset_left = 920.0
+offset_top = 41.0
+offset_right = 952.0
+offset_bottom = 72.0
 text = "X"
 
 [node name="HackingTerminalScreen" type="Control" parent="."]
@@ -98,7 +223,7 @@ offset_bottom = 40.0
 layout_mode = 0
 offset_right = 1920.0
 offset_bottom = 1080.0
-color = Color(0.029506557, 0.029506557, 0.029506557, 1)
+color = Color(0.12906453, 0.2868038, 0.1288411, 1)
 
 [node name="LoginWindow" type="Control" parent="HackingTerminalScreen"]
 anchors_preset = 0
@@ -113,6 +238,7 @@ offset_left = 380.0
 offset_top = 576.0
 offset_right = 640.0
 offset_bottom = 604.0
+theme_override_colors/font_color = Color(0.043039158, 0.04303915, 0.04303915, 1)
 theme_override_fonts/font = ExtResource("3_bel8c")
 theme_override_font_sizes/font_size = 24
 text = "Enter password"
@@ -123,7 +249,8 @@ offset_left = 380.0
 offset_top = 626.0
 offset_right = 636.0
 offset_bottom = 664.0
-theme_override_constants/outline_size = 1
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/caret_color = Color(0.086629175, 0.08662925, 0.08662953, 1)
 theme_override_fonts/font = ExtResource("3_bel8c")
 theme_override_font_sizes/font_size = 25
 placeholder_text = "*********"
@@ -140,7 +267,7 @@ theme_override_fonts/font = ExtResource("3_bel8c")
 theme_override_font_sizes/font_size = 24
 theme_override_styles/normal = SubResource("StyleBoxFlat_5y2vv")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_cq4yu")
-text = "SUBMIT
+text = "START GAME
 "
 
 [node name="ErrorLabel" type="Label" parent="HackingTerminalScreen/LoginWindow"]
@@ -161,19 +288,50 @@ offset_right = 720.0
 offset_bottom = 534.0
 text = "close X"
 
-[node name="SuccessWindow" type="Panel" parent="HackingTerminalScreen"]
-visible = false
+[node name="TV_FILTER" type="ColorRect" parent="HackingTerminalScreen"]
+material = SubResource("ShaderMaterial_cq4yu")
 layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
+offset_right = 1920.0
+offset_bottom = 1090.0
+
+[node name="SubmitButton" type="Button" parent="HackingTerminalScreen"]
+layout_mode = 0
+offset_left = 848.0
+offset_top = 596.0
+offset_right = 1102.0
+offset_bottom = 639.0
+theme_override_colors/font_color = Color(0.0068854266, 0.0068853837, 0.0068853926, 1)
+theme_override_fonts/font = ExtResource("3_bel8c")
+theme_override_font_sizes/font_size = 24
+theme_override_styles/pressed = SubResource("StyleBoxFlat_cq4yu")
+
+[node name="ExitButton" type="Button" parent="HackingTerminalScreen/SubmitButton"]
+layout_mode = 0
+offset_left = 278.0
+offset_top = -224.0
+offset_right = 340.0
+offset_bottom = -193.0
+
+[node name="SuccessWindow" type="Panel" parent="HackingTerminalScreen"]
+layout_mode = 0
+offset_left = 631.0
+offset_top = 372.0
+offset_right = 1314.0
+offset_bottom = 698.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_t2p27")
 
 [node name="SuccessText" type="RichTextLabel" parent="HackingTerminalScreen/SuccessWindow"]
 layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
+offset_left = 51.0
+offset_top = 53.0
+offset_right = 588.0
+offset_bottom = 218.0
 theme_override_colors/default_color = Color(0, 0.9647059, 0.24313726, 1)
 theme_override_fonts/normal_font = ExtResource("3_bel8c")
-text = "ACCESS GRANTED"
+theme_override_font_sizes/normal_font_size = 24
+text = "> ACCES GRANTED...
+> CONNECTING TO A ROBO-UNIT...
+"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 visible = false
@@ -182,8 +340,11 @@ shape = SubResource("RectangleShape2D_t2p27")
 one_way_collision = true
 
 [connection signal="input_event" from="LabRoomScreen/Clickable_Computer" to="." method="_on_Clickable_Computer_input_event"]
-[connection signal="input_event" from="LabRoomScreen/Clickable_Whiteboard" to="." method="_on_clickable_whiteboard_input_event"]
-[connection signal="input_event" from="LabRoomScreen/Clickable_Desk" to="." method="_on_clickable_desk_input_event"]
-[connection signal="input_event" from="LabRoomScreen/Clickable_IDCard" to="." method="_on_clickable_id_card_input_event"]
-[connection signal="pressed" from="HackingTerminalScreen/LoginWindow/SubmitButton" to="." method="_on_submit_button_pressed"]
-[connection signal="pressed" from="HackingTerminalScreen/LoginWindow/ExitButton" to="." method="_on_exit_button_pressed"]
+[connection signal="input_event" from="LabRoomScreen/Clickable_Whiteboard" to="." method="_on_Clickable_Whiteboard_input_event"]
+[connection signal="input_event" from="LabRoomScreen/Clickable_Desk" to="." method="_on_Clickable_Desk_input_event"]
+[connection signal="input_event" from="LabRoomScreen/Clickable_IDCard" to="." method="_on_Clickable_IDCard_input_event"]
+[connection signal="pressed" from="LabRoomScreen/ClueWindow/CloseClueButton" to="." method="_on_CloseClueButton_pressed"]
+[connection signal="pressed" from="HackingTerminalScreen/LoginWindow/SubmitButton" to="." method="_on_SubmitButton_pressed"]
+[connection signal="pressed" from="HackingTerminalScreen/LoginWindow/ExitButton" to="." method="_on_ExitButton_pressed"]
+[connection signal="pressed" from="HackingTerminalScreen/SubmitButton" to="." method="_on_SubmitButton_pressed"]
+[connection signal="pressed" from="HackingTerminalScreen/SubmitButton/ExitButton" to="." method="_on_ExitButton_pressed"]
