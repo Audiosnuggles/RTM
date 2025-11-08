@@ -1,3 +1,5 @@
+# DIESER CODE GEHÖRT IN: hacking_minigame.gd
+
 extends CanvasLayer
 
 # Signal, das an main_scene gesendet wird
@@ -17,7 +19,7 @@ signal minigame_finished(success: bool)
 @onready var login_window = $HackingTerminalScreen/LoginWindow
 @onready var password_input = $HackingTerminalScreen/LoginWindow/PasswordInput
 @onready var error_label = $HackingTerminalScreen/LoginWindow/ErrorLabel
-@onready var success_window = $HackingTerminalScreen/LoginWindow/SuccessWindow
+@onready var success_window = $HackingTerminalScreen/SuccessWindow
 @onready var success_text = $HackingTerminalScreen/SuccessWindow/SuccessText
 
 
@@ -119,7 +121,6 @@ func _on_Clickable_Computer_input_event(_viewport: Node, event: InputEvent, _sha
 
 func _on_SubmitButton_pressed():
 	# Prüfe das Passwort (ALVIN rückwärts = NIVLA, ID = 077)
-	print("!!! SUBMIT BUTTON GEDRÜCKT !!!") #
 	if password_input.text.strip_edges().to_upper() == "NIVLA077":
 		# Erfolg!
 		login_window.hide()
@@ -138,10 +139,16 @@ func _on_SubmitButton_pressed():
 
 func start_success_sequence():
 	success_window.show()
-	# success_text muss jetzt im Editor gestaltet sein, da wir keine Konstanten verwenden
+	
+	# +++ HIER IST DIE KORREKTUR +++
+	# Zeige das Fenster UND den Text an
+	success_text.show() 
+	
+	# success_text muss jetzt im Editor gestaltet sein
 	
 	# Warte 3 Sekunden, damit der Spieler es lesen kann
 	await get_tree().create_timer(3.0).timeout
 	
 	# Beende das Minispiel
 	minigame_finished.emit(true)
+}

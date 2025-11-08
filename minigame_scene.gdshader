@@ -1,3 +1,5 @@
+// DIESER CODE GEHÖRT IN: minigame_scene.gdshader
+
 shader_type canvas_item;
 
 // Wir müssen SCREEN_TEXTURE in Godot 4 explizit anfordern
@@ -16,9 +18,9 @@ float noise(vec2 uv) {
     vec2 uv_index = floor(uv);
     vec2 uv_fract = fract(uv);
     return mix( mix( dot( random(uv_index + vec2(0.0,0.0) ), uv_fract - vec2(0.0,0.0) ),
-                       dot( random(uv_index + vec2(1.0,0.0) ), uv_fract - vec2(1.0,0.0) ), uv_fract.x),
-                 mix( dot( random(uv_index + vec2(0.0,1.0) ), uv_fract - vec2(0.0,1.0) ),
-                       dot( random(uv_index + vec2(1.0,1.0) ), uv_fract - vec2(1.0,1.0) ), uv_fract.x), uv_fract.y) + 0.5;
+                   dot( random(uv_index + vec2(1.0,0.0) ), uv_fract - vec2(1.0,0.0) ), uv_fract.x),
+               mix( dot( random(uv_index + vec2(0.0,1.0) ), uv_fract - vec2(0.0,1.0) ),
+                   dot( random(uv_index + vec2(1.0,1.0) ), uv_fract - vec2(1.0,1.0) ), uv_fract.x), uv_fract.y) + 0.5;
 }
 // --- (Ende Noise/Random) ---
 
