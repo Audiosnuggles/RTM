@@ -1,4 +1,4 @@
-[gd_scene load_steps=79 format=3 uid="uid://1rfuf7s0xt4n"]
+[gd_scene load_steps=81 format=3 uid="uid://1rfuf7s0xt4n"]
 
 [ext_resource type="Script" uid="uid://bkqqgd3qwoyri" path="res://Enemy.gd" id="1_m1htj"]
 [ext_resource type="Texture2D" uid="uid://b6gblm5u6ys63" path="res://sprite-128px-36_drive.png" id="2_wovta"]
@@ -524,6 +524,12 @@ size = Vector2(3.015625, 3.1386719)
 [sub_resource type="CircleShape2D" id="CircleShape2D_wovta"]
 radius = 700.10284
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_xeo28"]
+size = Vector2(41, 24)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_kpr8r"]
+size = Vector2(85, 41.65625)
+
 [node name="Enemy" type="CharacterBody2D"]
 collision_layer = 8
 script = ExtResource("1_m1htj")
@@ -567,7 +573,23 @@ collision_mask = 3
 position = Vector2(94, -45)
 shape = SubResource("CircleShape2D_wovta")
 
+[node name="StompDetector" type="Area2D" parent="."]
+position = Vector2(294, 180)
+
+[node name="StompCollisionShape2D" type="CollisionShape2D" parent="StompDetector"]
+position = Vector2(1209, 819)
+shape = SubResource("RectangleShape2D_xeo28")
+
+[node name="HurtBox" type="Area2D" parent="."]
+position = Vector2(4746.37, 1013.375)
+
+[node name="HurtCollisionShape2D" type="CollisionShape2D" parent="HurtBox"]
+position = Vector2(-3244.37, 19.796875)
+shape = SubResource("RectangleShape2D_kpr8r")
+
 [connection signal="body_entered" from="Hitbox" to="." method="_on_hitbox_body_entered"]
 [connection signal="timeout" from="WaitTimer" to="." method="_on_wait_timer_timeout"]
 [connection signal="body_entered" from="DetectionRange" to="." method="_on_detection_range_body_entered"]
 [connection signal="body_exited" from="DetectionRange" to="." method="_on_detection_range_body_exited"]
+[connection signal="body_entered" from="StompDetector" to="." method="_on_stomp_detector_body_entered"]
+[connection signal="body_entered" from="HurtBox" to="." method="_on_hurt_box_body_entered"]

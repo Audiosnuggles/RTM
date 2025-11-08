@@ -113,3 +113,11 @@ func _on_spikes_2_body_entered(_body: Node2D) -> void:
 
 func _on_game_over_timer_timeout():
 	pass
+
+
+func _on_herz_body_entered(body: Node2D) -> void:
+	pass # Replace with function body.
+
+
+func _on_stomp_detector_body_entered(body: Node2D) -> void:
+	pass # Replace with function body.
