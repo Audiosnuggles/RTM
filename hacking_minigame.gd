@@ -17,7 +17,7 @@ signal minigame_finished(success: bool)
 @onready var login_window = $HackingTerminalScreen/LoginWindow
 @onready var password_input = $HackingTerminalScreen/LoginWindow/PasswordInput
 @onready var error_label = $HackingTerminalScreen/LoginWindow/ErrorLabel
-@onready var success_window = $HackingTerminalScreen/SuccessWindow
+@onready var success_window = $HackingTerminalScreen/LoginWindow/SuccessWindow
 @onready var success_text = $HackingTerminalScreen/SuccessWindow/SuccessText
 
 
@@ -119,6 +119,7 @@ func _on_Clickable_Computer_input_event(_viewport: Node, event: InputEvent, _sha
 
 func _on_SubmitButton_pressed():
 	# Prüfe das Passwort (ALVIN rückwärts = NIVLA, ID = 077)
+	print("!!! SUBMIT BUTTON GEDRÜCKT !!!") #
 	if password_input.text.strip_edges().to_upper() == "NIVLA077":
 		# Erfolg!
 		login_window.hide()

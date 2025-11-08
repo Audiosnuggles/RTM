@@ -5,7 +5,7 @@ const JUMP_VELOCITY = -650.0
 
 # +++ NEU +++
 # Diese Variable steuert, wie hoch der Spieler nach einem Stomp abprallt
-@export var bounce_velocity: float = 300.0
+@export var bounce_velocity: float = 450.0
 
 @export var max_health: int = 3
 var current_health: int

@@ -1,21 +1,20 @@
-[gd_scene load_steps=256 format=3 uid="uid://dh2ue3w1qbcrr"]
+[gd_scene load_steps=217 format=3 uid="uid://dh2ue3w1qbcrr"]
 
 [ext_resource type="Script" uid="uid://ba1x8aq3ygvoy" path="res://minigame_scene.gd" id="1_vs5gd"]
 [ext_resource type="Script" uid="uid://cqkj0flrbeyyd" path="res://MinigamePlayer.gd" id="2_a3a31"]
 [ext_resource type="Script" uid="uid://bumxs0gthw5x7" path="res://door.gd" id="2_gbnch"]
 [ext_resource type="Texture2D" uid="uid://cvgr4xejdiut8" path="res://hintergrund_minigame6.jpg" id="2_sajbp"]
 [ext_resource type="Texture2D" uid="uid://bc8ssosxhv3t" path="res://DOOR.png" id="4_npmsg"]
-[ext_resource type="Texture2D" uid="uid://xrint7hjaggn" path="res://spike_2.png" id="4_sajbp"]
 [ext_resource type="Texture2D" uid="uid://odo77k0vteva" path="res://Trash_Object.png" id="5_34y8s"]
 [ext_resource type="Texture2D" uid="uid://b6hncwpmdffxj" path="res://P1_crouching.png" id="5_sajbp"]
 [ext_resource type="Texture2D" uid="uid://corurcuugw3ut" path="res://sprite-256px-36.png" id="5_xfjop"]
 [ext_resource type="Texture2D" uid="uid://cguoi3w4l8gs2" path="res://jump_sprite-256px-36.png" id="6_6gwg8"]
 [ext_resource type="Texture2D" uid="uid://chlkhlsp14mgs" path="res://Milfs2_Object.png" id="6_ub7ad"]
 [ext_resource type="Texture2D" uid="uid://btv16iooj3p42" path="res://Geländer_Object.png" id="7_87wk0"]
+[ext_resource type="PackedScene" uid="uid://3n6fijpaaby3" path="res://Spike.tscn" id="7_adwht"]
 [ext_resource type="PackedScene" uid="uid://1rfuf7s0xt4n" path="res://Scenes/Enemy.tscn" id="8_e2w2n"]
 [ext_resource type="FontFile" uid="uid://diar4wg3jugva" path="res://OCR-a_.ttf" id="9_3wvma"]
 [ext_resource type="Texture2D" uid="uid://dlsud6hepc12r" path="res://sprite-256px-36_P1_Dying.png" id="9_i8wsy"]
-[ext_resource type="Texture2D" uid="uid://8onmev8bc71g" path="res://sprite-max-px-36_spider.png" id="9_wvn5a"]
 [ext_resource type="Shader" uid="uid://bbormptmqs8q5" path="res://minigame_scene.gdshader" id="12_x42hv"]
 [ext_resource type="Texture2D" uid="uid://bx6wfhymxaecc" path="res://heart.png" id="18_adwht"]
 [ext_resource type="Script" uid="uid://0q3v1g1qkl0w" path="res://herz.gd" id="18_jcji4"]
@@ -46,269 +45,6 @@ size = Vector2(256, 287)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_sajbp"]
 size = Vector2(200, 383.625)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_vijkx"]
-atlas = ExtResource("9_wvn5a")
-region = Rect2(0, 0, 412, 456)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_hhurd"]
-atlas = ExtResource("9_wvn5a")
-region = Rect2(412, 0, 412, 456)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_ivtjm"]
-atlas = ExtResource("9_wvn5a")
-region = Rect2(824, 0, 412, 456)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_iqfv4"]
-atlas = ExtResource("9_wvn5a")
-region = Rect2(1236, 0, 412, 456)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_ffsa8"]
-atlas = ExtResource("9_wvn5a")
-region = Rect2(1648, 0, 412, 456)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_h1vqf"]
-atlas = ExtResource("9_wvn5a")
-region = Rect2(2060, 0, 412, 456)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_01cbm"]
-atlas = ExtResource("9_wvn5a")
-region = Rect2(0, 456, 412, 456)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_qkfqd"]
-atlas = ExtResource("9_wvn5a")
-region = Rect2(412, 456, 412, 456)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_gsmfr"]
-atlas = ExtResource("9_wvn5a")
-region = Rect2(824, 456, 412, 456)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_ueqpr"]
-atlas = ExtResource("9_wvn5a")
-region = Rect2(1236, 456, 412, 456)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_urd5v"]
-atlas = ExtResource("9_wvn5a")
-region = Rect2(1648, 456, 412, 456)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_run5y"]
-atlas = ExtResource("9_wvn5a")
-region = Rect2(2060, 456, 412, 456)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_q8i5m"]
-atlas = ExtResource("9_wvn5a")
-region = Rect2(0, 912, 412, 456)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_cjlef"]
-atlas = ExtResource("9_wvn5a")
-region = Rect2(412, 912, 412, 456)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_sfeiv"]
-atlas = ExtResource("9_wvn5a")
-region = Rect2(824, 912, 412, 456)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_c1yqw"]
-atlas = ExtResource("9_wvn5a")
-region = Rect2(1236, 912, 412, 456)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_el7d4"]
-atlas = ExtResource("9_wvn5a")
-region = Rect2(1648, 912, 412, 456)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_7iqlu"]
-atlas = ExtResource("9_wvn5a")
-region = Rect2(2060, 912, 412, 456)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_mi561"]
-atlas = ExtResource("9_wvn5a")
-region = Rect2(0, 1368, 412, 456)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_1ijiy"]
-atlas = ExtResource("9_wvn5a")
-region = Rect2(412, 1368, 412, 456)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_ki53l"]
-atlas = ExtResource("9_wvn5a")
-region = Rect2(824, 1368, 412, 456)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_g6so5"]
-atlas = ExtResource("9_wvn5a")
-region = Rect2(1236, 1368, 412, 456)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_h68s3"]
-atlas = ExtResource("9_wvn5a")
-region = Rect2(1648, 1368, 412, 456)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_obehg"]
-atlas = ExtResource("9_wvn5a")
-region = Rect2(2060, 1368, 412, 456)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_sg61h"]
-atlas = ExtResource("9_wvn5a")
-region = Rect2(0, 1824, 412, 456)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_fd56p"]
-atlas = ExtResource("9_wvn5a")
-region = Rect2(412, 1824, 412, 456)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_nmoba"]
-atlas = ExtResource("9_wvn5a")
-region = Rect2(824, 1824, 412, 456)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_nnifm"]
-atlas = ExtResource("9_wvn5a")
-region = Rect2(1236, 1824, 412, 456)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_1u4ix"]
-atlas = ExtResource("9_wvn5a")
-region = Rect2(1648, 1824, 412, 456)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_u5lwi"]
-atlas = ExtResource("9_wvn5a")
-region = Rect2(2060, 1824, 412, 456)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_xoi7s"]
-atlas = ExtResource("9_wvn5a")
-region = Rect2(0, 2280, 412, 456)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_b3wnd"]
-atlas = ExtResource("9_wvn5a")
-region = Rect2(412, 2280, 412, 456)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_r632g"]
-atlas = ExtResource("9_wvn5a")
-region = Rect2(824, 2280, 412, 456)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_ox7l6"]
-atlas = ExtResource("9_wvn5a")
-region = Rect2(1236, 2280, 412, 456)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_2hrg3"]
-atlas = ExtResource("9_wvn5a")
-region = Rect2(1648, 2280, 412, 456)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_5p5tx"]
-atlas = ExtResource("9_wvn5a")
-region = Rect2(2060, 2280, 412, 456)
-
-[sub_resource type="SpriteFrames" id="SpriteFrames_vs3jj"]
-animations = [{
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_vijkx")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_hhurd")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_ivtjm")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_iqfv4")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_ffsa8")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_h1vqf")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_01cbm")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_qkfqd")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_gsmfr")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_ueqpr")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_urd5v")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_run5y")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_q8i5m")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_cjlef")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_sfeiv")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_c1yqw")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_el7d4")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_7iqlu")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_mi561")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_1ijiy")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_ki53l")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_g6so5")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_h68s3")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_obehg")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_sg61h")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_fd56p")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_nmoba")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_nnifm")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_1u4ix")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_u5lwi")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_xoi7s")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_b3wnd")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_r632g")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_ox7l6")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_2hrg3")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_5p5tx")
-}],
-"loop": true,
-"name": &"new_animation",
-"speed": 36.0
-}]
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_gbnch"]
-size = Vector2(99, 66.00003)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_fttra"]
 atlas = ExtResource("5_sajbp")
@@ -1847,6 +1583,11 @@ position = Vector2(1605, 388.5)
 shape = SubResource("RectangleShape2D_wvn5a")
 one_way_collision = true
 
+[node name="Spike" parent="." instance=ExtResource("7_adwht")]
+position = Vector2(900, 1006)
+collision_layer = 3
+collision_mask = 3
+
 [node name="Platform6" type="StaticBody2D" parent="."]
 position = Vector2(3781, 1013)
 collision_layer = 3
@@ -1912,130 +1653,6 @@ texture = ExtResource("7_87wk0")
 position = Vector2(1960, 341.1875)
 shape = SubResource("RectangleShape2D_sajbp")
 one_way_collision = true
-
-[node name="Spikes5" type="Area2D" parent="."]
-position = Vector2(-450, -2)
-collision_mask = 2
-
-[node name="Spider" type="AnimatedSprite2D" parent="Spikes5"]
-position = Vector2(8261, 1031)
-scale = Vector2(0.22330096, 0.22330096)
-sprite_frames = SubResource("SpriteFrames_vs3jj")
-animation = &"new_animation"
-autoplay = "new_animation"
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Spikes5"]
-position = Vector2(8262, 1019.25)
-shape = SubResource("RectangleShape2D_gbnch")
-debug_color = Color(0.9607843, 0, 0, 0.42352942)
-
-[node name="Spikes5" type="Area2D" parent="Spikes5"]
-position = Vector2(-450, -2)
-collision_mask = 2
-
-[node name="Spider" type="AnimatedSprite2D" parent="Spikes5/Spikes5"]
-position = Vector2(8868, 1032)
-scale = Vector2(0.23, 0.23)
-sprite_frames = SubResource("SpriteFrames_vs3jj")
-animation = &"new_animation"
-autoplay = "new_animation"
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Spikes5/Spikes5"]
-position = Vector2(8866, 1022)
-shape = SubResource("RectangleShape2D_gbnch")
-debug_color = Color(0.9607843, 0, 0, 0.49803922)
-
-[node name="Spikes6" type="Area2D" parent="."]
-position = Vector2(-450, -2)
-collision_mask = 2
-
-[node name="Sprite2D2" type="Sprite2D" parent="Spikes6"]
-position = Vector2(8781, 983.99994)
-scale = Vector2(0.69, 0.69)
-texture = ExtResource("4_sajbp")
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Spikes6"]
-position = Vector2(8783, 1019.25)
-shape = SubResource("RectangleShape2D_gbnch")
-debug_color = Color(0.9598109, 0, 0, 1)
-
-[node name="Spikes7" type="Area2D" parent="."]
-position = Vector2(-450, -2)
-collision_mask = 2
-
-[node name="Sprite2D2" type="Sprite2D" parent="Spikes7"]
-position = Vector2(9048, 982.99994)
-scale = Vector2(0.69, 0.69)
-texture = ExtResource("4_sajbp")
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Spikes7"]
-position = Vector2(9049, 1019.25)
-shape = SubResource("RectangleShape2D_gbnch")
-debug_color = Color(0.9598109, 0, 0, 1)
-
-[node name="Spikes8" type="Area2D" parent="."]
-position = Vector2(-450, -2)
-collision_mask = 2
-
-[node name="Sprite2D2" type="Sprite2D" parent="Spikes8"]
-position = Vector2(9307, 984.99994)
-scale = Vector2(0.69, 0.69)
-texture = ExtResource("4_sajbp")
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Spikes8"]
-position = Vector2(9307, 1019.25)
-shape = SubResource("RectangleShape2D_gbnch")
-debug_color = Color(0.9598109, 0, 0, 1)
-
-[node name="Spikes4" type="Area2D" parent="."]
-position = Vector2(-450, -2)
-collision_mask = 2
-
-[node name="Spider" type="AnimatedSprite2D" parent="Spikes4"]
-position = Vector2(1502, 1021.163)
-scale = Vector2(0.22330096, 0.22330096)
-sprite_frames = SubResource("SpriteFrames_vs3jj")
-animation = &"new_animation"
-autoplay = "new_animation"
-
-[node name="BodyCollision" type="CollisionShape2D" parent="Spikes4"]
-position = Vector2(1503, 1020)
-shape = SubResource("RectangleShape2D_gbnch")
-debug_color = Color(0.9607843, 0, 0, 0.42352942)
-
-[node name="Spikes2" type="Area2D" parent="."]
-position = Vector2(-451, 995)
-collision_layer = 3
-collision_mask = 2
-
-[node name="Spider" type="AnimatedSprite2D" parent="Spikes2"]
-position = Vector2(2012, 28)
-scale = Vector2(0.22330096, 0.22330096)
-sprite_frames = SubResource("SpriteFrames_vs3jj")
-animation = &"new_animation"
-autoplay = "new_animation"
-
-[node name="CollisionShape2D2" type="CollisionShape2D" parent="Spikes2"]
-position = Vector2(2013, 28)
-shape = SubResource("RectangleShape2D_gbnch")
-debug_color = Color(0.9607843, 0, 0, 0.42352942)
-
-[node name="Spikes" type="Area2D" parent="."]
-position = Vector2(-264, -2)
-collision_layer = 3
-collision_mask = 2
-
-[node name="CollisionShape" type="CollisionShape2D" parent="Spikes"]
-position = Vector2(4560.37, 1003.375)
-shape = SubResource("RectangleShape2D_gbnch")
-debug_color = Color(0.9598109, 0, 0, 1)
-
-[node name="Spider" type="AnimatedSprite2D" parent="Spikes"]
-position = Vector2(4561.615, 1027.234)
-scale = Vector2(0.25914988, 0.25914988)
-sprite_frames = SubResource("SpriteFrames_vs3jj")
-animation = &"new_animation"
-autoplay = "new_animation"
 
 [node name="Enemy" parent="." instance=ExtResource("8_e2w2n")]
 position = Vector2(2061, 975)
@@ -2114,7 +1731,8 @@ material = SubResource("ShaderMaterial_i8wsy")
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_right = 1.0
+offset_right = -1920.0
+offset_bottom = -1080.0
 grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 1)
@@ -2156,16 +1774,34 @@ autoplay = "default"
 position = Vector2(3190, 514.5)
 shape = SubResource("CircleShape2D_lndaw")
 
+[node name="Spike2" parent="." instance=ExtResource("7_adwht")]
+position = Vector2(1247, 828)
+
+[node name="Spike3" parent="." instance=ExtResource("7_adwht")]
+position = Vector2(6723, 1003)
+
+[node name="Spike4" parent="." instance=ExtResource("7_adwht")]
+position = Vector2(6922, 1005)
+
+[node name="Spike5" parent="." instance=ExtResource("7_adwht")]
+position = Vector2(8029, 1006)
+
+[node name="Spike6" parent="." instance=ExtResource("7_adwht")]
+position = Vector2(8118, 1006)
+
+[node name="Spike7" parent="." instance=ExtResource("7_adwht")]
+position = Vector2(8357, 1006)
+
+[node name="Spike8" parent="." instance=ExtResource("7_adwht")]
+position = Vector2(8710, 1006)
+
+[node name="Spike9" parent="." instance=ExtResource("7_adwht")]
+position = Vector2(8977, 1005)
+
+[node name="Spike10" parent="." instance=ExtResource("7_adwht")]
+position = Vector2(9147, 1005)
+
 [connection signal="body_entered" from="Door" to="." method="_on_door_body_entered"]
-[connection signal="body_entered" from="Spikes5" to="Player" method="_on_spikes_body_entered"]
-[connection signal="body_entered" from="Spikes5/Spikes5" to="Player" method="_on_spikes_body_entered"]
-[connection signal="body_entered" from="Spikes6" to="Player" method="_on_spikes_body_entered"]
-[connection signal="body_entered" from="Spikes7" to="Player" method="_on_spikes_body_entered"]
-[connection signal="body_entered" from="Spikes8" to="." method="_on_spikes_body_entered"]
-[connection signal="body_entered" from="Spikes8" to="Player" method="_on_spikes_body_entered"]
-[connection signal="body_entered" from="Spikes4" to="Player" method="_on_spikes_body_entered"]
-[connection signal="body_entered" from="Spikes2" to="Player" method="_on_spikes_body_entered"]
-[connection signal="body_entered" from="Spikes" to="Player" method="_on_spikes_body_entered"]
 [connection signal="player_hit" from="Enemy" to="Player" method="take_damage"]
 [connection signal="timeout" from="Player/CameraShakeTimer" to="Player" method="_on_camera_shake_timer_timeout"]
 [connection signal="timeout" from="Player/InvincibilityTimer" to="Player" method="_on_invincibility_timer_timeout"]

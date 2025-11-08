@@ -1,12 +1,12 @@
-[gd_scene load_steps=18 format=3 uid="uid://4kdoyieyqx7d"]
+[gd_scene load_steps=19 format=3 uid="uid://4kdoyieyqx7d"]
 
 [ext_resource type="Script" uid="uid://c0mgrw64vl3ts" path="res://hacking_minigame.gd" id="1_5y2vv"]
 [ext_resource type="Texture2D" uid="uid://dd4s3kjpkod6x" path="res://backgrounds/Bg_Puzzle.jpg" id="2_cq4yu"]
 [ext_resource type="FontFile" uid="uid://diar4wg3jugva" path="res://OCR-a_.ttf" id="3_bel8c"]
-[ext_resource type="Shader" uid="uid://dqaxlwgk7d4jr" path="res://story_intro.gdshader" id="4_cq4yu"]
 [ext_resource type="Texture2D" uid="uid://dn5f86lihhj30" path="res://PINWALL.jpg" id="4_t2p27"]
 [ext_resource type="Texture2D" uid="uid://s8j6cdug2ed3" path="res://Scientist.png" id="5_kn0ur"]
 [ext_resource type="Texture2D" uid="uid://dax3pwaj0etx1" path="res://ausweis.png" id="6_4j4vu"]
+[ext_resource type="Texture2D" uid="uid://c7bv8wso7cm4l" path="res://Noise.png" id="8_kn0ur"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_5y2vv"]
 size = Vector2(171, 142)
@@ -28,32 +28,242 @@ bg_color = Color(0.5075946, 0.61093503, 0.8204087, 1)
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_cq4yu"]
 bg_color = Color(0, 0.9647059, 0.24313726, 1)
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_cq4yu"]
-shader = ExtResource("4_cq4yu")
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_t2p27"]
+bg_color = Color(0.08627451, 0.08627451, 0.08627451, 1)
+
+[sub_resource type="Shader" id="Shader_t2p27"]
+code = "/*
+Shader from Godot Shaders - the free shader library.
+godotshaders.com/shader/VHS-and-CRT-monitor-effect
+
+Dieser Shader wurde für Godot 4 und WebGL (HTML5) repariert.
+Alle 'random()', 'noise()' und 'sin()'-Berechnungen, die in
+WebGL zu Präzisionsfehlern (schwarzen Balken) führen, wurden
+entweder durch Textur-Lookups oder 'mod()'-Funktionen ersetzt.
+
+FINALE KORREKTUR (08.11.): Die 'mod()'-Funktion wurde
+korrekt platziert, um das *gesamte* Argument von 'sin()'
+zu umschließen, nicht nur den 'time'-Teil.
+*/
+
+shader_type canvas_item;
+
+// --- HIER IST DIE KORREKTUR ---
+uniform sampler2D SCREEN_TEXTURE : hint_screen_texture, filter_linear_mipmap;
+// --- ENDE DER KORREKTUR ---
+
+uniform bool overlay = false;
+
+uniform float scanlines_opacity : hint_range(0.0, 1.0) = 0.4;
+uniform float scanlines_width : hint_range(0.0, 0.5) = 0.25;
+uniform float grille_opacity : hint_range(0.0, 1.0) = 0.3;
+uniform vec2 resolution = vec2(640.0, 480.0);
+
+uniform bool pixelate = true;
+
+uniform bool roll = true;
+uniform float roll_speed = 8.0;
+uniform float roll_size : hint_range(0.0, 100.0) = 15.0;
+uniform float roll_variation : hint_range(0.1, 5.0) = 1.8;
+uniform float distort_intensity : hint_range(0.0, 0.2) = 0.05;
+
+uniform float noise_opacity : hint_range(0.0, 1.0) = 0.4;
+uniform float noise_speed = 5.0;
+
+uniform float static_noise_intensity : hint_range(0.0, 1.0) = 0.06;
+
+uniform float aberration : hint_range(-1.0, 1.0) = 0.03;
+uniform float brightness = 1.4;
+uniform bool discolor = true;
+
+uniform float warp_amount :hint_range(0.0, 5.0) = 1.0;
+uniform bool clip_warp = false;
+
+uniform float vignette_intensity = 0.4;
+uniform float vignette_opacity : hint_range(0.0, 1.0) = 0.5;
+
+// +++ NEUES UNIFORM FÜR DIE TEXTUR (FÜR GODOT 4) +++
+// WICHTIG: Die Noise.png muss im Import-Tab (ganz unten)
+// auf Repeat: Repeat und Sampling: Nearest eingestellt sein.
+uniform sampler2D NOISE_TEXTURE : source_color, repeat_enable, filter_nearest;
+
+// --- DIE 'random' UND 'noise' FUNKTIONEN WURDEN ENTFERNT ---
+// (Sie verursachen WebGL-Abstürze)
+// (Godot 4 hat TAU bereits eingebaut, 'const float TAU...' wurde entfernt)
+
+
+// Takes in the UV and warps the edges, creating the spherized effect
+vec2 warp(vec2 uv){
+	vec2 delta = uv - 0.5;
+	float delta2 = dot(delta.xy, delta.xy);
+	float delta4 = delta2 * delta2;
+	float delta_offset = delta4 * warp_amount;
+	
+	return uv + delta * delta_offset;
+}
+
+// Adds a black border to hide stretched pixel created by the warp effect
+float border (vec2 uv){
+	float radius = min(warp_amount, 0.08);
+	radius = max(min(min(abs(radius * 2.0), abs(1.0)), abs(1.0)), 1e-5);
+	vec2 abs_uv = abs(uv * 2.0 - 1.0) - vec2(1.0, 1.0) + radius;
+	float dist = length(max(vec2(0.0), abs_uv)) / radius;
+	float square = smoothstep(0.96, 1.0, dist);
+	return clamp(1.0 - square, 0.0, 1.0);
+}
+
+// Adds a vignette shadow to the edges of the image
+float vignette(vec2 uv){
+	uv *= 1.0 - uv.xy;
+	float vignette = uv.x * uv.y * 15.0;
+	return pow(vignette, vignette_intensity * vignette_opacity);
+}
+
+void fragment()
+{
+	vec2 uv = overlay ? warp(SCREEN_UV) : warp(UV);
+	vec2 text_uv = uv;
+	vec2 roll_uv = vec2(0.0);
+	float time = roll ? TIME : 0.0;
+	
+
+	if (pixelate)
+	{
+		text_uv = ceil(uv * resolution) / resolution;
+	}
+	
+	float roll_line = 0.0;
+	if (roll || noise_opacity > 0.0)
+	{
+		// +++ KORREKTUR (08.11.): mod() umschließt das *gesamte* Argument +++
+		roll_line = smoothstep(0.3, 0.9, sin( mod(uv.y * roll_size - (time * roll_speed), TAU) ) );
+		
+		// +++ KORREKTUR (08.11.): mod() umschließt das *gesamte* Argument +++
+		roll_line *= roll_line * smoothstep(0.3, 0.9, sin( mod(uv.y * roll_size * roll_variation - (time * roll_speed * roll_variation), TAU) ) );
+		
+		roll_uv = vec2(( roll_line * distort_intensity * (1.-UV.x)), 0.0);
+	}
+	
+	vec4 text;
+	if (roll)
+	{
+		text.r = texture(SCREEN_TEXTURE, text_uv + roll_uv * 0.8 + vec2(aberration, 0.0) * .1).r;
+		text.g = texture(SCREEN_TEXTURE, text_uv + roll_uv * 1.2 - vec2(aberration, 0.0) * .1 ).g;
+		text.b = texture(SCREEN_TEXTURE, text_uv + roll_uv).b;
+		text.a = 1.0;
+	}
+	else
+	{
+		text.r = texture(SCREEN_TEXTURE, text_uv + vec2(aberration, 0.0) * .1).r;
+		text.g = texture(SCREEN_TEXTURE, text_uv - vec2(aberration, 0.0) * .1).g;
+		text.b = texture(SCREEN_TEXTURE, text_uv).b;
+		text.a = 1.0;
+	}
+	
+	float r = text.r;
+	float g = text.g;
+	float b = text.b;
+	
+	uv = warp(UV);
+	
+	if (grille_opacity > 0.0){
+		
+		// (Diese mod()-Aufrufe waren bereits korrekt)
+		float g_r = smoothstep(0.85, 0.95, abs(sin(mod(uv.x * (resolution.x * 3.14159265), TAU))));
+		r = mix(r, r * g_r, grille_opacity);
+
+		float g_g = smoothstep(0.85, 0.95, abs(sin(mod(1.05 + uv.x * (resolution.x * 3.14159265), TAU))));
+		g = mix(g, g * g_g, grille_opacity);
+
+		float b_b = smoothstep(0.85, 0.95, abs(sin(mod(2.1 + uv.x * (resolution.x * 3.14159265), TAU))));
+		b = mix(b, b * b_b, grille_opacity);
+		
+	}
+	
+	text.r = clamp(r * brightness, 0.0, 1.0);
+	text.g = clamp(g * brightness, 0.0, 1.0);
+	text.b = clamp(b * brightness, 0.0, 1.0);
+	
+	float scanlines = 0.5;
+	if (scanlines_opacity > 0.0)
+	{
+		// (Dieser mod()-Aufruf war bereits korrekt)
+		scanlines = smoothstep(scanlines_width, scanlines_width + 0.5, abs(sin(mod(uv.y * (resolution.y * 3.14159265), TAU))));
+		text.rgb = mix(text.rgb, text.rgb * vec3(scanlines), scanlines_opacity);
+	}
+	
+	// Apply the banded noise.
+	if (noise_opacity > 0.0)
+	{
+		// (Alle 'random()'/'noise()' Aufrufe wurden durch texture() ersetzt)
+		
+		// Erzeugt die Rausch-Bänder
+		float n = texture(NOISE_TEXTURE, uv * vec2(2.0, 200.0) + vec2(10.0, (TIME * (noise_speed))) ).r;
+		
+		// Erzeugt das Flimmer-Rauschen
+		vec2 flicker_uv = (ceil(uv * resolution) / resolution) + vec2(TIME * 0.8, 0.0);
+		float flicker_noise_tex = texture(NOISE_TEXTURE, flicker_uv).r;
+		float flicker_noise = flicker_noise_tex * 2.0 - 1.0;
+		
+		// Wendet das Rauschen an
+		roll_line *= n * scanlines * clamp(flicker_noise + 0.8, 0.0, 1.0);
+		text.rgb = clamp(mix(text.rgb, text.rgb + roll_line, noise_opacity), vec3(0.0), vec3(1.0));
+	}
+	
+	// Apply static noise by generating it over the whole screen in the same way as above
+	if (static_noise_intensity > 0.0)
+	{
+		vec2 static_uv = (ceil(uv * resolution) / resolution) + fract(TIME);
+		float static_noise = texture(NOISE_TEXTURE, static_uv).r;
+		text.rgb += static_noise * static_noise_intensity;
+	}
+	
+	text.rgb *= border(uv);
+	text.rgb *= vignette(uv);
+
+	if (clip_warp)
+	{
+		text.a = border(uv);
+	}
+	
+	float saturation = 0.5;
+	float contrast = 1.2;
+	if (discolor)
+	{
+		vec3 greyscale = vec3(text.r + text.g + text.b) / 3.;
+		text.rgb = mix(text.rgb, greyscale, saturation);
+		
+		float midpoint = pow(0.5, 2.2);
+		text.rgb = (text.rgb - vec3(midpoint)) * contrast + midpoint;
+	}
+	
+	COLOR = text;
+}"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_kn0ur"]
+shader = SubResource("Shader_t2p27")
 shader_parameter/overlay = true
-shader_parameter/scanlines_opacity = 0.1630000077425
-shader_parameter/scanlines_width = 0.1200000057
-shader_parameter/grille_opacity = 0.1650000078375
+shader_parameter/scanlines_opacity = 0.6310000299725
+shader_parameter/scanlines_width = 0.19200000912
+shader_parameter/grille_opacity = 0.3230000153425
 shader_parameter/resolution = Vector2(640, 480)
 shader_parameter/pixelate = false
 shader_parameter/roll = true
 shader_parameter/roll_speed = -0.5
-shader_parameter/roll_size = 41.86000198835
-shader_parameter/roll_variation = 1.2310000552126201
-shader_parameter/distort_intensity = 0.05
-shader_parameter/noise_opacity = 0.0450000021375
-shader_parameter/noise_speed = -0.74
+shader_parameter/roll_size = 34.6730016469675
+shader_parameter/roll_variation = 0.5470000227226199
+shader_parameter/distort_intensity = 0.0090000004275
+shader_parameter/noise_opacity = 0.110000005225
+shader_parameter/noise_speed = 0.03
 shader_parameter/static_noise_intensity = 0.0
-shader_parameter/aberration = -0.016999953307500038
-shader_parameter/brightness = 3.4
+shader_parameter/aberration = -0.01699995330750003
+shader_parameter/brightness = 1.4
 shader_parameter/discolor = false
 shader_parameter/warp_amount = 0.0
 shader_parameter/clip_warp = false
-shader_parameter/vignette_intensity = 1.4
-shader_parameter/vignette_opacity = 0.7210000342475
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_t2p27"]
-bg_color = Color(0.086629294, 0.086629234, 0.08662925, 0.9372549)
+shader_parameter/vignette_intensity = 0.38
+shader_parameter/vignette_opacity = 0.96800004598
+shader_parameter/NOISE_TEXTURE = ExtResource("8_kn0ur")
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_t2p27"]
 size = Vector2(256, 287)
@@ -216,28 +426,37 @@ text = "X"
 [node name="HackingTerminalScreen" type="Control" parent="."]
 layout_mode = 3
 anchors_preset = 0
-offset_right = 40.0
-offset_bottom = 40.0
+offset_right = 1920.0
+offset_bottom = 1090.0
 
 [node name="ColorRect" type="ColorRect" parent="HackingTerminalScreen"]
-layout_mode = 0
-offset_right = 1920.0
-offset_bottom = 1080.0
-color = Color(0.12906453, 0.2868038, 0.1288411, 1)
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.11297328, 0.25579968, 0.11297045, 1)
 
 [node name="LoginWindow" type="Control" parent="HackingTerminalScreen"]
-anchors_preset = 0
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
 offset_left = 468.0
 offset_top = -131.0
-offset_right = 508.0
-offset_bottom = -91.0
+offset_right = -1412.0
+offset_bottom = -1181.0
 
 [node name="Label" type="Label" parent="HackingTerminalScreen/LoginWindow"]
 layout_mode = 1
-offset_left = 380.0
-offset_top = 576.0
-offset_right = 640.0
-offset_bottom = 604.0
+anchors_preset = -1
+anchor_left = -11.700001
+anchor_top = 3.275
+anchor_right = 36.300003
+anchor_bottom = 30.525002
+offset_left = 848.0
+offset_top = 445.0
+offset_right = -812.0001
+offset_bottom = -617.0
 theme_override_colors/font_color = Color(0.043039158, 0.04303915, 0.04303915, 1)
 theme_override_fonts/font = ExtResource("3_bel8c")
 theme_override_font_sizes/font_size = 24
@@ -288,39 +507,20 @@ offset_right = 720.0
 offset_bottom = 534.0
 text = "close X"
 
-[node name="TV_FILTER" type="ColorRect" parent="HackingTerminalScreen"]
-material = SubResource("ShaderMaterial_cq4yu")
-layout_mode = 0
-offset_right = 1920.0
-offset_bottom = 1090.0
-
-[node name="SubmitButton" type="Button" parent="HackingTerminalScreen"]
-layout_mode = 0
-offset_left = 848.0
-offset_top = 596.0
-offset_right = 1102.0
-offset_bottom = 639.0
-theme_override_colors/font_color = Color(0.0068854266, 0.0068853837, 0.0068853926, 1)
-theme_override_fonts/font = ExtResource("3_bel8c")
-theme_override_font_sizes/font_size = 24
-theme_override_styles/pressed = SubResource("StyleBoxFlat_cq4yu")
-
-[node name="ExitButton" type="Button" parent="HackingTerminalScreen/SubmitButton"]
-layout_mode = 0
-offset_left = 278.0
-offset_top = -224.0
-offset_right = 340.0
-offset_bottom = -193.0
-
-[node name="SuccessWindow" type="Panel" parent="HackingTerminalScreen"]
-layout_mode = 0
-offset_left = 631.0
-offset_top = 372.0
-offset_right = 1314.0
-offset_bottom = 698.0
+[node name="SuccessWindow" type="Panel" parent="HackingTerminalScreen/LoginWindow"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 12.475
+anchor_top = 16.6
+anchor_right = 12.475
+anchor_bottom = 16.6
+offset_left = -336.0
+offset_top = -161.0
+offset_right = 347.0
+offset_bottom = 165.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_t2p27")
 
-[node name="SuccessText" type="RichTextLabel" parent="HackingTerminalScreen/SuccessWindow"]
+[node name="SuccessText" type="RichTextLabel" parent="HackingTerminalScreen/LoginWindow/SuccessWindow"]
 layout_mode = 0
 offset_left = 51.0
 offset_top = 53.0
@@ -332,6 +532,42 @@ theme_override_font_sizes/normal_font_size = 24
 text = "> ACCES GRANTED...
 > CONNECTING TO A ROBO-UNIT...
 "
+
+[node name="TV_FILTER" type="ColorRect" parent="HackingTerminalScreen/LoginWindow"]
+material = SubResource("ShaderMaterial_kn0ur")
+layout_mode = 1
+anchors_preset = -1
+anchor_left = -11.700001
+anchor_top = 3.275
+anchor_right = 36.300003
+anchor_bottom = 30.525002
+offset_left = 3.0517578e-05
+offset_right = -0.00012207031
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="SubmitButton2" type="Button" parent="HackingTerminalScreen/LoginWindow"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 12.475
+anchor_top = 18.712002
+anchor_right = 12.475
+anchor_bottom = 18.712002
+offset_left = -119.0
+offset_top = -21.480103
+offset_right = 135.0
+offset_bottom = 21.519897
+theme_override_colors/font_color = Color(0.0068854266, 0.0068853837, 0.0068853926, 1)
+theme_override_fonts/font = ExtResource("3_bel8c")
+theme_override_font_sizes/font_size = 24
+theme_override_styles/pressed = SubResource("StyleBoxFlat_cq4yu")
+
+[node name="ExitButton" type="Button" parent="HackingTerminalScreen/LoginWindow/SubmitButton2"]
+layout_mode = 0
+offset_left = 278.0
+offset_top = -224.0
+offset_right = 340.0
+offset_bottom = -193.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 visible = false
@@ -346,5 +582,5 @@ one_way_collision = true
 [connection signal="pressed" from="LabRoomScreen/ClueWindow/CloseClueButton" to="." method="_on_CloseClueButton_pressed"]
 [connection signal="pressed" from="HackingTerminalScreen/LoginWindow/SubmitButton" to="." method="_on_SubmitButton_pressed"]
 [connection signal="pressed" from="HackingTerminalScreen/LoginWindow/ExitButton" to="." method="_on_ExitButton_pressed"]
-[connection signal="pressed" from="HackingTerminalScreen/SubmitButton" to="." method="_on_SubmitButton_pressed"]
-[connection signal="pressed" from="HackingTerminalScreen/SubmitButton/ExitButton" to="." method="_on_ExitButton_pressed"]
+[connection signal="pressed" from="HackingTerminalScreen/LoginWindow/SubmitButton2" to="." method="_on_SubmitButton_pressed"]
+[connection signal="pressed" from="HackingTerminalScreen/LoginWindow/SubmitButton2/ExitButton" to="." method="_on_ExitButton_pressed"]
