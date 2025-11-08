@@ -1,4 +1,4 @@
-[gd_scene load_steps=53 format=3 uid="uid://bmylyescf3g70"]
+[gd_scene load_steps=54 format=3 uid="uid://bmylyescf3g70"]
 
 [ext_resource type="Script" uid="uid://br82ec5f4ohot" path="res://health_bar.gd" id="1_0f027"]
 [ext_resource type="Script" uid="uid://smeagdsc75b1" path="res://main_scene.gd" id="1_2c62f"]
@@ -8,8 +8,8 @@
 [ext_resource type="Script" uid="uid://s8t0fauav2l2" path="res://Typewriter_label.gd" id="5_m35m6"]
 [ext_resource type="Texture2D" uid="uid://ru00rfjq6acw" path="res://WorldMap_2.jpg" id="6_2jcla"]
 [ext_resource type="Texture2D" uid="uid://destv6n0a832q" path="res://sprites/drohne_3_sheet.png" id="6_7ycvg"]
-[ext_resource type="Texture2D" uid="uid://c77lhu0xapd4m" path="res://Startscreen_New.jpg" id="7_7th4q"]
-[ext_resource type="VideoStream" uid="uid://b04nmr0ndiefc" path="res://Done1.ogv" id="7_nfk4m"]
+[ext_resource type="Texture2D" uid="uid://cwn71pdwammph" path="res://Startscreen_New_2.jpg" id="7_84odl"]
+[ext_resource type="VideoStream" uid="uid://qrfi04mmy77e" path="res://Done1.ogv" id="7_nfk4m"]
 [ext_resource type="Texture2D" uid="uid://cyplpp46eebdf" path="res://sprites/drohne_2_sheet___.png" id="7_wr18j"]
 [ext_resource type="Script" uid="uid://b74q4q471ookd" path="res://title_screen.gd" id="8_671wp"]
 [ext_resource type="Script" uid="uid://cae7ma7hviea2" path="res://hub_map.gd" id="9_mo76n"]
@@ -17,7 +17,7 @@
 [ext_resource type="Script" uid="uid://dggh1wov2ew14" path="res://story_intro.gd" id="11_mo76n"]
 [ext_resource type="Shader" uid="uid://dqaxlwgk7d4jr" path="res://story_intro.gdshader" id="13_6jybn"]
 [ext_resource type="AudioStream" uid="uid://2njl8athfp46" path="res://keyboard.ogg" id="14_7th4q"]
-[ext_resource type="Texture2D" uid="uid://bh633v2myqbpx" path="res://Startscreen_New_2.jpg" id="17_84odl"]
+[ext_resource type="Texture2D" uid="uid://c7bv8wso7cm4l" path="res://Noise.png" id="15_84odl"]
 [ext_resource type="AudioStream" uid="uid://bo1ngesxr8fsi" path="res://Intro.mp3" id="17_u0ygc"]
 [ext_resource type="AudioStream" uid="uid://1ebtqxc72tth" path="res://goodnightmelodies.mp3" id="18_7th4q"]
 
@@ -455,26 +455,27 @@ _data = {
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_84odl"]
 shader = ExtResource("13_6jybn")
 shader_parameter/overlay = true
-shader_parameter/scanlines_opacity = 0.6030000286425
-shader_parameter/scanlines_width = 0.1200000057
-shader_parameter/grille_opacity = 0.486000023085
+shader_parameter/scanlines_opacity = 0.6310000299725
+shader_parameter/scanlines_width = 0.19200000912
+shader_parameter/grille_opacity = 0.3230000153425
 shader_parameter/resolution = Vector2(640, 480)
 shader_parameter/pixelate = false
 shader_parameter/roll = true
-shader_parameter/roll_speed = -1.0
-shader_parameter/roll_size = 41.86000198835
-shader_parameter/roll_variation = 1.23100005521262
-shader_parameter/distort_intensity = 0.05
-shader_parameter/noise_opacity = 0.034000001615
-shader_parameter/noise_speed = -0.74
+shader_parameter/roll_speed = -0.5
+shader_parameter/roll_size = 34.6730016469675
+shader_parameter/roll_variation = 0.5470000227226199
+shader_parameter/distort_intensity = 0.0090000004275
+shader_parameter/noise_opacity = 0.110000005225
+shader_parameter/noise_speed = 0.03
 shader_parameter/static_noise_intensity = 0.0
 shader_parameter/aberration = -0.01699995330750003
 shader_parameter/brightness = 1.4
 shader_parameter/discolor = false
-shader_parameter/warp_amount = 0.6690000317775
+shader_parameter/warp_amount = 2.38400011324
 shader_parameter/clip_warp = false
 shader_parameter/vignette_intensity = 0.4
-shader_parameter/vignette_opacity = 0.7210000342475
+shader_parameter/vignette_opacity = 0.590000028025
+shader_parameter/NOISE_TEXTURE = ExtResource("15_84odl")
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_6jybn"]
 
@@ -485,6 +486,8 @@ bg_color = Color(0.21770102, 0.21770108, 0.21770096, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_gyfs4"]
 bg_color = Color(0.107582815, 0.7043738, 0.50690824, 1)
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_6jybn"]
 
 [sub_resource type="Animation" id="Animation_7th4q"]
 resource_name = "Camaera_Zoom"
@@ -602,14 +605,13 @@ mouse_filter = 2
 script = ExtResource("8_671wp")
 
 [node name="TextureRect" type="TextureRect" parent="UI_Layer/TitleScreen"]
-visible = false
 texture_filter = 1
 layout_mode = 1
 offset_right = 1920.0
 offset_bottom = 1080.0
 pivot_offset = Vector2(960, 540)
 mouse_filter = 2
-texture = ExtResource("7_7th4q")
+texture = ExtResource("7_84odl")
 expand_mode = 1
 stretch_mode = 3
 
@@ -980,7 +982,7 @@ Find all still existing terminals. You must rewrite its code.
 ...nsdj sh isf ih fi sfih fs ih sfih bcubcub."
 script = ExtResource("11_42l1d")
 typing_speed = 0.075
-initial_delay = 10.0
+initial_delay = 8.0
 
 [node name="Next_Button2" type="Button" parent="UI_Layer/StoryIntro"]
 layout_mode = 1
@@ -1056,6 +1058,16 @@ offset_bottom = 11.5
 grow_horizontal = 2
 grow_vertical = 2
 
+[node name="Label" type="Label" parent="UI_Layer/Health_Bar"]
+layout_mode = 0
+offset_top = 63.0
+offset_right = 286.0
+offset_bottom = 97.125
+theme_override_colors/font_color = Color(0.5254902, 0.8666667, 0.8156863, 1)
+theme_override_fonts/font = ExtResource("5_hq1ik")
+theme_override_font_sizes/font_size = 24
+text = "UPLOADING THE 😃 CODE"
+
 [node name="Next_Round_Timer" type="Timer" parent="."]
 wait_time = 5.0
 one_shot = true
@@ -1063,7 +1075,7 @@ one_shot = true
 [node name="Background" type="Sprite2D" parent="."]
 z_index = -10
 position = Vector2(960, 540)
-texture = ExtResource("17_84odl")
+texture = SubResource("CompressedTexture2D_6jybn")
 
 [node name="Video_Player" type="VideoStreamPlayer" parent="."]
 anchors_preset = 8
