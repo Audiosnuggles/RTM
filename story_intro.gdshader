@@ -1,6 +1,6 @@
 /*
 DIESER CODE GEHÖRT IN: story_intro.gdshader
-(Der CRT-Shader für dein "TV_Filter Color Rect")
+(Korrektur: Die extra "}" am Ende der Datei wurde entfernt)
 */
 shader_type canvas_item;
 
@@ -28,9 +28,9 @@ uniform bool clip_warp = false;
 uniform float vignette_intensity = 0.4;
 uniform float vignette_opacity : hint_range(0.0, 1.0) = 0.5;
 
-// Dies ist der Shader, den wir ursprünglich repariert haben.
-// Er braucht die Noise.png, stell sicher, dass sie zugewiesen ist.
 uniform sampler2D NOISE_TEXTURE : source_color, repeat_enable, filter_nearest;
+
+// (Godot 4 hat TAU bereits eingebaut, 'const float TAU...' wurde entfernt)
 
 vec2 warp(vec2 uv){
 	vec2 delta = uv - 0.5;

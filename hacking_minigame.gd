@@ -19,6 +19,9 @@ signal minigame_finished(success: bool)
 @onready var login_window = $HackingTerminalScreen/LoginWindow
 @onready var password_input = $HackingTerminalScreen/LoginWindow/PasswordInput
 @onready var error_label = $HackingTerminalScreen/LoginWindow/ErrorLabel
+
+# +++ KORREKTUR FÜR PFAD-FEHLER +++
+# Pfade korrigiert, sie sind Kinder von HackingTerminalScreen, nicht LoginWindow
 @onready var success_window = $HackingTerminalScreen/SuccessWindow
 @onready var success_text = $HackingTerminalScreen/SuccessWindow/SuccessText
 
@@ -121,6 +124,7 @@ func _on_Clickable_Computer_input_event(_viewport: Node, event: InputEvent, _sha
 
 func _on_SubmitButton_pressed():
 	# Prüfe das Passwort (ALVIN rückwärts = NIVLA, ID = 077)
+	print("!!! SUBMIT BUTTON GEDRÜCKT !!!")
 	if password_input.text.strip_edges().to_upper() == "NIVLA077":
 		# Erfolg!
 		login_window.hide()
@@ -140,15 +144,13 @@ func _on_SubmitButton_pressed():
 func start_success_sequence():
 	success_window.show()
 	
-	# +++ HIER IST DIE KORREKTUR +++
-	# Zeige das Fenster UND den Text an
+	# +++ KORREKTUR FÜR FEHLER 3: Text anzeigen +++
 	success_text.show() 
 	
-	# success_text muss jetzt im Editor gestaltet sein
+	# success_text muss jetzt im Editor gestaltet sein, da wir keine Konstanten verwenden
 	
 	# Warte 3 Sekunden, damit der Spieler es lesen kann
 	await get_tree().create_timer(3.0).timeout
 	
 	# Beende das Minispiel
 	minigame_finished.emit(true)
-}
