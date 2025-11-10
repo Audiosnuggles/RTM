@@ -154,3 +154,8 @@ func start_success_sequence():
 	
 	# Beende das Minispiel
 	minigame_finished.emit(true)
+	
+
+
+func _on_SubmitButton2_pressed() -> void:
+	pass # Replace with function body.

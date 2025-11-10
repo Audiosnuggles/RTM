@@ -32,6 +32,10 @@ const CLICKER_LEVEL_ASSETS = [
 var current_level_index = 0 # KORREKTUR: Dies ist NUR der Fortschritt auf der Hub-Map
 var last_klicker_level_loaded = 0 # NEU: Merkt sich, welches Klicker-Level geladen wurde
 
+# --- KORREKTUR 2: Neue Variable für Intro-Status ---
+var has_completed_intro = false
+# --- ENDE KORREKTUR 2 ---
+
 # --- WÄHRUNG / UPGRADES ---
 # KORREKTUR: 'var' und 'harmony_fragments' auf EINE Zeile zusammengeführt
 var harmony_fragments = 0.0 
@@ -92,9 +96,19 @@ func _check_for_win():
 		
 		corrupted_healed.emit()
 		
+		# --- KORREKTUR 2: Logik zur Missions-Freischaltung ---
 		# HINWEIS: Diese Inkrementierung ist KORREKT.
 		# Sie erhöht den Fortschritts-Index für die Hub-Map.
-		current_level_index += 1
+		
+		# NEU: Unterscheiden zwischen Intro-Klicker und echten Missionen
+		if last_klicker_level_loaded == 0:
+			# Das war der Intro-Klicker (Index 0).
+			has_completed_intro = true # Setze das Intro-Flag
+			# current_level_index bleibt 0, damit Mission 1 (Start) freigeschaltet wird.
+		else:
+			# Das war ein normales Missions-Klicker-Spiel.
+			current_level_index += 1
+		# --- ENDE KORREKTUR 2 ---
 
 
 func start_new_combat(level_index: int): # KORRIGIERT: Akzeptiert Klicker-Index

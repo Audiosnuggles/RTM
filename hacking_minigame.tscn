@@ -582,5 +582,5 @@ one_way_collision = true
 [connection signal="pressed" from="LabRoomScreen/ClueWindow/CloseClueButton" to="." method="_on_CloseClueButton_pressed"]
 [connection signal="pressed" from="HackingTerminalScreen/LoginWindow/SubmitButton" to="." method="_on_SubmitButton_pressed"]
 [connection signal="pressed" from="HackingTerminalScreen/LoginWindow/ExitButton" to="." method="_on_ExitButton_pressed"]
-[connection signal="pressed" from="HackingTerminalScreen/LoginWindow/SubmitButton2" to="." method="_on_SubmitButton_pressed"]
+[connection signal="pressed" from="HackingTerminalScreen/LoginWindow/SubmitButton2" to="." method="_on_SubmitButton2_pressed"]
 [connection signal="pressed" from="HackingTerminalScreen/LoginWindow/SubmitButton2/ExitButton" to="." method="_on_ExitButton_pressed"]
