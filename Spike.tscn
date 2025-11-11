@@ -270,6 +270,8 @@ size = Vector2(329.27173, 148.6087)
 size = Vector2(34, 23)
 
 [node name="Spike" type="Area2D"]
+collision_layer = 9
+collision_mask = 3
 script = ExtResource("1_fgk57")
 
 [node name="Spider" type="AnimatedSprite2D" parent="."]

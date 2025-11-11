@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=3 uid="uid://4kdoyieyqx7d"]
+[gd_scene load_steps=21 format=3 uid="uid://4kdoyieyqx7d"]
 
 [ext_resource type="Script" uid="uid://c0mgrw64vl3ts" path="res://hacking_minigame.gd" id="1_5y2vv"]
 [ext_resource type="Texture2D" uid="uid://dd4s3kjpkod6x" path="res://backgrounds/Bg_Puzzle.jpg" id="2_cq4yu"]
@@ -6,19 +6,20 @@
 [ext_resource type="Texture2D" uid="uid://dn5f86lihhj30" path="res://PINWALL.jpg" id="4_t2p27"]
 [ext_resource type="Texture2D" uid="uid://s8j6cdug2ed3" path="res://Scientist.png" id="5_kn0ur"]
 [ext_resource type="Texture2D" uid="uid://dax3pwaj0etx1" path="res://ausweis.png" id="6_4j4vu"]
+[ext_resource type="Shader" uid="uid://bwcxqh1ksvpog" path="res://eyelid_effect.gdshader" id="7_kn0ur"]
 [ext_resource type="Texture2D" uid="uid://c7bv8wso7cm4l" path="res://Noise.png" id="8_kn0ur"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_5y2vv"]
-size = Vector2(171, 142)
+size = Vector2(217.5, 187)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_cq4yu"]
 size = Vector2(48, 125)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_bel8c"]
-size = Vector2(74, 142)
+size = Vector2(68, 174)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_d5u2o"]
-size = Vector2(43, 36)
+size = Vector2(59, 45.5)
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_t2p27"]
 
@@ -265,6 +266,12 @@ shader_parameter/vignette_intensity = 0.38
 shader_parameter/vignette_opacity = 0.96800004598
 shader_parameter/NOISE_TEXTURE = ExtResource("8_kn0ur")
 
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_4j4vu"]
+shader = ExtResource("7_kn0ur")
+shader_parameter/open_amount = 0.0
+shader_parameter/edge_blur_amount = 0.999999977648
+shader_parameter/color = Color(0, 0, 0, 1)
+
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_t2p27"]
 size = Vector2(256, 287)
 
@@ -279,36 +286,41 @@ offset_bottom = 40.0
 
 [node name="TextureRect" type="TextureRect" parent="LabRoomScreen"]
 layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
+offset_left = -319.00003
+offset_top = -238.0
+offset_right = 1260.4497
+offset_bottom = 658.66675
+scale = Vector2(1.5, 1.5)
 mouse_filter = 2
 texture = ExtResource("2_cq4yu")
+expand_mode = 2
 
 [node name="Clickable_Computer" type="Area2D" parent="LabRoomScreen" groups=["clickable"]]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="LabRoomScreen/Clickable_Computer"]
-position = Vector2(715.5, 642)
+position = Vector2(561.25, 555.5)
 shape = SubResource("RectangleShape2D_5y2vv")
 
 [node name="Clickable_Whiteboard" type="Area2D" parent="LabRoomScreen" groups=["clickable"]]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="LabRoomScreen/Clickable_Whiteboard"]
-position = Vector2(904, 562.5)
+position = Vector2(794, 458)
 shape = SubResource("RectangleShape2D_cq4yu")
 
 [node name="Clickable_Desk" type="Area2D" parent="LabRoomScreen" groups=["clickable"]]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="LabRoomScreen/Clickable_Desk"]
-position = Vector2(967, 821)
+position = Vector2(875, 773)
 shape = SubResource("RectangleShape2D_bel8c")
 
 [node name="Clickable_IDCard" type="Area2D" parent="LabRoomScreen" groups=["clickable"]]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="LabRoomScreen/Clickable_IDCard"]
-position = Vector2(1210, 873)
+position = Vector2(1170.5, 840.75)
 shape = SubResource("RectangleShape2D_d5u2o")
 
 [node name="ClueWindow" type="Panel" parent="LabRoomScreen"]
+visible = false
 layout_mode = 0
 offset_left = 468.0
 offset_top = 286.0
@@ -378,7 +390,7 @@ text = "MEMO AN ALLE MITARBEITER:
 
 Das neue Sicherheitsprotokoll ist ein Albtraum. Wer soll sich das neue Schema merken können?
 
-SCHEMA: [Projektname] (rückwärts) + [ID der Projektleiterin]
+SCHEMA: [Projektname] rückwärts + [ID des Projektleiters]
 
 Das sollte nicht zu schwer sein, oder? *seufz*"
 
@@ -409,7 +421,7 @@ theme_override_colors/default_color = Color(0, 0.9647059, 0.24313726, 1)
 theme_override_fonts/normal_font = ExtResource("3_bel8c")
 theme_override_font_sizes/normal_font_size = 24
 text = "LAB ID CARD 
-Dr. Raymond Scott - ID Number: 077 -Position: Scientist"
+Dr. Smek - ID Number: 077 -Position: Lead Sccientist"
 
 [node name="Sprite2D" type="Sprite2D" parent="LabRoomScreen/ClueWindow/ClueContent/IDCardClue"]
 position = Vector2(492, 340)
@@ -424,6 +436,7 @@ offset_bottom = 72.0
 text = "X"
 
 [node name="HackingTerminalScreen" type="Control" parent="."]
+visible = false
 layout_mode = 3
 anchors_preset = 0
 offset_right = 1920.0
@@ -570,6 +583,12 @@ offset_left = 278.0
 offset_top = -224.0
 offset_right = 340.0
 offset_bottom = -193.0
+
+[node name="eyelid_effect" type="ColorRect" parent="."]
+material = SubResource("ShaderMaterial_4j4vu")
+offset_right = 1920.0
+offset_bottom = 1090.0
+mouse_filter = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 visible = false

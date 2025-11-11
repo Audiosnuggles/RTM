@@ -1136,6 +1136,11 @@ color_ramp = SubResource("GradientTexture1D_87wk0")
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3wvma"]
 bg_color = Color(0, 0.9647059, 0.24313726, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.5254902, 0.8666667, 0.8156863, 1)
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_i8wsy"]
 shader = ExtResource("12_x42hv")
@@ -1586,7 +1591,6 @@ one_way_collision = true
 [node name="Spike" parent="." instance=ExtResource("7_adwht")]
 position = Vector2(900, 1006)
 collision_layer = 3
-collision_mask = 3
 
 [node name="Platform6" type="StaticBody2D" parent="."]
 position = Vector2(3781, 1013)
@@ -1719,10 +1723,12 @@ offset_left = 20.0
 offset_top = 20.0
 offset_right = 420.0
 offset_bottom = 70.0
-theme_override_colors/font_color = Color(0, 0.9647059, 0.24313726, 1)
+theme_override_colors/font_color = Color(0.9651087, 0.10180078, 0.80074847, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("9_3wvma")
 theme_override_styles/fill = SubResource("StyleBoxFlat_3wvma")
 value = 100.0
+exp_edit = true
 
 [node name="GameOverScreen" type="CanvasLayer" parent="."]
 layer = 10
