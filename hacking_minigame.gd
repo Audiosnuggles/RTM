@@ -22,9 +22,12 @@ signal minigame_finished(success: bool)
 
 # +++ KORREKTUR FÜR PFAD-FEHLER +++
 # Pfade korrigiert, sie sind Kinder von HackingTerminalScreen, nicht LoginWindow
-@onready var success_window = $HackingTerminalScreen/SuccessWindow
-@onready var success_text = $HackingTerminalScreen/SuccessWindow/SuccessText
+@onready var success_window = $HackingTerminalScreen/LoginWindow/SuccessWindow
+@onready var success_text = $HackingTerminalScreen/LoginWindow/SuccessWindow/SuccessText
 
+@onready var login_label = $HackingTerminalScreen/LoginWindow/Label
+@onready var submit_button = $HackingTerminalScreen/LoginWindow/SubmitButton
+@onready var exit_button = $HackingTerminalScreen/LoginWindow/ExitButton
 
 # --- Die versteckten Hinweise (TEXT-KONSTANTEN KÖNNEN GELÖSCHT WERDEN) ---
 # const HINWEIS_WHITEBOARD = ...
@@ -127,8 +130,14 @@ func _on_SubmitButton_pressed():
 	print("!!! SUBMIT BUTTON GEDRÜCKT !!!")
 	if password_input.text.strip_edges().to_upper() == "NIVLA077":
 		# Erfolg!
-		login_window.hide()
-		error_label.hide()
+		
+		# --- KORREKTUR ---
+		# Verstecke NUR die Login-Elemente, nicht das ganze Fenster
+		if is_instance_valid(login_label): login_label.hide()
+		if is_instance_valid(password_input): password_input.hide()
+		if is_instance_valid(submit_button): submit_button.hide()
+		if is_instance_valid(exit_button): exit_button.hide()
+		if is_instance_valid(error_label): error_label.hide()
 		
 		# Starte die Erfolgssequenz
 		start_success_sequence()
@@ -159,3 +168,5 @@ func start_success_sequence():
 
 func _on_SubmitButton2_pressed() -> void:
 	pass # Replace with function body.
+
+# Ende 

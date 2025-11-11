@@ -452,6 +452,10 @@ _data = {
 &"RESET": SubResource("Animation_hq1ik")
 }
 
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_84odl"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_ak604"]
+
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_84odl"]
 shader = ExtResource("13_6jybn")
 shader_parameter/overlay = true
@@ -476,10 +480,6 @@ shader_parameter/clip_warp = false
 shader_parameter/vignette_intensity = 0.4
 shader_parameter/vignette_opacity = 0.590000028025
 shader_parameter/NOISE_TEXTURE = ExtResource("15_84odl")
-
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_6jybn"]
-
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_84odl"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2c62f"]
 bg_color = Color(0.21770102, 0.21770108, 0.21770096, 1)
@@ -991,14 +991,16 @@ anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 1460.0
-offset_top = 840.0
-offset_right = 1660.0
-offset_bottom = 890.0
+offset_left = 1448.0
+offset_top = 827.0
+offset_right = 1648.0
+offset_bottom = 877.0
 grow_horizontal = 0
 grow_vertical = 0
 theme_override_fonts/font = ExtResource("5_hq1ik")
 theme_override_font_sizes/font_size = 32
+theme_override_styles/pressed = SubResource("StyleBoxEmpty_84odl")
+theme_override_styles/hover = SubResource("StyleBoxEmpty_ak604")
 text = "SKIP >>"
 
 [node name="TV_FILTER" type="ColorRect" parent="UI_Layer/StoryIntro"]
@@ -1008,22 +1010,21 @@ offset_right = 1920.0
 offset_bottom = 1080.0
 
 [node name="Next_Button" type="Button" parent="UI_Layer/StoryIntro"]
+modulate = Color(1, 1, 1, 0)
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 1449.0
-offset_top = 835.0
-offset_right = 1649.0
-offset_bottom = 885.0
+offset_left = 1424.0
+offset_top = 806.0
+offset_right = 1624.0
+offset_bottom = 856.0
 grow_horizontal = 0
 grow_vertical = 0
 theme_override_fonts/font = ExtResource("5_hq1ik")
 theme_override_font_sizes/font_size = 32
-theme_override_styles/normal = SubResource("StyleBoxEmpty_6jybn")
-theme_override_styles/hover = SubResource("StyleBoxEmpty_84odl")
 
 [node name="TypeSoundPlayer" type="AudioStreamPlayer2D" parent="UI_Layer/StoryIntro"]
 stream = ExtResource("14_7th4q")

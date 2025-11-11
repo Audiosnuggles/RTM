@@ -1667,6 +1667,7 @@ position = Vector2(6213, 975)
 collision_layer = 34
 collision_mask = 43
 script = ExtResource("2_a3a31")
+max_health = 4
 health_bar = NodePath("../MinigameUI/MinigameHealthBar")
 
 [node name="AnimatedSprite" type="AnimatedSprite2D" parent="Player"]

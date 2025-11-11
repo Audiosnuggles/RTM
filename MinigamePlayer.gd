@@ -260,3 +260,10 @@ func _on_spikes_7_body_entered(_body: Node2D) -> void:
 	pass # Replace with function body.
 func _on_spikes_8_body_entered(_body: Node2D) -> void:
 	pass # Replace with function body.
+
+# +++ HIER IST DIE FEHLENDE FUNKTION +++
+# Wird von Enemy.gd und Spike.gd aufgerufen, wenn der Spieler auf sie springt
+func bounce():
+	# Setze die vertikale Geschwindigkeit auf einen "Sprung",
+	# der etwas schwächer ist als ein normaler Sprung (80% der Sprungkraft).
+	velocity.y = JUMP_VELOCITY * 0.8
