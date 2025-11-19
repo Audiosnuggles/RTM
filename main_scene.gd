@@ -72,6 +72,7 @@ enum GameState {
 	STATE_INVENTORY,
 	STATE_MINIGAME
 }
+const ROBOT_STATUS = preload("res://Combat_Logic.gd").ROBOT_STATUS
 
 # ==============================================================================
 # 3. STATE-VARIABLEN
@@ -80,6 +81,7 @@ enum GameState {
 var current_state: GameState = GameState.STATE_TITLE
 var current_minigame: Node = null
 var level_to_start: int = -1
+var current_mission_robot_id: String = ""
 
 # --- Search Screen Timer ---
 var search_text_updated: bool = false
@@ -361,8 +363,12 @@ func _on_minigame_finished(success: bool):
 			print("Minigame erfolgreich abgeschlossen!")
 			
 			if minigame_path == HACKING_MINIGAME_PATH.resource_path:
-				# --- Fall 1: Hacking-Intro war erfolgreich ---
-				# (current_level_index ist noch 0)
+				# --- Fall 1: Hacking-Intro war erfolgreich (führt zum Clicker-Hack) ---
+				
+				# Setze die Mission ID und die globale ID
+				current_mission_robot_id = "robot_1"
+				Combat.current_mission_robot_id = "robot_1"
+				
 				level_to_start = 0 # Klicker-Spiel 0 (Intro Teil 2)
 				
 				# Black-Screen-Fix: FadeScreen sofort ausblenden
@@ -370,17 +376,21 @@ func _on_minigame_finished(success: bool):
 					fade_screen.hide()
 					fade_screen.modulate.a = 0.0
 				
-				_show_search_screen(true) # Starte Intro-Klicker
+				_show_search_screen(true) # Startet Intro-Clicker (DIES MUSS DIE VERZÖGERUNG HABEN)
 				return # WICHTIG: Stoppt hier, geht nicht zur Hub-Map
 			
 			elif minigame_path == PLATFORMER_MINIGAME_PATH.resource_path:
 				# --- Fall 2: Platformer (Mission 1) war erfolgreich ---
-				if Combat.current_level_index == 0:
-					Combat.current_level_index = 1 # Schalte Mission 2 (Index 1) frei
+				
+				# NEUE LOGIK: Setze Status, starte den Clicker-Hack
+				Combat.set_robot_requires_hacking(current_mission_robot_id)
+				start_mission_clicker_hack()
+				return
+				
 		else:
 			print("Minigame fehlgeschlagen. Zurück zur Karte.")
 	
-	# 4. Zur Hub-Map zurückkehren (wird nur von Fall 2 oder Fehlschlag erreicht)
+	# 4. Zur Hub-Map zurückkehren (wird nur von Fehlschlag erreicht)
 	goto_hub_map()
 	
 	# 5. Fade-In (Schwarzer Bildschirm verschwindet)
@@ -438,7 +448,7 @@ func _on_corrupted_healed():
 			await video_player.finished
 			video_player.hide()
 
-	# Nach JEDEM Klicker-Sieg zur Hub-Map zurückkehren
+	# NEU: Der Status wurde bereits in _check_for_win gesetzt. Hier nur die Navigation.
 	goto_hub_map()
 
 # Startet das Klicker-Level (wird von _show_search_screen aufgerufen)
@@ -489,27 +499,22 @@ func _on_button_start_pressed():
 func _on_mission_button_pressed(level_index: int):
 	if current_state != GameState.STATE_HUB_MAP: return
 	
+	# NEU: Wir verwenden level_index + 2, da Mission 1 (Index 0) der Roboter 2 ist (robot_2)
+	var mission_robot_id = "robot_" + str(level_index + 2) 
+	
 	if is_instance_valid(hub_music_player) and hub_music_player.is_playing():
 		hub_music_player.stop()
 	if is_instance_valid(hub_map): 
 		hub_map.hide()
+	
+	# 1. Setze die Roboter-ID global und lokal
+	current_mission_robot_id = mission_robot_id
+	Combat.current_mission_robot_id = mission_robot_id # Das Combat Singleton muss es auch wissen!
 
-	if level_index == 0:
-		# MISSION 1 (Index 0) startet das PLATTFORMER SPIEL
-		current_state = GameState.STATE_MINIGAME
-		start_minigame_level()
-	elif level_index == 1:
-		# MISSION 2 (Index 1) startet das KLICKER SPIEL (Asset 1)
-		current_state = GameState.STATE_COMBAT
-		level_to_start = 1 # Klicker Level 1
-		_show_search_screen(true)
-	else:
-		# MISSION 3+ (Index 2, 3, 4...)
-		current_state = GameState.STATE_COMBAT
-		level_to_start = level_index
-		_show_search_screen(true)
+	# 2. Starte IMMER den Platformer für Missions-Level
+	current_state = GameState.STATE_MINIGAME
+	start_minigame_level()
 
-# --- KORREKTUR 1: Namen an .tscn-Signale angepasst (Großschreibung) ---
 func _on_Upgrade_Button_pressed():
 	if Combat.upgrade_healing_power():
 		_update_fragment_display()
@@ -523,14 +528,86 @@ func _on_Click_Upgrade_Button_pressed():
 		if is_instance_valid(click_upgrade_button):
 			click_upgrade_button.text = "Upgrade Click (" + str(Combat.click_upgrade_cost) + " C)"
 			click_upgrade_button.release_focus()
-# --- ENDE KORREKTUR 1 ---
 
 
 # ==============================================================================
 # 9. UI HELPER-FUNKTIONEN
 # ==============================================================================
 
+# NEUE FUNKTION: Startet den Clicker-Hack NACH dem Platformer-Sieg
+func start_mission_clicker_hack():
+	
+	# 1. FIX: Hintergrundgrafik sichtbar machen und Kamera zurücksetzen
+	if is_instance_valid(klicker_background):
+		klicker_background.show() 
+	
+	if is_instance_valid(main_camera):
+		main_camera.enabled = true
+		main_camera.make_current()
+		# FIX: Kamera-Position und Zoom explizit zurücksetzen
+		main_camera.zoom = Vector2(1.0, 1.0)
+		main_camera.position = Vector2(960, 540) 
+
+	# 2. Setze den Zustand auf COMBAT (Clicker-Modus)
+	current_state = GameState.STATE_COMBAT
+	
+	# Hole die Nummer aus der ID (z.B. robot_2 -> 2)
+	var robot_id_number = current_mission_robot_id.split("_")[1].to_int()
+	
+	# Setze den Level-Index: robot_2 (Nummer 2) soll Asset Index 1 nutzen
+	level_to_start = robot_id_number - 1 
+
+	# 3. Klicker sofort starten (Bypass Search Screen)
+	if is_instance_valid(klicker_roboter): klicker_roboter.show()
+	_show_ui()
+	if is_instance_valid(health_bar): health_bar.show()
+	
+	# Dies lädt den Roboter-Sprite und startet die Combat_Logic sofort
+	start_next_corrupted(level_to_start)
+	
+	print("Zustand: COMBAT.")
+
+# REINSTATUIERTE FUNKTION: Wird von story_intro.gd aufgerufen
+func play_video_after_intro():
+	
+	# 1. (Text/Buttons wurden bereits von story_intro.gd versteckt)
+	# (Der TV_FILTER ist noch sichtbar)
+
+	# 2. Video-Player holen und abspielen
+	if is_instance_valid(video_player):
+		
+		# Lade das korrekte Video.
+		if video_player.stream == null:
+			video_player.stream = load("res://Done1.ogv") 
+		
+		if video_player.stream == null:
+			print("FEHLER: 'Done1.ogv' nicht gefunden! Prüfe den Pfad.")
+			if is_instance_valid(story_intro): story_intro.hide()
+			goto_hub_map()
+			return 
+		
+		video_player.show()
+		video_player.play()
+		
+		# 3. Warten, bis das Video fertig ist
+		await video_player.finished
+		
+		# 4. Video aufräumen
+		video_player.stop()
+		video_player.hide()
+	else:
+		print("FEHLER (MainScene): Video_Player nicht gefunden, kann Intro-Video nicht abspielen.")
+
+	# +++ Jetzt das StoryIntro-Panel (und den Filter) komplett verstecken +++
+	if is_instance_valid(story_intro):
+		story_intro.hide()
+
+	# 5. Jetzt den ursprünglichen "Button-Klick"-Fluss fortsetzen
+	goto_hub_map()
+
+
 func _show_search_screen(to_combat: bool = false):
+	# DIESE FUNKTION WIRD NUR FÜR DEN INTRO-CLICKER VERWENDET, UM DIE VERZÖGERUNG ZU ERZEUGEN
 	if is_instance_valid(victory_display): victory_display.hide()
 	_hide_ui()
 	if is_instance_valid(search_screen): search_screen.show()
@@ -575,7 +652,7 @@ func _show_search_screen(to_combat: bool = false):
 	else:
 		goto_hub_map()
 
-# Kehrt vom Search_Screen zum Klicker-Kampf zurück
+# Kehrt vom Search_Screen zum Klicker-Kampf zurück (nur für Intro-Flow)
 func _return_to_combat_after_transition():
 	if is_instance_valid(search_screen): search_screen.hide()
 	if is_instance_valid(video_player): video_player.hide()
@@ -597,21 +674,17 @@ func _return_to_combat_after_transition():
 
 # Versteckt die Haupt-UI (Klicker/Hub)
 func _hide_ui():
-	# --- FIX: Verwendet jetzt die gecachten @onready vars ---
 	var nodes_to_hide = [fragment_display, power_display, upgrade_button, 
 						click_upgrade_button, health_bar, 
 						drone_gallery, drone_gallery_label]
-	# --- ENDE FIX ---
 	for node in nodes_to_hide:
 		if is_instance_valid(node): node.hide()
 
 # Zeigt die Haupt-UI (Klicker/Hub)
 func _show_ui():
-	# --- FIX: Verwendet jetzt die gecachten @onready vars ---
 	var nodes_to_show = [fragment_display, power_display, upgrade_button, 
 						click_upgrade_button,
 						drone_gallery, drone_gallery_label]
-	# --- ENDE FIX ---
 	for node in nodes_to_show:
 		if is_instance_valid(node): node.show()
 
@@ -647,8 +720,8 @@ func _update_fragment_display():
 		
 	if is_instance_valid(power_display):
 		power_display.text = (
-			"Hacking Skills: " + str(Combat.echo_healing_power) + " HS/s\n" +
-			"Klickattack: " + str(Combat.echo_click_power) + " HS/Attack"
+			"Passiv: " + str(Combat.echo_healing_power) + " HP/s\n" +
+			"Klick: " + str(Combat.echo_click_power) + " HP"
 		)
 
 # Aktualisiert den Text des Search-Screens (für "CORRUPTION FOUND...")
@@ -665,48 +738,3 @@ func _update_search_text(new_text: String):
 			
 		search_label.text = final_text
 		search_label.start_typing()
-
-
-# +++ HIER IST DIE NEUE FUNKTION (ANGEPASST) +++
-# (Mit korrekter Einrückung und korrektem Video-Pfad)
-func play_video_after_intro():
-	
-	# 1. (Text/Buttons wurden bereits von story_intro.gd versteckt)
-	#    (Der TV_FILTER ist noch sichtbar)
-
-	# 2. Video-Player holen und abspielen
-	if is_instance_valid(video_player):
-		
-		# --- HIER IST DIE KORREKTUR ---
-		# Lade das korrekte Video.
-		# (Passe "res://intro_video.ogv" an, falls es in einem Unterordner wie "res://videos/" liegt)
-		video_player.stream = load("res://intro_video.ogv") 
-		
-		if video_player.stream == null:
-			print("FEHLER: 'intro_video.ogv' nicht gefunden! Prüfe den Pfad.")
-			# (Video überspringen und direkt weiter)
-			if is_instance_valid(story_intro): story_intro.hide()
-			goto_hub_map()
-			return # WICHTIG: Funktion hier beenden
-		# --- ENDE KORREKTUR ---
-		
-		video_player.show()
-		video_player.play()
-		
-		# 3. Warten, bis das Video fertig ist
-		await video_player.finished
-		
-		# 4. Video aufräumen
-		video_player.stop()
-		video_player.hide()
-	else:
-		print("FEHLER (MainScene): Video_Player nicht gefunden, kann Intro-Video nicht abspielen.")
-
-	# +++ NEU: Jetzt das StoryIntro-Panel (und den Filter) komplett verstecken +++
-	if is_instance_valid(story_intro):
-		story_intro.hide()
-	# --- ENDE NEU ---
-
-	# 5. Jetzt den ursprünglichen "Button-Klick"-Fluss fortsetzen
-	# (Dies wird das Hacking-Spiel starten, da 'has_completed_intro' noch false ist)
-	goto_hub_map()
