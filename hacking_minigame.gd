@@ -20,20 +20,18 @@ signal minigame_finished(success: bool)
 @onready var password_input = $HackingTerminalScreen/LoginWindow/PasswordInput
 @onready var error_label = $HackingTerminalScreen/LoginWindow/ErrorLabel
 
-# +++ KORREKTUR FÜR PFAD-FEHLER +++
-# Pfade korrigiert, sie sind Kinder von HackingTerminalScreen, nicht LoginWindow
+# Korrigierte Pfade (beinhalten LoginWindow)
 @onready var success_window = $HackingTerminalScreen/LoginWindow/SuccessWindow
 @onready var success_text = $HackingTerminalScreen/LoginWindow/SuccessWindow/SuccessText
 
+# Referenzen für das Verstecken der Login-Elemente
 @onready var login_label = $HackingTerminalScreen/LoginWindow/Label
 @onready var submit_button = $HackingTerminalScreen/LoginWindow/SubmitButton
 @onready var exit_button = $HackingTerminalScreen/LoginWindow/ExitButton
 
-# --- Die versteckten Hinweise (TEXT-KONSTANTEN KÖNNEN GELÖSCHT WERDEN) ---
-# const HINWEIS_WHITEBOARD = ...
-# const HINWEIS_DESK = ...
-# const HINWEIS_IDCARD = ...
-const HINWEIS_ERFOLG = "> ZUGRIFF GENEHMIGT...\n> VERBINDE MIT ROBOTER-EINHEIT..."
+# +++ DEIN SHADER-NODE +++
+# !!! WICHTIG: Stelle sicher, dass dieser Pfad auf deinen ColorRect mit dem Augen-Shader zeigt!
+@onready var eyelid_effect = $eyelid_effect 
 
 
 func _ready():
@@ -46,6 +44,10 @@ func _ready():
 	
 	# Verstecke alle Inhaltsseiten im ClueWindow
 	_hide_all_clues()
+
+	# +++ NEU: Starte die Blinzel-Animation +++
+	start_blinking_animation()
+
 
 # NEU: Hilfsfunktion zum Verstecken aller Inhalte
 func _hide_all_clues():
@@ -126,7 +128,7 @@ func _on_Clickable_Computer_input_event(_viewport: Node, event: InputEvent, _sha
 # --- STUFE 2: Terminal (Passwort eingeben) ---
 
 func _on_SubmitButton_pressed():
-	# Prüfe das Passwort (ALVIN rückwärts = NIVLA, ID = 077)
+	# Prüfe das Passwort (ALVIN rückwärts = SOLAT, ID = 077)
 	print("!!! SUBMIT BUTTON GEDRÜCKT !!!")
 	if password_input.text.strip_edges().to_upper() == "NIVLA077":
 		# Erfolg!
@@ -156,7 +158,7 @@ func start_success_sequence():
 	# +++ KORREKTUR FÜR FEHLER 3: Text anzeigen +++
 	success_text.show() 
 	
-	# success_text muss jetzt im Editor gestaltet sein, da wir keine Konstanten verwenden
+	# success_text muss jetzt im Editor gestaltet sein
 	
 	# Warte 3 Sekunden, damit der Spieler es lesen kann
 	await get_tree().create_timer(3.0).timeout
@@ -165,8 +167,49 @@ func start_success_sequence():
 	minigame_finished.emit(true)
 	
 
-
 func _on_SubmitButton2_pressed() -> void:
 	pass # Replace with function body.
 
-# Ende 
+
+# +++ HIER IST DEINE NEUE ANIMATIONSFUNKTION +++
+func start_blinking_animation():
+	
+	# 1. Sicherstellen, dass das Material existiert
+	if not is_instance_valid(eyelid_effect) or not eyelid_effect.material is ShaderMaterial:
+		print("FEHLER (HackingMinigame): 'eyelid_effect' Node nicht gefunden oder hat kein ShaderMaterial! Pfad in Zeile 31 prüfen.")
+		return
+
+	var material = eyelid_effect.material as ShaderMaterial
+	
+	# 2. Auge am Anfang sofort schließen
+	material.set_shader_parameter("open_amount", 0.0)
+
+	# 3. Tween (Animation) erstellen
+	var tween = create_tween()
+	
+	# Wir verwenden EASE_IN_OUT für sanfte Übergänge
+	tween.set_ease(Tween.EASE_IN_OUT) 
+	
+	# Wir ketten die Animationen basierend auf deiner Beschreibung aneinander:
+
+	# 1. "ganz langsam aufmachen" (Dauer: 1.5s, Start-Verzögerung: 0.5s)
+	tween.tween_property(material, "shader_parameter/open_amount", 1.0, 1.0).set_delay(0.5)
+	
+	# 2. "dann wieder zu" (Dauer: 0.3s, Verzögerung: 0.8s)
+	tween.tween_property(material, "shader_parameter/open_amount", 0.0, 0.3).set_delay(0.8)
+
+	# 3. "etwas zulassen" (auf 30% öffnen) (Dauer: 0.8s, Verzögerung: 0.5s)
+	tween.tween_property(material, "shader_parameter/open_amount", 1.0, 1.5).set_delay(0.5)
+
+	# 4. "wieder auf" (Dauer: 0.5s, Verzögerung: 1.0s)
+	tween.tween_property(material, "shader_parameter/open_amount", 1.0, 0.2).set_delay(1.0)
+
+	# 6. "dann zweimal blinzeln" (Blink 2) (Dauer: 0.1s zu, 0.2s auf, Verzögerung: 0.3s)
+	tween.tween_property(material, "shader_parameter/open_amount", 0.0, 0.1).set_delay(0.3)
+	tween.tween_property(material, "shader_parameter/open_amount", 1.0, 0.2) # Direkt danach wieder auf
+	
+	# 7. "bevor die augen ganz offen sind" (Finale Öffnung)
+	tween.tween_property(material, "shader_parameter/open_amount", 1.0, 0.4) # Bleibt offen
+
+	# +++ DIESE ZEILE WURDE ENTFERNT +++
+	# tween.start()

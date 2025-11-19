@@ -18,7 +18,9 @@ func _ready():
 		game_over_screen.hide()
 		
 		# 2. Den Shader-Parameter "movement" auf 0 zurücksetzen
-		var shader_mat = game_over_screen.get_node("MeltEffect").material as ShaderMaterial
+		var melt_effect_node = game_over_screen.get_node("MeltEffect")
+		# KORREKTUR: Verwende .get_material() für robusten Shader-Zugriff
+		var shader_mat = melt_effect_node.get_material() as ShaderMaterial 
 		if is_instance_valid(shader_mat):
 			shader_mat.set_shader_parameter("movement", 0.0)
 	
@@ -45,17 +47,28 @@ func player_died() -> void:
 # Diese Funktion spielt die Schmelz-Animation ab
 func start_game_over_sequence():
 	
-	# Hole Referenz zum Shader-Material
-	var shader_mat = game_over_screen.get_node("MeltEffect").material as ShaderMaterial
+	var melt_effect_node = game_over_screen.get_node_or_null("MeltEffect")
+	
+	# DEBUGGING-CHECK 1: Existiert der MeltEffect-Node?
+	if not is_instance_valid(melt_effect_node):
+		print("!!! FATALER FEHLER: MeltEffect Node existiert nicht oder Pfad ist falsch! !!!")
+		minigame_finished.emit(false) 
+		return
+		
+	# Hole Referenz zum Shader-Material (KORRIGIERTE, ROBUSTE Methode)
+	var shader_mat = melt_effect_node.get_material() as ShaderMaterial 
 	
 	# Hole Referenz auf das Label
 	var try_again_label = game_over_ui.get_node_or_null("TryAgainLabel")
 	
+	# DEBUGGING-CHECK 2: Ist das ShaderMaterial zugewiesen und korrekt?
 	if not is_instance_valid(shader_mat):
-		print("FEHLER: ShaderMaterial auf GameOverScreen/MeltEffect nicht gefunden!")
+		print("!!! FATALER FEHLER: Material ist nicht ShaderMaterial oder nicht zugewiesen! !!!")
+		print("DEBUG: Ist MeltEffect sichtbar? ", melt_effect_node.is_visible_in_tree())
 		minigame_finished.emit(false) 
 		return
 		
+	# Material und Node sind gültig. Starte Sequenz.
 	shader_mat.set_shader_parameter("movement", 0.0)
 	
 	# Sicherstellen, dass das Label unsichtbar ist

@@ -364,7 +364,7 @@ text = "PROJEKT-STATUS:
    
    OBLIVION-Knoten
 
-- Projektname: ALVIN"
+- Projektname: TALOS"
 
 [node name="Sprite2D2" type="Sprite2D" parent="LabRoomScreen/ClueWindow/ClueContent/WhiteboardClue"]
 position = Vector2(377.667, 291.25)
@@ -421,7 +421,7 @@ theme_override_colors/default_color = Color(0, 0.9647059, 0.24313726, 1)
 theme_override_fonts/normal_font = ExtResource("3_bel8c")
 theme_override_font_sizes/normal_font_size = 24
 text = "LAB ID CARD 
-Dr. Smek - ID Number: 077 -Position: Lead Sccientist"
+Dr. Smek - ID Number: 077 -Position: Lead Scientist"
 
 [node name="Sprite2D" type="Sprite2D" parent="LabRoomScreen/ClueWindow/ClueContent/IDCardClue"]
 position = Vector2(492, 340)

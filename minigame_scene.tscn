@@ -1136,27 +1136,6 @@ scale_min = 0.5
 scale_curve = SubResource("CurveTexture_adwht")
 color_ramp = SubResource("GradientTexture1D_87wk0")
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wvn5a"]
-bg_color = Color(1, 0.2466495, 0.29551792, 1)
-border_width_left = 3
-border_width_top = 3
-border_width_right = 3
-border_width_bottom = 3
-border_color = Color(0.5254902, 0.8666667, 0.8156863, 1)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3wvma"]
-bg_color = Color(0, 0.9647059, 0.24313726, 1)
-border_width_left = 3
-border_width_top = 3
-border_width_right = 3
-border_width_bottom = 3
-border_color = Color(0.5254902, 0.8666667, 0.8156863, 1)
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_i8wsy"]
-shader = ExtResource("12_x42hv")
-shader_parameter/subdivisions = 20
-shader_parameter/movement = 0.0
-
 [sub_resource type="AtlasTexture" id="AtlasTexture_vs3jj"]
 atlas = ExtResource("18_adwht")
 region = Rect2(0, 0, 140, 126)
@@ -1419,6 +1398,27 @@ animations = [{
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_lndaw"]
 radius = 38.470768
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_i8wsy"]
+shader = ExtResource("12_x42hv")
+shader_parameter/subdivisions = 20.0
+shader_parameter/movement = 0.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wvn5a"]
+bg_color = Color(1, 0.2466495, 0.29551792, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.5254902, 0.8666667, 0.8156863, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3wvma"]
+bg_color = Color(0, 0.9647059, 0.24313726, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.5254902, 0.8666667, 0.8156863, 1)
 
 [node name="MinigameScene" type="Node2D"]
 script = ExtResource("1_vs5gd")
@@ -1726,70 +1726,6 @@ one_shot = true
 explosiveness = 1.0
 process_material = SubResource("ParticleProcessMaterial_jcji4")
 
-[node name="MinigameUI" type="CanvasLayer" parent="."]
-
-[node name="DamageBar" type="ProgressBar" parent="MinigameUI"]
-offset_left = 20.0
-offset_top = 20.0
-offset_right = 420.0
-offset_bottom = 70.0
-theme_override_colors/font_color = Color(0, 0, 0, 0)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("9_3wvma")
-theme_override_font_sizes/font_size = 24
-theme_override_styles/fill = SubResource("StyleBoxFlat_wvn5a")
-value = 100.0
-exp_edit = true
-
-[node name="HealthBar" type="ProgressBar" parent="MinigameUI"]
-offset_left = 20.0
-offset_top = 20.0
-offset_right = 420.0
-offset_bottom = 70.0
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("9_3wvma")
-theme_override_font_sizes/font_size = 24
-theme_override_styles/fill = SubResource("StyleBoxFlat_3wvma")
-value = 100.0
-exp_edit = true
-
-[node name="GameOverScreen" type="CanvasLayer" parent="."]
-layer = 10
-
-[node name="MeltEffect" type="ColorRect" parent="GameOverScreen"]
-material = SubResource("ShaderMaterial_i8wsy")
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_right = -1920.0
-offset_bottom = -1080.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(0, 0, 0, 1)
-metadata/_edit_use_anchors_ = true
-
-[node name="GameOverUI" type="CanvasLayer" parent="."]
-layer = 11
-
-[node name="TryAgainLabel" type="Label" parent="GameOverUI"]
-modulate = Color(1, 1, 1, 0)
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -79.5
-offset_top = -35.5
-offset_right = 257.5
-offset_bottom = 35.5
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_colors/font_color = Color(0.5254902, 0.8666667, 0.8156863, 1)
-theme_override_fonts/font = ExtResource("9_3wvma")
-theme_override_font_sizes/font_size = 64
-text = "SWEET"
-
 [node name="Herz" type="Area2D" parent="."]
 collision_layer = 3
 collision_mask = 3
@@ -1831,6 +1767,70 @@ position = Vector2(8977, 1005)
 
 [node name="Spike10" parent="." instance=ExtResource("7_adwht")]
 position = Vector2(9147, 1005)
+
+[node name="GameOverScreen" type="CanvasLayer" parent="."]
+layer = 10
+
+[node name="MeltEffect" type="ColorRect" parent="GameOverScreen"]
+material = SubResource("ShaderMaterial_i8wsy")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = -1920.0
+offset_bottom = -1080.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(1, 1, 1, 0)
+metadata/_edit_use_anchors_ = true
+
+[node name="GameOverUI" type="CanvasLayer" parent="."]
+layer = 11
+
+[node name="TryAgainLabel" type="Label" parent="GameOverUI"]
+modulate = Color(1, 1, 1, 0)
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -79.5
+offset_top = -35.5
+offset_right = 257.5
+offset_bottom = 35.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.5254902, 0.8666667, 0.8156863, 1)
+theme_override_fonts/font = ExtResource("9_3wvma")
+theme_override_font_sizes/font_size = 64
+text = "SWEET"
+
+[node name="MinigameUI" type="CanvasLayer" parent="."]
+
+[node name="DamageBar" type="ProgressBar" parent="MinigameUI"]
+offset_left = 20.0
+offset_top = 20.0
+offset_right = 420.0
+offset_bottom = 70.0
+theme_override_colors/font_color = Color(0, 0, 0, 0)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("9_3wvma")
+theme_override_font_sizes/font_size = 24
+theme_override_styles/fill = SubResource("StyleBoxFlat_wvn5a")
+value = 100.0
+exp_edit = true
+
+[node name="HealthBar" type="ProgressBar" parent="MinigameUI"]
+offset_left = 20.0
+offset_top = 20.0
+offset_right = 420.0
+offset_bottom = 70.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("9_3wvma")
+theme_override_font_sizes/font_size = 24
+theme_override_styles/fill = SubResource("StyleBoxFlat_3wvma")
+value = 100.0
+exp_edit = true
 
 [connection signal="body_entered" from="Door" to="." method="_on_door_body_entered"]
 [connection signal="player_hit" from="Enemy" to="Player" method="take_damage"]
