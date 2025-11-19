@@ -195,6 +195,7 @@ func goto_title_screen():
 	
 	print("Zustand: TITLE SCREEN.")
 
+# (Startet nur den Text-Typewriter, NICHT das Video)
 func goto_story_intro():
 	current_state = GameState.STATE_STORY
 	
@@ -216,10 +217,10 @@ func goto_story_intro():
 		await fade_out_tween.finished
 		fade_screen.hide()
 		
-	# HINWEIS: Das Skript wartet, bis story_intro.gd "goto_hub_map()" aufruft.
-
+	# HINWEIS: Das Skript wartet, bis story_intro.gd "play_video_after_intro()" aufruft.
+	
 func goto_hub_map():
-	# Fängt den allerersten Aufruf ab (nach dem Story-Intro)
+	# Fängt den allerersten Aufruf ab (nach dem Story-Intro-Video)
 	if not Combat.has_completed_intro:
 		start_hacking_minigame()
 		return # Stoppt hier, bis das Hacking-Intro fertig ist
@@ -278,7 +279,8 @@ func start_hacking_minigame():
 		
 		if is_instance_valid(main_camera): main_camera.enabled = false
 		if is_instance_valid(klicker_background): klicker_background.hide()
-		if is_instance_valid(klicker_roboter): klicker_roboter.hide()
+		if is_instance_valid(klicker_roboter): 
+			klicker_roboter.hide()
 		_hide_ui()
 		
 		add_child(current_minigame)
@@ -404,7 +406,7 @@ func _on_corrupted_healed():
 		await next_round_timer.timeout
 
 	if is_instance_valid(victory_display):
-		victory_display.text = "Firmware updated.\n(+ " + str(int(Combat.healing_target_health * 0.5)) + " Coins)"
+		victory_display.text = "Success! Your Robot is ready.\n(+ " + str(int(Combat.healing_target_health * 0.5)) + " Coins)"
 		victory_display.modulate = Color(1, 1, 1, 0)
 		victory_display.show()
 
@@ -645,8 +647,8 @@ func _update_fragment_display():
 		
 	if is_instance_valid(power_display):
 		power_display.text = (
-			"Passiv: " + str(Combat.echo_healing_power) + " HP/s\n" +
-			"Klick: " + str(Combat.echo_click_power) + " HP"
+			"Hacking Skills: " + str(Combat.echo_healing_power) + " HS/s\n" +
+			"Klickattack: " + str(Combat.echo_click_power) + " HS/Attack"
 		)
 
 # Aktualisiert den Text des Search-Screens (für "CORRUPTION FOUND...")
@@ -663,3 +665,48 @@ func _update_search_text(new_text: String):
 			
 		search_label.text = final_text
 		search_label.start_typing()
+
+
+# +++ HIER IST DIE NEUE FUNKTION (ANGEPASST) +++
+# (Mit korrekter Einrückung und korrektem Video-Pfad)
+func play_video_after_intro():
+	
+	# 1. (Text/Buttons wurden bereits von story_intro.gd versteckt)
+	#    (Der TV_FILTER ist noch sichtbar)
+
+	# 2. Video-Player holen und abspielen
+	if is_instance_valid(video_player):
+		
+		# --- HIER IST DIE KORREKTUR ---
+		# Lade das korrekte Video.
+		# (Passe "res://intro_video.ogv" an, falls es in einem Unterordner wie "res://videos/" liegt)
+		video_player.stream = load("res://intro_video.ogv") 
+		
+		if video_player.stream == null:
+			print("FEHLER: 'intro_video.ogv' nicht gefunden! Prüfe den Pfad.")
+			# (Video überspringen und direkt weiter)
+			if is_instance_valid(story_intro): story_intro.hide()
+			goto_hub_map()
+			return # WICHTIG: Funktion hier beenden
+		# --- ENDE KORREKTUR ---
+		
+		video_player.show()
+		video_player.play()
+		
+		# 3. Warten, bis das Video fertig ist
+		await video_player.finished
+		
+		# 4. Video aufräumen
+		video_player.stop()
+		video_player.hide()
+	else:
+		print("FEHLER (MainScene): Video_Player nicht gefunden, kann Intro-Video nicht abspielen.")
+
+	# +++ NEU: Jetzt das StoryIntro-Panel (und den Filter) komplett verstecken +++
+	if is_instance_valid(story_intro):
+		story_intro.hide()
+	# --- ENDE NEU ---
+
+	# 5. Jetzt den ursprünglichen "Button-Klick"-Fluss fortsetzen
+	# (Dies wird das Hacking-Spiel starten, da 'has_completed_intro' noch false ist)
+	goto_hub_map()

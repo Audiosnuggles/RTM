@@ -5,7 +5,7 @@
 [ext_resource type="FontFile" uid="uid://diar4wg3jugva" path="res://OCR-a_.ttf" id="3_bel8c"]
 [ext_resource type="Texture2D" uid="uid://dn5f86lihhj30" path="res://PINWALL.jpg" id="4_t2p27"]
 [ext_resource type="Texture2D" uid="uid://s8j6cdug2ed3" path="res://Scientist.png" id="5_kn0ur"]
-[ext_resource type="Texture2D" uid="uid://dax3pwaj0etx1" path="res://ausweis.png" id="6_4j4vu"]
+[ext_resource type="Texture2D" uid="uid://184fijhc78kd" path="res://ausweis1.png" id="6_kn0ur"]
 [ext_resource type="Shader" uid="uid://bwcxqh1ksvpog" path="res://eyelid_effect.gdshader" id="7_kn0ur"]
 [ext_resource type="Texture2D" uid="uid://c7bv8wso7cm4l" path="res://Noise.png" id="8_kn0ur"]
 
@@ -424,8 +424,9 @@ text = "LAB ID CARD
 Dr. Smek - ID Number: 077 -Position: Lead Scientist"
 
 [node name="Sprite2D" type="Sprite2D" parent="LabRoomScreen/ClueWindow/ClueContent/IDCardClue"]
-position = Vector2(492, 340)
-texture = ExtResource("6_4j4vu")
+position = Vector2(492, 400)
+scale = Vector2(0.8, 0.8)
+texture = ExtResource("6_kn0ur")
 
 [node name="CloseClueButton" type="Button" parent="LabRoomScreen/ClueWindow"]
 layout_mode = 0
@@ -509,6 +510,7 @@ offset_bottom = 534.0
 text = "close X"
 
 [node name="SuccessWindow" type="Panel" parent="HackingTerminalScreen/LoginWindow"]
+z_index = 1
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 12.475

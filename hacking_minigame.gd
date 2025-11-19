@@ -130,7 +130,7 @@ func _on_Clickable_Computer_input_event(_viewport: Node, event: InputEvent, _sha
 func _on_SubmitButton_pressed():
 	# Prüfe das Passwort (ALVIN rückwärts = SOLAT, ID = 077)
 	print("!!! SUBMIT BUTTON GEDRÜCKT !!!")
-	if password_input.text.strip_edges().to_upper() == "NIVLA077":
+	if password_input.text.strip_edges().to_upper() == "SOLAT077":
 		# Erfolg!
 		
 		# --- KORREKTUR ---

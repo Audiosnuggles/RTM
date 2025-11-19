@@ -1,10 +1,12 @@
-[gd_scene load_steps=218 format=3 uid="uid://dh2ue3w1qbcrr"]
+[gd_scene load_steps=220 format=3 uid="uid://dh2ue3w1qbcrr"]
 
 [ext_resource type="Script" uid="uid://ba1x8aq3ygvoy" path="res://minigame_scene.gd" id="1_vs5gd"]
 [ext_resource type="Script" uid="uid://cqkj0flrbeyyd" path="res://MinigamePlayer.gd" id="2_a3a31"]
 [ext_resource type="Script" uid="uid://bumxs0gthw5x7" path="res://door.gd" id="2_gbnch"]
 [ext_resource type="Texture2D" uid="uid://cvgr4xejdiut8" path="res://hintergrund_minigame6.jpg" id="2_sajbp"]
+[ext_resource type="Texture2D" uid="uid://ddysjntoxue4h" path="res://Wall_left.png" id="3_jcji4"]
 [ext_resource type="Texture2D" uid="uid://bc8ssosxhv3t" path="res://DOOR.png" id="4_npmsg"]
+[ext_resource type="Texture2D" uid="uid://cwlw7bvrwvugj" path="res://Wall_right.png" id="4_ovobv"]
 [ext_resource type="Texture2D" uid="uid://odo77k0vteva" path="res://Trash_Object.png" id="5_34y8s"]
 [ext_resource type="Texture2D" uid="uid://b6hncwpmdffxj" path="res://P1_crouching.png" id="5_sajbp"]
 [ext_resource type="Texture2D" uid="uid://cguoi3w4l8gs2" path="res://jump_sprite-256px-36.png" id="6_6gwg8"]
@@ -28,7 +30,7 @@ fog_light_energy = 2.13
 size = Vector2(159, 281.5)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_6jybn"]
-size = Vector2(10083, 40.5)
+size = Vector2(10579, 43.25)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ub7ad"]
 size = Vector2(255.75, 197)
@@ -1401,7 +1403,7 @@ radius = 38.470768
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_i8wsy"]
 shader = ExtResource("12_x42hv")
-shader_parameter/subdivisions = 20.0
+shader_parameter/subdivisions = 20
 shader_parameter/movement = 0.0
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wvn5a"]
@@ -1444,18 +1446,27 @@ centered = false
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_sajbp")
 
+[node name="WallLeft" type="Sprite2D" parent="."]
+position = Vector2(9615.5, 769)
+texture = ExtResource("3_jcji4")
+
+[node name="WallRight" type="Sprite2D" parent="."]
+z_index = 11
+position = Vector2(9871.5, 595)
+texture = ExtResource("4_ovobv")
+
 [node name="Door" type="Area2D" parent="."]
 z_index = 10
 collision_mask = 2
 script = ExtResource("2_gbnch")
 
 [node name="Sprite2D" type="Sprite2D" parent="Door"]
-position = Vector2(9552, 864)
-scale = Vector2(1.6860465, 1.1451613)
+position = Vector2(9853, 864)
+scale = Vector2(1.0058128, 1.1451613)
 texture = ExtResource("4_npmsg")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Door"]
-position = Vector2(9557, 887)
+position = Vector2(9865, 887)
 shape = SubResource("RectangleShape2D_84odl")
 
 [node name="Floor" type="StaticBody2D" parent="."]
@@ -1470,7 +1481,7 @@ offset_bottom = 530.0
 color = Color(0.40982348, 0.1434182, 0.029744148, 1)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Floor"]
-position = Vector2(3262.5, 534)
+position = Vector2(3510.5, 535.375)
 shape = SubResource("RectangleShape2D_6jybn")
 
 [node name="TrashObject3" type="StaticBody2D" parent="."]
@@ -1668,11 +1679,14 @@ position = Vector2(1960, 341.1875)
 shape = SubResource("RectangleShape2D_sajbp")
 one_way_collision = true
 
-[node name="Enemy" parent="." instance=ExtResource("8_e2w2n")]
-position = Vector2(2061, 975)
+[node name="Enemy4" parent="." instance=ExtResource("8_e2w2n")]
+position = Vector2(9192, 974)
 
 [node name="Enemy2" parent="." instance=ExtResource("8_e2w2n")]
 position = Vector2(3975, 973)
+
+[node name="Enemy" parent="." instance=ExtResource("8_e2w2n")]
+position = Vector2(2061, 975)
 
 [node name="Enemy3" parent="." instance=ExtResource("8_e2w2n")]
 position = Vector2(6213, 975)
@@ -1726,19 +1740,35 @@ one_shot = true
 explosiveness = 1.0
 process_material = SubResource("ParticleProcessMaterial_jcji4")
 
-[node name="Herz" type="Area2D" parent="."]
+[node name="Herz2" type="Area2D" parent="."]
 collision_layer = 3
 collision_mask = 3
 script = ExtResource("18_jcji4")
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Herz"]
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Herz2"]
 position = Vector2(3190, 514.5)
 scale = Vector2(0.5, 0.5)
 sprite_frames = SubResource("SpriteFrames_fdpyr")
 autoplay = "default"
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Herz"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Herz2"]
 position = Vector2(3190, 514.5)
+shape = SubResource("CircleShape2D_lndaw")
+
+[node name="Herz" type="Area2D" parent="."]
+position = Vector2(6315, 524)
+collision_layer = 3
+collision_mask = 3
+script = ExtResource("18_jcji4")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Herz"]
+position = Vector2(-8, -2.5)
+scale = Vector2(0.5, 0.5)
+sprite_frames = SubResource("SpriteFrames_fdpyr")
+autoplay = "default"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Herz"]
+position = Vector2(-8, -2.5)
 shape = SubResource("CircleShape2D_lndaw")
 
 [node name="Spike2" parent="." instance=ExtResource("7_adwht")]
@@ -1751,22 +1781,22 @@ position = Vector2(6723, 1003)
 position = Vector2(6922, 1005)
 
 [node name="Spike5" parent="." instance=ExtResource("7_adwht")]
-position = Vector2(8029, 1006)
+position = Vector2(7850, 1006)
 
 [node name="Spike6" parent="." instance=ExtResource("7_adwht")]
-position = Vector2(8118, 1006)
+position = Vector2(7939, 1006)
 
 [node name="Spike7" parent="." instance=ExtResource("7_adwht")]
-position = Vector2(8357, 1006)
+position = Vector2(8101, 1006)
 
 [node name="Spike8" parent="." instance=ExtResource("7_adwht")]
-position = Vector2(8710, 1006)
+position = Vector2(8405, 1006)
 
 [node name="Spike9" parent="." instance=ExtResource("7_adwht")]
-position = Vector2(8977, 1005)
+position = Vector2(8558, 1005)
 
 [node name="Spike10" parent="." instance=ExtResource("7_adwht")]
-position = Vector2(9147, 1005)
+position = Vector2(8246, 1005)
 
 [node name="GameOverScreen" type="CanvasLayer" parent="."]
 layer = 10
@@ -1776,12 +1806,8 @@ material = SubResource("ShaderMaterial_i8wsy")
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_right = -1920.0
-offset_bottom = -1080.0
-grow_horizontal = 2
 grow_vertical = 2
 color = Color(1, 1, 1, 0)
-metadata/_edit_use_anchors_ = true
 
 [node name="GameOverUI" type="CanvasLayer" parent="."]
 layer = 11
