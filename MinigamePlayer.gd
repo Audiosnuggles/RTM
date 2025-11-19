@@ -153,52 +153,60 @@ func _on_spikes_body_entered(body):
 		take_damage(1) 
 
 func take_damage(damage_amount: int = 1):
+	# 1. Unmittelbarer Schutz: Verhindere Schaden, wenn bereits tot oder unverwundbar
 	if is_invincible or is_dead:
 		return 
 
 	print("Player took damage: ", damage_amount)
 	current_health -= damage_amount
 	
+	# --- KORREKTUR: HealthBar-Update VOR dem Todes-Check ---
 	if is_instance_valid(health_bar):
 		health_bar.value = current_health
 	else:
 		print("HealthBar nicht gefunden, kann Wert nicht aktualisieren.")
-
-	if current_health > 0:
-		is_invincible = true
-		invincibility_timer.start(1.0) 
-		invisibility_timer.start(0.1) 
-		modulate.a = 0.5 
+	# --- ENDE KORREKTUR ---
+	
+	# 2. TODESPRÜFUNG (Muss VOR der Unverwundbarkeit stehen)
+	if current_health <= 0:
+		
+		# Setze den Todes-Status und starte die Sequenz
+		if not is_dead:
+			print("Player health is zero. Starte Todes-Sequenz...")
+			
+			is_dead = true
+			modulate.a = 1.0
+			
+			# Stoppe ALLE Timer sofort, um die Verzögerung zu minimieren
+			invincibility_timer.stop()
+			invisibility_timer.stop()
+			camera_shake_timer.stop()
+			is_invincible = false
+			is_shaking = false
+			camera.offset = Vector2.ZERO
+			
+			animated_sprite.play("Death")
+			
+			if minigame_scene.has_method("player_died"):
+				# Die Game Over Sequenz wird gestartet (pausiert das Spiel)
+				await minigame_scene.player_died()
+			else:
+				print("FEHLER: player_died() Methode nicht in minigame_scene gefunden!")
+		
+		return # Verhindere, dass der Code weiterläuft und Unverwundbarkeit setzt
+	
+	# 3. LEBENS-LOGIK (Wird nur ausgeführt, wenn der Spieler überlebt)
+	print("Player health remaining: ", current_health)
+	
+	# Setze Unverwundbarkeit und Shake
+	is_invincible = true
+	invincibility_timer.start(1.0) 
+	invisibility_timer.start(0.1) 
+	modulate.a = 0.5 
 
 	is_shaking = true
 	camera_shake_timer.start(0.2)
 
-	if current_health <= 0 and not is_dead:
-		print("Player health is zero. Starte Todes-Sequenz...")
-		
-		is_dead = true
-		modulate.a = 1.0
-		
-		print("DEBUG: Spiele 'Death'-Animation...")
-		animated_sprite.play("Death")
-		
-		if is_instance_valid(death_smoke_effect):
-			death_smoke_effect.emitting = true 
-		else:
-			print("WARNUNG: 'DeathSmoke'-Node nicht gefunden!")
-		
-		await animated_sprite.animation_finished
-		print("DEBUG: 'Death'-Animation beendet.")
-		
-		if minigame_scene.has_method("player_died"):
-			print("DEBUG [take_damage]: Rufe 'await minigame_scene.player_died()' auf...")
-			await minigame_scene.player_died()
-			print("DEBUG [take_damage]: 'await minigame_scene.player_died()' ist BEENDET.")
-		else:
-			print("FEHLER: player_died() Methode nicht in minigame_scene gefunden!")
-			
-	elif current_health > 0:
-		print("Player health remaining: ", current_health)
 
 # --- NEUE FUNKTION: HEILUNG ---
 # Wird von einem Herz-Item (Area2D) aufgerufen
@@ -260,7 +268,6 @@ func _on_spikes_7_body_entered(_body: Node2D) -> void:
 	pass # Replace with function body.
 func _on_spikes_8_body_entered(_body: Node2D) -> void:
 	pass # Replace with function body.
-
 # +++ HIER IST DIE FEHLENDE FUNKTION +++
 # Wird von Enemy.gd und Spike.gd aufgerufen, wenn der Spieler auf sie springt
 func bounce():
