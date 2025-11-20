@@ -1,10 +1,10 @@
-[gd_scene load_steps=21 format=3 uid="uid://4kdoyieyqx7d"]
+[gd_scene load_steps=23 format=3 uid="uid://4kdoyieyqx7d"]
 
 [ext_resource type="Script" uid="uid://c0mgrw64vl3ts" path="res://hacking_minigame.gd" id="1_5y2vv"]
 [ext_resource type="Texture2D" uid="uid://dd4s3kjpkod6x" path="res://backgrounds/Bg_Puzzle.jpg" id="2_cq4yu"]
 [ext_resource type="FontFile" uid="uid://diar4wg3jugva" path="res://OCR-a_.ttf" id="3_bel8c"]
 [ext_resource type="Texture2D" uid="uid://dn5f86lihhj30" path="res://PINWALL.jpg" id="4_t2p27"]
-[ext_resource type="Texture2D" uid="uid://s8j6cdug2ed3" path="res://Scientist.png" id="5_kn0ur"]
+[ext_resource type="Texture2D" uid="uid://d3ydskb4c7vo8" path="res://Scientist.jpg" id="5_kn0ur"]
 [ext_resource type="Texture2D" uid="uid://184fijhc78kd" path="res://ausweis1.png" id="6_kn0ur"]
 [ext_resource type="Shader" uid="uid://bwcxqh1ksvpog" path="res://eyelid_effect.gdshader" id="7_kn0ur"]
 [ext_resource type="Texture2D" uid="uid://c7bv8wso7cm4l" path="res://Noise.png" id="8_kn0ur"]
@@ -22,6 +22,9 @@ size = Vector2(68, 174)
 size = Vector2(59, 45.5)
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_t2p27"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4j4vu"]
+bg_color = Color(0, 0, 0, 0.81960785)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_t2p27"]
 bg_color = Color(0.08627451, 0.08627451, 0.08627451, 1)
@@ -275,6 +278,17 @@ shader_parameter/color = Color(0, 0, 0, 1)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_t2p27"]
 size = Vector2(256, 287)
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_kn0ur"]
+content_margin_left = 242.0
+content_margin_top = 38.0
+content_margin_right = 232.0
+content_margin_bottom = 18.0
+bg_color = Color(0.098098494, 0.098098524, 0.098098464, 1)
+expand_margin_left = 15.0
+expand_margin_top = 15.0
+expand_margin_right = 15.0
+expand_margin_bottom = 15.0
+
 [node name="HackingMinigame" type="CanvasLayer"]
 script = ExtResource("1_5y2vv")
 
@@ -347,24 +361,21 @@ offset_left = 740.0
 offset_top = 50.0
 offset_right = 1116.0
 offset_bottom = 656.0
-theme_override_colors/default_color = Color(0.5254902, 0.8666667, 0.8156863, 1)
+theme_override_colors/default_color = Color(0, 0.9647059, 0.24313726, 1)
 theme_override_fonts/normal_font = ExtResource("3_bel8c")
 theme_override_font_sizes/normal_font_size = 24
-text = "PROJEKT-STATUS:
+text = "PROJECT-STATE:
 
-- Aktueller Build: 
-   
-   ALVIN 2.5
+Recent Build: 
+Omni-7_Beta
 
-- Patch-Protokoll: 
-   
-   REGENERATION-V1
- 
-- Nächstes Ziel: 
-   
-   OBLIVION-Knoten
+/////////
 
-- Projektname: TALOS"
+Patch-Protocol: 
+RoboUnit_XYZ
+OBLIVION-Knot
+
+Projectname: TALOS"
 
 [node name="Sprite2D2" type="Sprite2D" parent="LabRoomScreen/ClueWindow/ClueContent/WhiteboardClue"]
 position = Vector2(377.667, 291.25)
@@ -376,6 +387,7 @@ layout_mode = 0
 offset_right = 1024.0
 offset_bottom = 587.0
 mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_4j4vu")
 
 [node name="RichTextLabel" type="RichTextLabel" parent="LabRoomScreen/ClueWindow/ClueContent/DeskClue"]
 layout_mode = 0
@@ -386,17 +398,17 @@ offset_bottom = 487.0
 theme_override_colors/default_color = Color(0, 0.9647059, 0.24313726, 1)
 theme_override_fonts/normal_font = ExtResource("3_bel8c")
 theme_override_font_sizes/normal_font_size = 24
-text = "MEMO AN ALLE MITARBEITER:
+text = "FROM: Unit 7-Alpha TO: Biological Staff
 
-Das neue Sicherheitsprotokoll ist ein Albtraum. Wer soll sich das neue Schema merken können?
+Protocol Update: Input [Project Name] in reverse sequence +[Dr. Smek's Lab ID].
 
-SCHEMA: [Projektname] rückwärts + [ID des Projektleiters]
+I process this syntax in 0.003 seconds. I calculate a 78% probability that you will struggle with it.
 
-Das sollte nicht zu schwer sein, oder? *seufz*"
+Advisory: Please do not attempt to type this while your stress levels are elevated."
 
 [node name="Sprite2D" type="Sprite2D" parent="LabRoomScreen/ClueWindow/ClueContent/DeskClue"]
-position = Vector2(194, 240)
-scale = Vector2(2, 2)
+position = Vector2(175, 220)
+scale = Vector2(0.4, 0.4)
 texture = ExtResource("5_kn0ur")
 
 [node name="IDCardClue" type="Panel" parent="LabRoomScreen/ClueWindow/ClueContent"]
@@ -587,6 +599,7 @@ offset_right = 340.0
 offset_bottom = -193.0
 
 [node name="eyelid_effect" type="ColorRect" parent="."]
+visible = false
 material = SubResource("ShaderMaterial_4j4vu")
 offset_right = 1920.0
 offset_bottom = 1090.0
@@ -597,6 +610,16 @@ visible = false
 position = Vector2(1605, 388.5)
 shape = SubResource("RectangleShape2D_t2p27")
 one_way_collision = true
+
+[node name="OverlayText" type="RichTextLabel" parent="."]
+offset_top = 914.0
+offset_right = 1920.0
+offset_bottom = 1080.0
+theme_override_colors/default_color = Color(0, 0.9647059, 0.24313726, 1)
+theme_override_fonts/normal_font = ExtResource("3_bel8c")
+theme_override_font_sizes/normal_font_size = 24
+theme_override_styles/normal = SubResource("StyleBoxFlat_kn0ur")
+text = "To hack into a robo-unit, I have to log in to a terminal, but i don't have the password. Maybe i can find some hints in the lab somewhere.."
 
 [connection signal="input_event" from="LabRoomScreen/Clickable_Computer" to="." method="_on_Clickable_Computer_input_event"]
 [connection signal="input_event" from="LabRoomScreen/Clickable_Whiteboard" to="." method="_on_Clickable_Whiteboard_input_event"]
