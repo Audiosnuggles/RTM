@@ -1406,21 +1406,11 @@ shader = ExtResource("12_x42hv")
 shader_parameter/subdivisions = 20
 shader_parameter/movement = 0.0
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wvn5a"]
-bg_color = Color(1, 0.2466495, 0.29551792, 1)
-border_width_left = 3
-border_width_top = 3
-border_width_right = 3
-border_width_bottom = 3
-border_color = Color(0.5254902, 0.8666667, 0.8156863, 1)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_jcji4"]
+bg_color = Color(0.95943695, 0.2058531, 0.40431383, 1)
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3wvma"]
-bg_color = Color(0, 0.9647059, 0.24313726, 1)
-border_width_left = 3
-border_width_top = 3
-border_width_right = 3
-border_width_bottom = 3
-border_color = Color(0.5254902, 0.8666667, 0.8156863, 1)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ovobv"]
+bg_color = Color(7.2196127e-07, 0.71029615, 0.4712392, 1)
 
 [node name="MinigameScene" type="Node2D"]
 script = ExtResource("1_vs5gd")
@@ -1691,12 +1681,12 @@ position = Vector2(2061, 975)
 [node name="Enemy3" parent="." instance=ExtResource("8_e2w2n")]
 position = Vector2(6213, 975)
 
-[node name="Player" type="CharacterBody2D" parent="." node_paths=PackedStringArray("health_bar") groups=["Player"]]
+[node name="Player" type="CharacterBody2D" parent="." node_paths=PackedStringArray("health_bar", "damage_bar") groups=["Player"]]
 collision_layer = 34
 collision_mask = 43
 script = ExtResource("2_a3a31")
-max_health = 4
 health_bar = NodePath("../MinigameUI/HealthBar")
+damage_bar = NodePath("../MinigameUI/DamageBar")
 
 [node name="AnimatedSprite" type="AnimatedSprite2D" parent="Player"]
 position = Vector2(540, 893)
@@ -1833,30 +1823,36 @@ text = "SWEET"
 [node name="MinigameUI" type="CanvasLayer" parent="."]
 
 [node name="DamageBar" type="ProgressBar" parent="MinigameUI"]
-offset_left = 20.0
-offset_top = 20.0
-offset_right = 420.0
-offset_bottom = 70.0
-theme_override_colors/font_color = Color(0, 0, 0, 0)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("9_3wvma")
-theme_override_font_sizes/font_size = 24
-theme_override_styles/fill = SubResource("StyleBoxFlat_wvn5a")
-value = 100.0
-exp_edit = true
+anchors_preset = -1
+anchor_left = 0.023000002
+anchor_top = 0.037
+anchor_right = 0.17600001
+anchor_bottom = 0.062000003
+offset_left = -0.16000366
+offset_top = 0.040000916
+offset_right = 0.07998657
+offset_bottom = 0.039993286
+theme_override_styles/fill = SubResource("StyleBoxFlat_jcji4")
+max_value = 3.0
+step = 1.0
+value = 3.0
+show_percentage = false
 
 [node name="HealthBar" type="ProgressBar" parent="MinigameUI"]
-offset_left = 20.0
-offset_top = 20.0
-offset_right = 420.0
-offset_bottom = 70.0
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("9_3wvma")
-theme_override_font_sizes/font_size = 24
-theme_override_styles/fill = SubResource("StyleBoxFlat_3wvma")
-value = 100.0
-exp_edit = true
+anchors_preset = -1
+anchor_left = 0.023000002
+anchor_top = 0.037
+anchor_right = 0.17600001
+anchor_bottom = 0.062000003
+offset_left = -0.16000366
+offset_top = 0.040000916
+offset_right = 0.07998657
+offset_bottom = 0.039993286
+theme_override_styles/fill = SubResource("StyleBoxFlat_ovobv")
+max_value = 3.0
+step = 1.0
+value = 3.0
+show_percentage = false
 
 [connection signal="body_entered" from="Door" to="." method="_on_door_body_entered"]
 [connection signal="player_hit" from="Enemy" to="Player" method="take_damage"]

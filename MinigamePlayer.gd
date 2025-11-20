@@ -5,15 +5,17 @@ const JUMP_VELOCITY = -650.0
 
 @export var max_health: int = 3
 var current_health: int
-@export var health_bar: ProgressBar # Zugewiesen im Editor
+
+# --- UI REFERENZEN ---
+@export var health_bar: ProgressBar # Die vordere Leiste (Aktuelle HP)
+@export var damage_bar: ProgressBar # Die hintere Leiste (Nachzieheffekt)
 
 var gravity = ProjectSettings.get_setting("physics/2d/default_gravity")
 
 @onready var animated_sprite = $AnimatedSprite
 @onready var minigame_scene = get_parent() 
 
-# --- RAUCH-EFFEKT ---
-@onready var death_smoke_effect = $DeathSmoke 
+@onready var death_smoke_effect = get_node_or_null("DeathSmoke") 
 
 @onready var stand_shape = $StandShape
 @onready var crouch_shape = $CrouchShape
@@ -34,12 +36,19 @@ var is_dead: bool = false
 
 func _ready():
 	current_health = max_health
+	
+	print("--- PLAYER START ---")
+	# Initialisiere BEIDE Bars
 	if is_instance_valid(health_bar):
 		health_bar.max_value = max_health
 		health_bar.value = current_health
-	else:
-		print("FEHLER in MinigamePlayer.gd: Die 'Health Bar'-Variable wurde nicht im Inspektor zugewiesen!")
+		health_bar.show_percentage = false # Optional: Text ausblenden für cleaneren Look
 	
+	if is_instance_valid(damage_bar):
+		damage_bar.max_value = max_health
+		damage_bar.value = current_health
+		damage_bar.show_percentage = false
+		
 	stand_shape.disabled = false
 	crouch_shape.disabled = true
 	
@@ -51,23 +60,15 @@ func _ready():
 
 
 func _physics_process(delta):
-	
-	# 'direction' hier deklarieren, damit sie immer im Scope ist
 	var direction = 0.0
 	
-	# 1. Schwerkraft IMMER anwenden (auch wenn tot)
 	if not is_on_floor():
 		velocity.y += gravity * delta
 
-	# 2. Prüfen, ob der Spieler tot ist
 	if is_dead:
-		# Wenn tot, keine X-Bewegung
 		velocity.x = 0
-	
-	# 3. Wenn der Spieler LEBT, verarbeite Input
 	else:
 		var crouch_input = Input.is_action_pressed("ui_down")
-		# Weise der 'direction'-Variable den Input zu (sie wurde oben schon deklariert)
 		direction = Input.get_axis("ui_left", "ui_right") 
 		
 		var wants_to_crouch = crouch_input and is_on_floor()
@@ -87,7 +88,6 @@ func _physics_process(delta):
 			if animated_sprite.animation == "Crouch_Idle":
 				animated_sprite.play("Crouch_End")
 		
-		# Verarbeite Links/Rechts-Bewegung
 		if is_crouching or animated_sprite.animation in ["Crouch_Start", "Crouch_End"]:
 			velocity.x = 0
 		else:
@@ -96,16 +96,12 @@ func _physics_process(delta):
 			else:
 				velocity.x = move_toward(velocity.x, 0, SPEED)
 
-		# Verarbeite Sprung
 		if Input.is_action_just_pressed("ui_accept") and is_on_floor() and not is_crouching:
 			velocity.y = JUMP_VELOCITY
 			
-	# 4. Bewegung IMMER ausführen (tot oder lebendig)
 	move_and_slide()
 
-	# 5. Animationen und Kamera-Shake NUR verarbeiten, wenn lebendig
 	if not is_dead:
-		# Dieser Block ist jetzt sicher, da 'direction' immer existiert
 		if direction != 0:
 			animated_sprite.flip_h = (direction < 0) 
 
@@ -127,150 +123,103 @@ func _physics_process(delta):
 			)
 
 func _on_animation_finished():
-	
 	var anim_name = animated_sprite.animation
-	
-	if anim_name == "Death":
-		return
-	
+	if anim_name == "Death": return
 	if anim_name == "Crouch_Start":
-		if is_crouching:
-			animated_sprite.play("Crouch_Idle")
-		else:
-			animated_sprite.play("Crouch_End")
-			
+		animated_sprite.play("Crouch_Idle" if is_crouching else "Crouch_End")
 	elif anim_name == "Crouch_End":
-		# 'direction' ist hier nicht verfügbar.
-		# Wir müssen den Input erneut abfragen, um die korrekte Idle/Run-Animation zu wählen
-		var current_direction = Input.get_axis("ui_left", "ui_right")
-		if current_direction != 0:
-			animated_sprite.play("Run")
-		else:
-			animated_sprite.play("Idle")
+		animated_sprite.play("Idle")
 
 func _on_spikes_body_entered(body):
-	if body == self:
-		take_damage(1) 
+	if body == self: take_damage(1) 
 
 func take_damage(damage_amount: int = 1):
-	# 1. Unmittelbarer Schutz: Verhindere Schaden, wenn bereits tot oder unverwundbar
-	if is_invincible or is_dead:
-		return 
+	if is_invincible or is_dead: return 
 
-	print("Player took damage: ", damage_amount)
 	current_health -= damage_amount
+	print("--- TREFFER --- HP:", current_health)
 	
-	# --- KORREKTUR: HealthBar-Update VOR dem Todes-Check ---
+	# 1. HealthBar sofort aktualisieren (Hartes Feedback)
 	if is_instance_valid(health_bar):
 		health_bar.value = current_health
-	else:
-		print("HealthBar nicht gefunden, kann Wert nicht aktualisieren.")
-	# --- ENDE KORREKTUR ---
 	
-	# 2. TODESPRÜFUNG (Muss VOR der Unverwundbarkeit stehen)
+	# 2. DamageBar sanft nachziehen (Visueller "Ghost" Effekt)
+	if is_instance_valid(damage_bar):
+		var tween = create_tween()
+		# Warte kurz (0.2s), damit der Unterschied sichtbar ist
+		tween.tween_interval(0.2) 
+		# Animiere den Wert über 0.4 Sekunden auf den neuen Stand
+		tween.tween_property(damage_bar, "value", current_health, 0.4).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	
+	# TODES-LOGIK
 	if current_health <= 0:
-		
-		# Setze den Todes-Status und starte die Sequenz
 		if not is_dead:
-			print("Player health is zero. Starte Todes-Sequenz...")
-			
 			is_dead = true
+			is_invincible = true
 			modulate.a = 1.0
 			
-			# Stoppe ALLE Timer sofort, um die Verzögerung zu minimieren
-			invincibility_timer.stop()
-			invisibility_timer.stop()
-			camera_shake_timer.stop()
-			is_invincible = false
+			set_deferred("process_mode", Node.PROCESS_MODE_DISABLED) 
+			set_deferred("collision_layer", 0) 
+			set_deferred("collision_mask", 0)  
+			
+			if invincibility_timer: invincibility_timer.stop()
+			if invisibility_timer: invisibility_timer.stop()
+			if camera_shake_timer: camera_shake_timer.stop()
 			is_shaking = false
-			camera.offset = Vector2.ZERO
+			if camera: camera.offset = Vector2.ZERO
 			
 			animated_sprite.play("Death")
+			if is_instance_valid(death_smoke_effect):
+				death_smoke_effect.emitting = true
 			
 			if minigame_scene.has_method("player_died"):
-				# Die Game Over Sequenz wird gestartet (pausiert das Spiel)
 				await minigame_scene.player_died()
-			else:
-				print("FEHLER: player_died() Methode nicht in minigame_scene gefunden!")
-		
-		return # Verhindere, dass der Code weiterläuft und Unverwundbarkeit setzt
-	
-	# 3. LEBENS-LOGIK (Wird nur ausgeführt, wenn der Spieler überlebt)
-	print("Player health remaining: ", current_health)
-	
-	# Setze Unverwundbarkeit und Shake
+		return 
+
+	# ÜBERLEBT
 	is_invincible = true
-	invincibility_timer.start(1.0) 
-	invisibility_timer.start(0.1) 
+	if invincibility_timer: invincibility_timer.start(1.0) 
+	if invisibility_timer: invisibility_timer.start(0.1) 
 	modulate.a = 0.5 
 
 	is_shaking = true
-	camera_shake_timer.start(0.2)
+	if camera_shake_timer: camera_shake_timer.start(0.2)
 
 
-# --- NEUE FUNKTION: HEILUNG ---
-# Wird von einem Herz-Item (Area2D) aufgerufen
 func heal(amount: int):
-	# Prüfen, ob der Spieler überhaupt Heilung braucht
 	if current_health < max_health:
-		current_health += amount
+		current_health = min(current_health + amount, max_health)
 		
-		# Sicherstellen, dass die Gesundheit nicht über das Maximum geht
-		if current_health > max_health:
-			current_health = max_health
-		
-		# Die Lebensanzeige (Health Bar) aktualisieren
-		if is_instance_valid(health_bar):
+		# Bei Heilung aktualisieren wir beide sofort (oder animieren hoch)
+		if is_instance_valid(health_bar): 
 			health_bar.value = current_health
-		
-		# Optional: Hier einen Heil-Sound abspielen
-		# $HealSound.play() 
-		
-		print("Geheilt! Aktuelle HP: ", current_health)
-		return true # Heilung war erfolgreich
-	
-	# Spieler hat bereits volle Leben
-	return false # Heilung war nicht nötig
-# --- ENDE NEUE FUNKTION ---
+		if is_instance_valid(damage_bar): 
+			damage_bar.value = current_health # Ghost-Bar zieht sofort nach
+			
+		return true 
+	return false 
 
+func bounce():
+	velocity.y = JUMP_VELOCITY * 0.8
 
 func _on_invincibility_timer_timeout():
 	is_invincible = false
 	modulate.a = 1.0 
-	invisibility_timer.stop() 
-
+	if invisibility_timer: invisibility_timer.stop() 
 
 func _on_invisibility_timer_timeout():
 	if is_invincible:
 		modulate.a = 1.0 - modulate.a 
 		invisibility_timer.start(0.1)
 
-
 func _on_camera_shake_timer_timeout():
 	is_shaking = false
-	camera.offset = Vector2.ZERO
+	if camera: camera.offset = Vector2.ZERO
 
-
-# --- Diese leeren Funktionen kannst du für deine Spikes verwenden ---
-func _on_spikes_3_body_entered(_body: Node2D) -> void:
-	pass # Replace with function body.
-func _on_spikes_2_body_entered(_body: Node2D) -> void:
-	pass # Replace with function body.
-
-
-func _on_spikes_5_body_entered(_body: Node2D) -> void:
-	pass # Replace with function body.
-func _on_spikes_6_body_entered(_body: Node2D) -> void:
-	pass # Replace with function body.
-
-
-func _on_spikes_7_body_entered(_body: Node2D) -> void:
-	pass # Replace with function body.
-func _on_spikes_8_body_entered(_body: Node2D) -> void:
-	pass # Replace with function body.
-# +++ HIER IST DIE FEHLENDE FUNKTION +++
-# Wird von Enemy.gd und Spike.gd aufgerufen, wenn der Spieler auf sie springt
-func bounce():
-	# Setze die vertikale Geschwindigkeit auf einen "Sprung",
-	# der etwas schwächer ist als ein normaler Sprung (80% der Sprungkraft).
-	velocity.y = JUMP_VELOCITY * 0.8
+# Dummy-Funktionen
+func _on_spikes_3_body_entered(_body: Node2D) -> void: pass
+func _on_spikes_2_body_entered(_body: Node2D) -> void: pass
+func _on_spikes_5_body_entered(_body: Node2D) -> void: pass
+func _on_spikes_6_body_entered(_body: Node2D) -> void: pass
+func _on_spikes_7_body_entered(_body: Node2D) -> void: pass
+func _on_spikes_8_body_entered(_body: Node2D) -> void: pass
